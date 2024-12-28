@@ -4,11 +4,57 @@
 #include <string.h>
 #include <unistd.h>
 
+void draw_border(int start_y, int start_x)
+{
+    attron(COLOR_PAIR(5));
+    for (int i = start_x - 2; i < start_x + 20; i++)
+    {
+        mvprintw(start_y - 3, i, "-");
+        mvprintw(start_y + NUM_CHOICES + 1, i, "-");
+    }
+    for (int i = start_y - 2; i < start_y + NUM_CHOICES + 2; i++)
+    {
+        mvprintw(i, start_x - 2, "|");
+        mvprintw(i, start_x + 20, "|");
+    }
+    mvprintw(start_y - 3, start_x - 2, "+");
+    mvprintw(start_y - 3, start_x + 20, "+");
+    mvprintw(start_y + NUM_CHOICES + 1, start_x - 2, "+");
+    mvprintw(start_y + NUM_CHOICES + 1, start_x + 20, "+");
+    attroff(COLOR_PAIR(5));
+}
+
+void highlight_choice(int start_y, int start_x, const char **options, int choice)
+{
+    For(i, NUM_CHOICES)
+    {
+        if (i == choice)
+        {
+            attron(COLOR_PAIR(2));
+        }
+        else
+        {
+            attron(COLOR_PAIR(1));
+        }
+        mvprintw(start_y + i, start_x, "%s", options[i]);
+        attroff(COLOR_PAIR(1) | COLOR_PAIR(2));
+    }
+}
+
+void print_exit_message(int start_y, int start_x)
+{
+    attron(COLOR_PAIR(3));
+    mvprintw(start_y + NUM_CHOICES + 2, start_x, "Exiting...");
+    attroff(COLOR_PAIR(3));
+    refresh();
+    sleep(1);
+}
+
 void show_main_menu()
 {
     int choice = 0;
 
-    const char *choices[NUM_CHOICES] = {
+    const char *options[NUM_CHOICES] = {
         "Login",
         "Sign up",
         "Exit"};
@@ -36,43 +82,13 @@ void show_main_menu()
         int start_x = (max_x / 2) - 10;
 
         // displaying the menu
-        // ********** START **********
-        // drawing borders
-        attron(COLOR_PAIR(5));
-        for (int i = start_x - 2; i < start_x + 20; i++)
-        {
-            mvprintw(start_y - 3, i, "-");
-            mvprintw(start_y + NUM_CHOICES + 1, i, "-");
-        }
-        for (int i = start_y - 2; i < start_y + NUM_CHOICES + 2; i++)
-        {
-            mvprintw(i, start_x - 2, "|");
-            mvprintw(i, start_x + 20, "|");
-        }
-        mvprintw(start_y - 3, start_x - 2, "+");
-        mvprintw(start_y - 3, start_x + 20, "+");
-        mvprintw(start_y + NUM_CHOICES + 1, start_x - 2, "+");
-        mvprintw(start_y + NUM_CHOICES + 1, start_x + 20, "+");
-        attroff(COLOR_PAIR(5));
+        draw_border(start_y, start_x);
 
         attron(COLOR_PAIR(3));
         mvprintw(start_y - 2, start_x, "=== Main Menu ===");
         attroff(COLOR_PAIR(3));
 
-        // making the choice highlighted
-        For(i, NUM_CHOICES)
-        {
-            if (i == choice)
-            {
-                attron(COLOR_PAIR(2));
-            }
-            else
-            {
-                attron(COLOR_PAIR(1));
-            }
-            mvprintw(start_y + i, start_x, "%s", choices[i]);
-            attroff(COLOR_PAIR(1) | COLOR_PAIR(2));
-        }
+        highlight_choice(start_y, start_x, options, choice);
 
         // moving in the list
         int ch = getch();
@@ -103,11 +119,7 @@ void show_main_menu()
             }
             else if (choice == 2)
             {
-                attron(COLOR_PAIR(3));
-                mvprintw(start_y + NUM_CHOICES + 2, start_x, "Exiting...");
-                attroff(COLOR_PAIR(3));
-                refresh();
-                sleep(1);
+                print_exit_message(start_y, start_x);
                 return;
             }
             break;
@@ -115,6 +127,5 @@ void show_main_menu()
         default:
             break;
         }
-        // ********** END **********
     }
 }
