@@ -2,6 +2,7 @@
 #include "global_defines.h"
 #include <ncurses.h>
 #include <string.h>
+#include <unistd.h>
 
 void show_main_menu()
 {
@@ -15,13 +16,16 @@ void show_main_menu()
     // color settings
     start_color();
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    init_pair(2, COLOR_GREEN, COLOR_BLACK);
+    init_pair(2, COLOR_BLACK, COLOR_GREEN);
     init_pair(3, COLOR_RED, COLOR_BLACK);
     init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(5, COLOR_YELLOW, COLOR_BLACK);
 
     // getting console size
     int max_y, max_x;
     getmaxyx(stdscr, max_y, max_x);
+
+    curs_set(0); // hiding cursor
 
     while (1)
     {
@@ -33,6 +37,24 @@ void show_main_menu()
 
         // displaying the menu
         // ********** START **********
+        // drawing borders
+        attron(COLOR_PAIR(5));
+        for (int i = start_x - 2; i < start_x + 20; i++)
+        {
+            mvprintw(start_y - 3, i, "-");
+            mvprintw(start_y + NUM_CHOICES + 1, i, "-");
+        }
+        for (int i = start_y - 2; i < start_y + NUM_CHOICES + 2; i++)
+        {
+            mvprintw(i, start_x - 2, "|");
+            mvprintw(i, start_x + 20, "|");
+        }
+        mvprintw(start_y - 3, start_x - 2, "+");
+        mvprintw(start_y - 3, start_x + 20, "+");
+        mvprintw(start_y + NUM_CHOICES + 1, start_x - 2, "+");
+        mvprintw(start_y + NUM_CHOICES + 1, start_x + 20, "+");
+        attroff(COLOR_PAIR(5));
+
         attron(COLOR_PAIR(3));
         mvprintw(start_y - 2, start_x, "=== Main Menu ===");
         attroff(COLOR_PAIR(3));
@@ -59,7 +81,7 @@ void show_main_menu()
         case KEY_UP:
             choice--;
             if (choice < 0)
-                choice = NUM_CHOICES - 1; // loop to the end option
+                choice = NUM_CHOICES - 1; // loop to the last option
             break;
 
         case KEY_DOWN:
@@ -81,10 +103,11 @@ void show_main_menu()
             }
             else if (choice == 2)
             {
-                attron(COLOR_PAIR(4));
-                mvprintw(start_y + NUM_CHOICES + 1, start_x, "Exiting...");
+                attron(COLOR_PAIR(3));
+                mvprintw(start_y + NUM_CHOICES + 2, start_x, "Exiting...");
                 attroff(COLOR_PAIR(3));
                 refresh();
+                sleep(1);
                 return;
             }
             break;
