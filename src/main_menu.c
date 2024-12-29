@@ -1,6 +1,7 @@
 #include "main_menu.h"
 #include "global_defines.h"
 #include "ui_utils.h"
+#include "signup.h"
 #include <ncurses.h>
 #include <string.h>
 #include <unistd.h>
@@ -31,6 +32,8 @@ void show_main_menu()
 
     curs_set(0); // hiding cursor
 
+    // displaying the main menu
+    // ********* START **********
     while (1)
     {
         clear();
@@ -73,7 +76,7 @@ void show_main_menu()
             else if (choice == 1)
             {
                 attron(COLOR_PAIR(COLOR_MESSAGE));
-                /*Sign up option*/
+                show_signup_form();
             }
             else if (choice == 2)
             {
@@ -86,4 +89,5 @@ void show_main_menu()
             break;
         }
     }
+    // ********* END **********
 }
