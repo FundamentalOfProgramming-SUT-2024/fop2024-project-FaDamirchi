@@ -1,51 +1,15 @@
 #include "main_menu.h"
 #include "global_defines.h"
+#include "ui_utils.h"
 #include <ncurses.h>
 #include <string.h>
 #include <unistd.h>
 
-void draw_border(int start_y, int start_x)
-{
-    attron(COLOR_PAIR(5));
-    for (int i = start_x - 2; i < start_x + 20; i++)
-    {
-        mvprintw(start_y - 3, i, "-");
-        mvprintw(start_y + NUM_CHOICES + 1, i, "-");
-    }
-    for (int i = start_y - 2; i < start_y + NUM_CHOICES + 2; i++)
-    {
-        mvprintw(i, start_x - 2, "|");
-        mvprintw(i, start_x + 20, "|");
-    }
-    mvprintw(start_y - 3, start_x - 2, "+");
-    mvprintw(start_y - 3, start_x + 20, "+");
-    mvprintw(start_y + NUM_CHOICES + 1, start_x - 2, "+");
-    mvprintw(start_y + NUM_CHOICES + 1, start_x + 20, "+");
-    attroff(COLOR_PAIR(5));
-}
-
-void highlight_choice(int start_y, int start_x, const char **options, int choice)
-{
-    For(i, NUM_CHOICES)
-    {
-        if (i == choice)
-        {
-            attron(COLOR_PAIR(2));
-        }
-        else
-        {
-            attron(COLOR_PAIR(1));
-        }
-        mvprintw(start_y + i, start_x, "%s", options[i]);
-        attroff(COLOR_PAIR(1) | COLOR_PAIR(2));
-    }
-}
-
 void print_exit_message(int start_y, int start_x)
 {
-    attron(COLOR_PAIR(3));
+    attron(COLOR_PAIR(COLOR_MESSAGE));
     mvprintw(start_y + NUM_CHOICES + 2, start_x, "Exiting...");
-    attroff(COLOR_PAIR(3));
+    attroff(COLOR_PAIR(COLOR_MESSAGE));
     refresh();
     sleep(1);
 }
@@ -59,13 +23,7 @@ void show_main_menu()
         "Sign up",
         "Exit"};
 
-    // color settings
-    start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    init_pair(2, COLOR_BLACK, COLOR_GREEN);
-    init_pair(3, COLOR_RED, COLOR_BLACK);
-    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(5, COLOR_YELLOW, COLOR_BLACK);
+    init_colors();
 
     // getting console size
     int max_y, max_x;
@@ -82,13 +40,15 @@ void show_main_menu()
         int start_x = (max_x / 2) - 10;
 
         // displaying the menu
-        draw_border(start_y, start_x);
+        int height = NUM_CHOICES + 2;
+        int width = strlen("=== Main Menu ===");
+        draw_border(start_y, start_x, height, width);
 
-        attron(COLOR_PAIR(3));
+        attron(COLOR_PAIR(COLOR_TITLE));
         mvprintw(start_y - 2, start_x, "=== Main Menu ===");
-        attroff(COLOR_PAIR(3));
+        attroff(COLOR_PAIR(COLOR_TITLE));
 
-        highlight_choice(start_y, start_x, options, choice);
+        highlight_choice(start_y, start_x, options, NUM_CHOICES, choice);
 
         // moving in the list
         int ch = getch();
@@ -109,12 +69,12 @@ void show_main_menu()
         case ENTER:
             if (choice == 0)
             {
-                attron(COLOR_PAIR(4));
+                attron(COLOR_PAIR(COLOR_MESSAGE));
                 /*Login option*/
             }
             else if (choice == 1)
             {
-                attron(COLOR_PAIR(4));
+                attron(COLOR_PAIR(COLOR_MESSAGE));
                 /*Sign up option*/
             }
             else if (choice == 2)

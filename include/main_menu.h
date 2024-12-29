@@ -1,10 +1,10 @@
 #ifndef MAIN_MENU
 #define MAIN_MENU
 
-// Consts
+// consts
 #define NUM_CHOICES 3
 
-// Functions
+// functions
 void show_main_menu();
 
 #endif
