@@ -51,3 +51,10 @@ void highlight_choice(int start_y, int start_x, const char **options, int num_ch
         attroff(COLOR_PAIR(COLOR_DEFAULT) | COLOR_PAIR(COLOR_HIGHLIGHT));
     }
 }
+
+void show_title(int start_y, int start_x, char *title)
+{
+    attron(COLOR_PAIR(COLOR_TITLE));
+    mvprintw(start_y, start_x,"%s", title);
+    attroff(COLOR_PAIR(COLOR_TITLE));
+}

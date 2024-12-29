@@ -44,9 +44,7 @@ void show_main_menu()
         int width = strlen("=== Main Menu ===");
         draw_border(start_y, start_x, height, width);
 
-        attron(COLOR_PAIR(COLOR_TITLE));
-        mvprintw(start_y - 2, start_x, "=== Main Menu ===");
-        attroff(COLOR_PAIR(COLOR_TITLE));
+        show_title(start_y - 2, start_x, "=== Main Menu ===");
 
         highlight_choice(start_y, start_x, options, NUM_CHOICES, choice);
 
