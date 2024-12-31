@@ -2,83 +2,59 @@
 #include "global_defines.h"
 #include "ui_utils.h"
 #include "ncurses.h"
+#include <string.h>
 
-void show_signup_form()
+typedef struct
 {
-    char *fields[] = {
-        "Email: ",
-        "Username: ",
-        "Password: ",
-        "Sign up"};
-
     char email[320];
     char username[20];
     char password[64];
+} User;
 
-    int currunt_field = 0;
+void show_signup_form()
+{
+    User newUser;
 
     // getting console size
     int max_y, max_x;
     getmaxyx(stdscr, max_y, max_x);
 
-    curs_set(0); // hiding cursor
+    clear();
 
-    // displaying the signup form
-    // ********* START **********
+    int ch;
+    int i = 0;
+
+    // find center
+    int start_y = (max_y / 2) - (NUM_FEILDS / 2);
+    int start_x = (max_x / 2) - 10;
+
     while (1)
     {
-        clear();
-
-        // find center to start showing the menu
-        int start_y = (max_y / 2) - (NUM_FEILDS / 2);
-        int start_x = (max_x / 2) - 10;
-
-        // displaying the menu
-        int height = NUM_FEILDS + 2;
-        int width = strlen("=== Sign up ===");
-        draw_border(start_y, start_x, height, width);
-
         show_title(start_y - 2, start_x, "=== Sign up ===");
+        show_title(start_y - 1, start_x, "---------------");
 
-        highlight_choice(start_y, start_x, fields, NUM_FEILDS, currunt_field);
+        show_field(start_y, start_x, "Email: ");
+        echo();
+        getstr(newUser.email);
+        noecho();
 
-        // moving in the list
-        int ch = getch();
-        switch (ch)
-        {
-        case KEY_UP:
-            currunt_field--;
-            if (currunt_field < 0)
-                currunt_field = NUM_FEILDS - 1; // loop to the last field
-            break;
+        // check if the email exists...
+        // check if the email is valid...
 
-        case KEY_DOWN:
-            currunt_field++;
-            if (currunt_field >= NUM_FEILDS)
-                currunt_field = 0; // loop to the first field
-            break;
+        show_field(start_y + 1, start_x, "Username: ");
+        echo();
+        getstr(newUser.username);
+        noecho();
 
-        case ENTER:
-            if (currunt_field == 0)
-            {
-                attron(COLOR_PAIR(COLOR_MESSAGE));
-                /*Login option*/
-            }
-            else if (currunt_field == 1)
-            {
-                attron(COLOR_PAIR(COLOR_MESSAGE));
-                /*Sign up option*/
-            }
-            else if (currunt_field == 2)
-            {
-                return;
-            }
-            break;
+        // check if the username exists...
 
-        default:
-            break;
-        }
+        // generate random password? (Y/n)
+
+        show_field(start_y + 2, start_x, "Password: ");
+        echo();
+        getstr(newUser.password);
+        noecho();
+
+        // check conditions for password...
     }
-
-    // ********* END **********
 }
