@@ -3,9 +3,6 @@
 #ifndef GLOBAL_DEFINES
 #define GLOBAL_DEFINES
 
-// blocks
-#define For(i, n) for(int i = 0; i < n; i++)
-
 // characters
 #define ENTER 10
 

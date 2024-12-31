@@ -6,15 +6,6 @@
 #include <string.h>
 #include <unistd.h>
 
-void print_exit_message(int start_y, int start_x)
-{
-    attron(COLOR_PAIR(COLOR_MESSAGE));
-    mvprintw(start_y + NUM_CHOICES + 2, start_x, "Exiting...");
-    attroff(COLOR_PAIR(COLOR_MESSAGE));
-    refresh();
-    sleep(1);
-}
-
 void show_main_menu()
 {
     int choice = 0;
@@ -80,7 +71,7 @@ void show_main_menu()
             }
             else if (choice == 2)
             {
-                print_exit_message(start_y, start_x);
+                show_message(start_y + NUM_CHOICES + 2, start_x, "Exiting...");
                 return;
             }
             break;

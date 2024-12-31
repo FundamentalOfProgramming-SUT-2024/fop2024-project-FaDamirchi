@@ -1,7 +1,7 @@
 #include "ui_utils.h"
-#include "global_defines.h"
 #include <ncurses.h>
 #include <string.h>
+#include <unistd.h>
 
 void init_colors()
 {
@@ -39,7 +39,7 @@ void draw_border(int start_y, int start_x, int height, int width)
 
 void highlight_choice(int start_y, int start_x, const char **options, int num_choices, int choice)
 {
-    For(i, num_choices)
+    for (int i = 0; i < num_choices; i++)
     {
         if (i == choice)
         {
@@ -66,4 +66,13 @@ void show_field(int start_y, int start_x, char *title)
     attron(COLOR_PAIR(COLOR_FIELD));
     mvprintw(start_y, start_x, "%s", title);
     attroff(COLOR_PAIR(COLOR_FIELD));
+}
+
+void show_message(int start_y, int start_x, char message[])
+{
+    attron(COLOR_PAIR(COLOR_MESSAGE));
+    mvprintw(start_y, start_x, "%s", message);
+    attroff(COLOR_PAIR(COLOR_MESSAGE));
+    refresh();
+    sleep(1);
 }
