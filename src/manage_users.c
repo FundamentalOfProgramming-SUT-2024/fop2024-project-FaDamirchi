@@ -2,6 +2,8 @@
 #include "ui_utils.h"
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <time.h>
 
 bool is_email_valid(int start_y, int start_x, char *email)
 {
@@ -184,6 +186,38 @@ bool is_password_valid(int start_y, int start_x, char *password)
     }
 
     return true;
+}
+
+void generate_password(char *password)
+{   
+    const char all[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$\%^&*-+/";
+    const char lowercase[] = "abcdefghijklmnopqrstuvwxyz";
+    const char uppercase[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const char digit[] = "0123456789";
+
+    srand(time(NULL));
+
+    int length = 7 + (rand() % 10);
+
+    password[0] = lowercase[rand() % 26];
+    password[1] = uppercase[rand() % 26];
+    password[2] = digit[rand() % 26];
+
+    for (int i = 3; i < length; i++)
+    {
+        password[i] = all[rand() % sizeof(all)];
+    }
+
+    // shuffel the password
+    for (int i = 0; i < length; i++)
+    {
+        int j = rand() % length;
+        char temp = password[i];
+        password[i] = password[j];
+        password[j] = temp;
+    }
+    
+    password[length] = '\0';
 }
 
 void create_new_user(char *email, char *username, char *password)

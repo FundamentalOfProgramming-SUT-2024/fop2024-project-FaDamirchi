@@ -5,5 +5,7 @@
 
 // characters
 #define ENTER 10
+#define YES 'y'
+#define NO 'n'
 
 #endif

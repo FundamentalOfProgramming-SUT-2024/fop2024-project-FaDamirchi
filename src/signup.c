@@ -60,17 +60,47 @@ void show_signup_form()
 
     do
     {
-        strcpy(newUser.password, "");                      // remove the prevoius password
-        move(start_y + 2, start_x + strlen("Password: ")); // move cursor to the start of the password input area
-        clrtoeol();                                        // clear the line from the cursor to the end
-        move(start_y + 3, start_x);                        // move cursor to the start of the next line
-        clrtoeol();                                        // clear the line
+        show_alert_message(start_y + 2, start_x, "Do you want to generate random password? (y/n)");
+        int ch = getch();
 
-        show_field(start_y + 2, start_x, "Password: ");    // start getting the password again
-        echo();
-        getstr(newUser.password);
-        noecho();
-    } while (is_password_valid(start_y + 3, start_x, newUser.password) == false);
+        if (ch == YES)
+        {
+            strcpy(newUser.password, "");
+            generate_password(newUser.password);
+
+            move(start_y + 2, start_x);
+            clrtoeol();
+            show_success_message(start_y + 2, start_x, "Your password is: ");
+            show_success_message(start_y + 2, start_x + strlen("Your password is: "), newUser.password);
+            show_alert_message(start_y + 3, start_x, "Do you want to keep this passord? (y/n)");
+            ch = getch();
+
+            move(start_y + 3, start_x);
+            clrtoeol();
+            
+            if (ch == YES)
+            {
+                break;
+            }            
+        }
+        else if (ch == NO)
+        {
+            do
+            {
+                strcpy(newUser.password, "");                      // remove the prevoius password
+                move(start_y + 2, start_x + strlen("Password: ")); // move cursor to the start of the password input area
+                clrtoeol();                                        // clear the line from the cursor to the end
+                move(start_y + 3, start_x);                        // move cursor to the start of the next line
+                clrtoeol();                                        // clear the line
+
+                show_field(start_y + 2, start_x, "Password: ");    // start getting the password again
+                echo();
+                getstr(newUser.password);
+                noecho();
+            } while (is_password_valid(start_y + 3, start_x, newUser.password) == false);
+        }
+
+    } while (1);
 
     create_new_user(newUser.email, newUser.username, newUser.password);
 

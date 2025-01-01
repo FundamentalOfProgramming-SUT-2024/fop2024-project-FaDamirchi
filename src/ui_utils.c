@@ -84,5 +84,5 @@ void show_success_message(int start_y, int start_x, char message[])
     mvprintw(start_y, start_x, "%s", message);
     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
     refresh();
-    sleep(1.5);
+    sleep(2);
 }
