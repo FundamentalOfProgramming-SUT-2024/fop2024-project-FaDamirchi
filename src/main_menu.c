@@ -61,17 +61,15 @@ void show_main_menu()
         case ENTER:
             if (choice == 0)
             {
-                attron(COLOR_PAIR(COLOR_MESSAGE));
                 /*Login option*/
             }
             else if (choice == 1)
             {
-                attron(COLOR_PAIR(COLOR_MESSAGE));
                 show_signup_form();
             }
             else if (choice == 2)
             {
-                show_message(start_y + NUM_CHOICES + 2, start_x, "Exiting...");
+                show_alert_message(start_y + NUM_CHOICES + 2, start_x, "Exiting...");
                 return;
             }
             break;

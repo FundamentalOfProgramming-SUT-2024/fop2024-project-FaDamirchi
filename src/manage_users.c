@@ -3,11 +3,11 @@
 #include <string.h>
 #include <ctype.h>
 
-bool is_email_valid(int start_y, int start_x, char email[])
+bool is_email_valid(int start_y, int start_x, char *email)
 {
     if (!email || strlen(email) == 0)
     {
-        show_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.");
         return false;
     }
 
@@ -35,21 +35,21 @@ bool is_email_valid(int start_y, int start_x, char email[])
     // must have exactly one '@' and at least one '.'
     if (atCount != 1 || dotCount < 1)
     {
-        show_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.");
         return false;
     }
 
     // '@' cannot be the first or the last character
     if (atIndex == 0 || atIndex == len - 1)
     {
-        show_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.");
         return false;
     }
 
     // '.' cannot be immidiately after '@'
     if (dotIndex == atIndex + 1)
     {
-        show_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.");
         return false;
     }
 
@@ -58,7 +58,7 @@ bool is_email_valid(int start_y, int start_x, char email[])
     {
         if (!isalnum(email[i]) && email[i] != '.' && email[i] != '_' && email[i] != '-')
         {
-            show_message(start_y, start_x, "Please provide a valid email address.");
+            show_alert_message(start_y, start_x, "Please provide a valid email address.");
             return false;
         }
     }
@@ -68,7 +68,7 @@ bool is_email_valid(int start_y, int start_x, char email[])
     {
         if (!isalnum(email[i]) && email[i] != '.' && email[i] != '-')
         {
-            show_message(start_y, start_x, "Please provide a valid email address.");
+            show_alert_message(start_y, start_x, "Please provide a valid email address.");
             return false;
         }
     }
@@ -76,14 +76,14 @@ bool is_email_valid(int start_y, int start_x, char email[])
     // domain part must have at least one dot
     if (dotIndex < atIndex)
     {
-        show_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.");
         return false;
     }
 
     return true;
 }
 
-bool is_email_unique(int start_y, int start_x, char email[])
+bool is_email_unique(int start_y, int start_x, char *email)
 {
     FILE *file = fopen(USERS_FILE, "r");
 
@@ -96,7 +96,7 @@ bool is_email_unique(int start_y, int start_x, char email[])
 
         if (strcmp(saved_email, email) == 0)
         {
-            show_message(start_y, start_x, "Email already exists.");
+            show_alert_message(start_y, start_x, "Email already exists.");
             fclose(file);
             return false;
         }
@@ -106,7 +106,7 @@ bool is_email_unique(int start_y, int start_x, char email[])
     return true;
 }
 
-bool is_username_unique(int start_y, int start_x, char username[])
+bool is_username_unique(int start_y, int start_x, char *username)
 {
     FILE *file = fopen(USERS_FILE, "r");
 
@@ -119,7 +119,7 @@ bool is_username_unique(int start_y, int start_x, char username[])
 
         if (strcmp(saved_username, username) == 0)
         {
-            show_message(start_y, start_x, "Username already exists.");
+            show_alert_message(start_y, start_x, "Username already exists.");
             fclose(file);
             return false;
         }
@@ -129,11 +129,11 @@ bool is_username_unique(int start_y, int start_x, char username[])
     return true;
 }
 
-bool is_password_valid(int start_y, int start_x, char password[])
+bool is_password_valid(int start_y, int start_x, char *password)
 {
     if (!password || strlen(password) == 0)
     {
-        show_message(start_y, start_x, "Please choose a password.");
+        show_alert_message(start_y, start_x, "Please choose a password.");
         return false;
     }
 
@@ -145,7 +145,7 @@ bool is_password_valid(int start_y, int start_x, char password[])
 
     if (len < 7)
     {
-        show_message(start_y, start_x, "Password is too short. (Minimum length is 7)");
+        show_alert_message(start_y, start_x, "Password is too short. (Minimum length is 7)");
         return false;
     }
 
@@ -167,21 +167,28 @@ bool is_password_valid(int start_y, int start_x, char password[])
 
     if (digCount == 0)
     {
-        show_message(start_y, start_x, "Password must contain at least one digit.");
+        show_alert_message(start_y, start_x, "Password must contain at least one digit.");
         return false;
     }
 
     if (uprCount == 0)
     {
-        show_message(start_y, start_x, "Password must contain at least one capital letter.");
+        show_alert_message(start_y, start_x, "Password must contain at least one capital letter.");
         return false;
     }
 
     if (lwrCount == 0)
     {
-        show_message(start_y, start_x, "Password must contain at least one small letter.");
+        show_alert_message(start_y, start_x, "Password must contain at least one small letter.");
         return false;
     }
 
     return true;
+}
+
+void create_new_user(char *email, char *username, char *password)
+{
+    FILE *file = fopen(USERS_FILE, "a");
+    fprintf(file, "%s:%s:%s\n", email, username, password);
+    fclose(file);
 }

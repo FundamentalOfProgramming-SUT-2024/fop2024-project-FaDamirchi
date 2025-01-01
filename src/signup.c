@@ -71,4 +71,10 @@ void show_signup_form()
         getstr(newUser.password);
         noecho();
     } while (is_password_valid(start_y + 3, start_x, newUser.password) == false);
+
+    create_new_user(newUser.email, newUser.username, newUser.password);
+
+    show_success_message(start_y + 4, start_x, "New user created successfully!");
+
+    // heading to the rest of the game
 }

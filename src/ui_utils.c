@@ -9,7 +9,8 @@ void init_colors()
     init_pair(COLOR_DEFAULT, COLOR_WHITE, COLOR_BLACK);
     init_pair(COLOR_HIGHLIGHT, COLOR_BLACK, COLOR_GREEN);
     init_pair(COLOR_TITLE, COLOR_CYAN, COLOR_BLACK);
-    init_pair(COLOR_MESSAGE, COLOR_RED, COLOR_BLACK);
+    init_pair(COLOR_ALERT_MESSAGE, COLOR_RED, COLOR_BLACK);
+    init_pair(COLOR_SUCCESS_MESSAGE, COLOR_GREEN, COLOR_BLACK);
     init_pair(COLOR_BORDER, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLOR_FIELD, COLOR_MAGENTA, COLOR_BLACK);
 }
@@ -68,11 +69,20 @@ void show_field(int start_y, int start_x, char *title)
     attroff(COLOR_PAIR(COLOR_FIELD));
 }
 
-void show_message(int start_y, int start_x, char message[])
+void show_alert_message(int start_y, int start_x, char message[])
 {
-    attron(COLOR_PAIR(COLOR_MESSAGE));
+    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
     mvprintw(start_y, start_x, "%s", message);
-    attroff(COLOR_PAIR(COLOR_MESSAGE));
+    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
     refresh();
     sleep(1);
+}
+
+void show_success_message(int start_y, int start_x, char message[])
+{
+    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+    mvprintw(start_y, start_x, "%s", message);
+    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+    refresh();
+    sleep(1.5);
 }
