@@ -2,6 +2,7 @@
 #include "global_defines.h"
 #include "ui_utils.h"
 #include "signup.h"
+#include "login.h"
 #include <ncurses.h>
 #include <string.h>
 #include <unistd.h>
@@ -61,7 +62,7 @@ void show_main_menu()
         case ENTER:
             if (choice == 0)
             {
-                /*Login option*/
+                show_login_form();
             }
             else if (choice == 1)
             {

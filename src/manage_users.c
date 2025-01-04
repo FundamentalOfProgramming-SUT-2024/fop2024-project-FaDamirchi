@@ -89,7 +89,7 @@ bool is_email_unique(int start_y, int start_x, char *email)
 {
     FILE *file = fopen(USERS_FILE, "r");
 
-    char line[256];
+    char line[1024];
 
     while (fgets(line, sizeof(line), file))
     {
@@ -112,7 +112,7 @@ bool is_username_unique(int start_y, int start_x, char *username)
 {
     FILE *file = fopen(USERS_FILE, "r");
 
-    char line[256];
+    char line[1024];
 
     while (fgets(line, sizeof(line), file))
     {
@@ -189,7 +189,7 @@ bool is_password_valid(int start_y, int start_x, char *password)
 }
 
 void generate_password(char *password)
-{   
+{
     const char all[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$\%^&*-+/";
     const char lowercase[] = "abcdefghijklmnopqrstuvwxyz";
     const char uppercase[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -216,7 +216,7 @@ void generate_password(char *password)
         password[i] = password[j];
         password[j] = temp;
     }
-    
+
     password[length] = '\0';
 }
 
@@ -225,4 +225,31 @@ void create_new_user(char *email, char *username, char *password)
     FILE *file = fopen(USERS_FILE, "a");
     fprintf(file, "%s:%s:%s\n", email, username, password);
     fclose(file);
+}
+
+bool authenticate_user(char *username, char *password)
+{
+    FILE *file = fopen(USERS_FILE, "r");
+
+    char line[1024];
+
+    while (fgets(line, sizeof(line), file))
+    {
+        line[strcspn(line, "\n")] = '\0';
+
+        char stored_username[64];
+        char stored_password[64];
+
+        if (sscanf(line, "%*[^:]:%[^:]:%s", stored_username, stored_password) == 2)
+        {
+            if (strcmp(username, stored_username) == 0 && strcmp(password, stored_password) == 0)
+            {
+                fclose(file);
+                return true;
+            }
+        }
+    }
+
+    fclose(file);
+    return false;
 }

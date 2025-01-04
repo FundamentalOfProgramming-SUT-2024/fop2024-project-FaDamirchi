@@ -16,5 +16,6 @@ bool is_username_unique(int start_y, int start_x, char *username);
 bool is_password_valid(int start_y, int start_x, char *password);
 void generate_password(char *user_password);
 void create_new_user(char *email, char *username, char *password);
+bool authenticate_user(char *username, char *password);
 
 #endif

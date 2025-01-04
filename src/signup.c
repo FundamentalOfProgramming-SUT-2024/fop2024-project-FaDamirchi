@@ -23,7 +23,7 @@ void show_signup_form()
     clear();
 
     // find center
-    int start_y = (max_y / 2) - (NUM_FEILDS / 2);
+    int start_y = (max_y / 2) - (SIGNUP_NUM_FIELDS / 2);
     int start_x = (max_x / 2) - 10;
 
     show_title(start_y - 2, start_x, "=== Sign up ===");
