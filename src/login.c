@@ -2,6 +2,7 @@
 #include "global_defines.h"
 #include "ui_utils.h"
 #include "manage_users.h"
+#include "signup.h"
 #include <string.h>
 
 typedef struct
@@ -27,38 +28,87 @@ void show_login_form()
     show_title(start_y - 2, start_x, "=== Login ===");
     show_title(start_y - 1, start_x, "-------------");
 
+    show_field(start_y, start_x, "Username: ");     // start getting the username
+    echo();
+    getstr(user.username);
+    noecho();
+
+    show_field(start_y + 1, start_x, "Password: "); // start getting the password
+    echo();
+    getstr(user.password);
+    noecho();
+
     do
     {
-        strcpy(user.username, "");                     // remove the prevoius username
-        strcpy(user.password, "");                     // remove the prevoius password
-        move(start_y, start_x + strlen("Username: ")); // move cursor to the start of the email input area
-        clrtoeol();                                    // clear the line from the cursor to the end
-        move(start_y + 1, start_x);                    // move cursor to the start of the next line
-        clrtoeol();                                    // clear the line
+        int login_status = authenticate_user(user.username, user.password);
 
-        show_field(start_y, start_x, "Username: ");    // start getting the username
-        echo();
-        getstr(user.username);
-        noecho();
-
-        show_field(start_y + 1, start_x, "Password: "); // start getting the password
-        echo();
-        getstr(user.password);
-        noecho();
-
-        if (authenticate_user(user.username, user.password) == false)
+        if (login_status == INCORRECT_PASSWORD)
         {
-            show_alert_message(start_y + 3, start_x, "Authentication failed!");
-            move(start_y + 3, start_x);
-            clrtoeol();
+            show_alert_message(start_y + 3, start_x, "Incorrect password!");
+            show_alert_message(start_y + 3, start_x, "Do you want to recover your password? (y/n)");
+
+            char ch = getch();
+
+            if (ch == YES)
+            {
+                move(start_y + 3, start_x); // move cursor to the start of the line
+                clrtoeol();                 // clear the line
+
+                char recovery_email[320];
+                show_title(start_y + 3, start_x, "Enter your email: ");
+                echo();
+                getstr(recovery_email);
+                noecho();
+
+                password_recovery(user.username, recovery_email, start_y + 5, start_x);
+                break;
+            }
+            else if (ch == NO)
+            {
+                move(start_y + 3, start_x);                    // move cursor to the start of the line
+                clrtoeol();                                    // clear the line
+                strcpy(user.username, "");                     // remove the prevoius username
+                move(start_y, start_x + strlen("Username: ")); // move cursor to the start of the username input area
+                clrtoeol();                                    // clear the line from the cursor to the end
+                move(start_y + 1, start_x);                    // move cursor to the start of the next line
+                clrtoeol();                                    // clear the line
+
+                show_field(start_y, start_x, "Username: ");    // start getting the username
+                echo();
+                getstr(user.username);
+                noecho();
+
+                show_field(start_y + 1, start_x, "Password: "); // start getting the password
+                echo();
+                getstr(user.password);
+                noecho();
+            }
         }
-        else
+        else if (login_status == USERNAME_NOT_FOUND)
         {
-            show_success_message(start_y + 3, start_x, "Welcome!");
+            show_alert_message(start_y + 3, start_x, "User not found!");
+            show_alert_message(start_y + 3, start_x, "Do you want to create account? (y/n)");
+
+            char ch = getch();
+
+            if (ch == YES)
+            {
+                show_signup_form();
+            }
+            else if (ch == NO)
+            {
+                break;
+            }
+        }
+        else if (login_status == SUCCESSFULL_LOGIN)
+        {
+            char welcome_message[124];
+            strcpy(welcome_message, "Welcome ");
+            strcat(welcome_message, user.username);
+            strcat(welcome_message, "!");
+            show_success_message(start_y + 3, start_x, welcome_message);
             break;
         }
 
     } while (1);
-
-    // heading to the rest of the game
 }

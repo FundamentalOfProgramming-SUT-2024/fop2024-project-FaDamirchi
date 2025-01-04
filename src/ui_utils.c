@@ -75,7 +75,7 @@ void show_alert_message(int start_y, int start_x, char message[])
     mvprintw(start_y, start_x, "%s", message);
     attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
     refresh();
-    sleep(1);
+    sleep(1.5);
 }
 
 void show_success_message(int start_y, int start_x, char message[])

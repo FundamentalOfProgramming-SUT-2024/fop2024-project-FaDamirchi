@@ -61,7 +61,7 @@ void show_signup_form()
     do
     {
         show_alert_message(start_y + 2, start_x, "Do you want to generate random password? (y/n)");
-        int ch = getch();
+        char ch = getch();
 
         if (ch == YES)
         {

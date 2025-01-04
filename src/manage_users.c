@@ -1,4 +1,5 @@
 #include "manage_users.h"
+#include "global_defines.h"
 #include "ui_utils.h"
 #include <string.h>
 #include <ctype.h>
@@ -227,7 +228,7 @@ void create_new_user(char *email, char *username, char *password)
     fclose(file);
 }
 
-bool authenticate_user(char *username, char *password)
+int authenticate_user(char *username, char *password)
 {
     FILE *file = fopen(USERS_FILE, "r");
 
@@ -242,14 +243,67 @@ bool authenticate_user(char *username, char *password)
 
         if (sscanf(line, "%*[^:]:%[^:]:%s", stored_username, stored_password) == 2)
         {
-            if (strcmp(username, stored_username) == 0 && strcmp(password, stored_password) == 0)
+            if (strcmp(username, stored_username) == 0)
             {
-                fclose(file);
-                return true;
+                if (strcmp(password, stored_password) == 0)
+                {
+                    fclose(file);
+                    return SUCCESSFULL_LOGIN;
+                }
+                else
+                {
+                    fclose(file);
+                    return INCORRECT_PASSWORD;
+                }
             }
         }
     }
 
     fclose(file);
-    return false;
+    return USERNAME_NOT_FOUND;
+}
+
+void password_recovery(char *username, char *email, int start_y, int start_x)
+{
+    FILE *file = fopen(USERS_FILE, "r");
+
+    char line[1024];
+
+    while (fgets(line, sizeof(line), file))
+    {
+        line[strcspn(line, "\n")] = '\0';
+
+        char stored_email[320];
+        char stored_username[64];
+        char stored_password[64];
+
+        if (sscanf(line, "%[^:]:%[^:]:%s", stored_email, stored_username, stored_password) == 3)
+        {
+            if (strcmp(username, stored_username) == 0)
+            {
+                if (strcmp(email, stored_email) == 0)
+                {
+                    show_success_message(start_y, start_x, "Password recovered successfully!");
+
+                    char recovered_password[124];
+                    strcpy(recovered_password, "Your password is: ");
+                    strcat(recovered_password, stored_password);
+
+                    show_success_message(start_y + 1, start_x, recovered_password);
+
+                    show_success_message(start_y + 3, start_x, "Use this password to login again.");
+                    show_alert_message(start_y + 5, start_x, "Press any key to continue...");
+                    getch();
+
+                    fclose(file);
+                }
+                else
+                {
+                    show_alert_message(start_y, start_x, "Password recovery failed!");
+
+                    fclose(file);
+                }
+            }
+        }
+    }
 }
