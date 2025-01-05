@@ -4,9 +4,9 @@
 #include <stdbool.h>
 
 // codes
-#define SUCCESSFULL_LOGIN    200
-#define USERNAME_NOT_FOUND   404
-#define INCORRECT_PASSWORD   401
+#define SUCCESSFULL_LOGIN  200
+#define USERNAME_NOT_FOUND 404
+#define INCORRECT_PASSWORD 401
 
 // files
 #define USERS_FILE "data/users.txt"
