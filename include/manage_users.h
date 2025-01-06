@@ -10,9 +10,7 @@
 
 // files
 #define USERS_FILE "data/users.txt"
-#define SCORE_FILE "data/score.txt"
-#define PROGRESS_FILE "data/progress.txt"
-#define FINISHED_GAME_FILE "data/finished_game.txt"
+#define SETTINGS_FILE "data/settings.txt"
 
 // functions
 bool is_email_valid(int start_y, int start_x, char *email);
