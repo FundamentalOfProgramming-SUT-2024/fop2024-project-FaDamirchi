@@ -71,7 +71,10 @@ void show_main_menu()
             }
             else if (choice == 2)
             {
-                // show game
+                show_alert_message(start_y + NUM_CHOICES + 2, start_x, "Attention:", 1);
+                show_success_message(start_y + NUM_CHOICES + 3, start_x, "By playing as a guest,", 0);
+                show_success_message(start_y + NUM_CHOICES + 4, start_x, "your progress won\'t be saved!", 3);
+                // pre-game menu
             }
 
             else if (choice == 3)
