@@ -2,7 +2,7 @@
 #define MAIN_MENU
 
 // consts
-#define NUM_CHOICES 4
+#define NUM_CHOICES_MAINMENU 4
 
 // functions
 void show_main_menu();

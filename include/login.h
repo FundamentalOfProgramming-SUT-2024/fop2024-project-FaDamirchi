@@ -2,7 +2,7 @@
 #define LOGIN
 
 // consts
-#define LOGIN_NUM_FIELDS 3
+#define NUM_FIELDS_LOGIN 3
 
 // functions
 void show_login_form();
