@@ -69,20 +69,20 @@ void show_field(int start_y, int start_x, char *title)
     attroff(COLOR_PAIR(COLOR_FIELD));
 }
 
-void show_alert_message(int start_y, int start_x, char message[])
+void show_alert_message(int start_y, int start_x, char message[], float sleep_time)
 {
     attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
     mvprintw(start_y, start_x, "%s", message);
     attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
     refresh();
-    sleep(1.5);
+    sleep(sleep_time);
 }
 
-void show_success_message(int start_y, int start_x, char message[])
+void show_success_message(int start_y, int start_x, char message[], float sleep_time)
 {
     attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
     mvprintw(start_y, start_x, "%s", message);
     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
     refresh();
-    sleep(2);
+    sleep(sleep_time);
 }

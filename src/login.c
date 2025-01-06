@@ -44,8 +44,8 @@ void show_login_form()
 
         if (login_status == INCORRECT_PASSWORD)
         {
-            show_alert_message(start_y + 3, start_x, "Incorrect password!");
-            show_alert_message(start_y + 3, start_x, "Do you want to recover your password? (y/n)");
+            show_alert_message(start_y + 3, start_x, "Incorrect password!", 1.5);
+            show_alert_message(start_y + 3, start_x, "Do you want to recover your password? (y/n)", 0);
 
             char ch = getch();
 
@@ -86,8 +86,8 @@ void show_login_form()
         }
         else if (login_status == USERNAME_NOT_FOUND)
         {
-            show_alert_message(start_y + 3, start_x, "User not found!");
-            show_alert_message(start_y + 3, start_x, "Do you want to create account? (y/n)");
+            show_alert_message(start_y + 3, start_x, "User not found!", 1.5);
+            show_alert_message(start_y + 3, start_x, "Do you want to create account? (y/n)", 0);
 
             char ch = getch();
 
@@ -106,7 +106,7 @@ void show_login_form()
             strcpy(welcome_message, "Welcome ");
             strcat(welcome_message, user.username);
             strcat(welcome_message, "!");
-            show_success_message(start_y + 3, start_x, welcome_message);
+            show_success_message(start_y + 3, start_x, welcome_message, 2.5);
             break;
         }
 

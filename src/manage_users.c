@@ -10,7 +10,7 @@ bool is_email_valid(int start_y, int start_x, char *email)
 {
     if (!email || strlen(email) == 0)
     {
-        show_alert_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.", 2);
         return false;
     }
 
@@ -38,21 +38,21 @@ bool is_email_valid(int start_y, int start_x, char *email)
     // must have exactly one '@' and at least one '.'
     if (atCount != 1 || dotCount < 1)
     {
-        show_alert_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.", 2);
         return false;
     }
 
     // '@' cannot be the first or the last character
     if (atIndex == 0 || atIndex == len - 1)
     {
-        show_alert_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.", 2);
         return false;
     }
 
     // '.' cannot be immidiately after '@'
     if (dotIndex == atIndex + 1)
     {
-        show_alert_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.", 2);
         return false;
     }
 
@@ -61,7 +61,7 @@ bool is_email_valid(int start_y, int start_x, char *email)
     {
         if (!isalnum(email[i]) && email[i] != '.' && email[i] != '_' && email[i] != '-')
         {
-            show_alert_message(start_y, start_x, "Please provide a valid email address.");
+            show_alert_message(start_y, start_x, "Please provide a valid email address.", 2);
             return false;
         }
     }
@@ -71,7 +71,7 @@ bool is_email_valid(int start_y, int start_x, char *email)
     {
         if (!isalnum(email[i]) && email[i] != '.' && email[i] != '-')
         {
-            show_alert_message(start_y, start_x, "Please provide a valid email address.");
+            show_alert_message(start_y, start_x, "Please provide a valid email address.", 2);
             return false;
         }
     }
@@ -79,7 +79,7 @@ bool is_email_valid(int start_y, int start_x, char *email)
     // domain part must have at least one dot
     if (dotIndex < atIndex)
     {
-        show_alert_message(start_y, start_x, "Please provide a valid email address.");
+        show_alert_message(start_y, start_x, "Please provide a valid email address.", 2);
         return false;
     }
 
@@ -99,7 +99,7 @@ bool is_email_unique(int start_y, int start_x, char *email)
 
         if (strcmp(saved_email, email) == 0)
         {
-            show_alert_message(start_y, start_x, "Email already exists.");
+            show_alert_message(start_y, start_x, "Email already exists.", 2);
             fclose(file);
             return false;
         }
@@ -122,7 +122,7 @@ bool is_username_unique(int start_y, int start_x, char *username)
 
         if (strcmp(saved_username, username) == 0)
         {
-            show_alert_message(start_y, start_x, "Username already exists.");
+            show_alert_message(start_y, start_x, "Username already exists.", 2);
             fclose(file);
             return false;
         }
@@ -136,7 +136,7 @@ bool is_password_valid(int start_y, int start_x, char *password)
 {
     if (!password || strlen(password) == 0)
     {
-        show_alert_message(start_y, start_x, "Please choose a password.");
+        show_alert_message(start_y, start_x, "Please choose a password.", 1.5);
         return false;
     }
 
@@ -148,7 +148,7 @@ bool is_password_valid(int start_y, int start_x, char *password)
 
     if (len < 7)
     {
-        show_alert_message(start_y, start_x, "Password is too short. (Minimum length is 7)");
+        show_alert_message(start_y, start_x, "Password is too short. (Minimum length is 7)", 2.5);
         return false;
     }
 
@@ -170,19 +170,19 @@ bool is_password_valid(int start_y, int start_x, char *password)
 
     if (digCount == 0)
     {
-        show_alert_message(start_y, start_x, "Password must contain at least one digit.");
+        show_alert_message(start_y, start_x, "Password must contain at least one digit.", 2.5);
         return false;
     }
 
     if (uprCount == 0)
     {
-        show_alert_message(start_y, start_x, "Password must contain at least one capital letter.");
+        show_alert_message(start_y, start_x, "Password must contain at least one capital letter.", 2.5);
         return false;
     }
 
     if (lwrCount == 0)
     {
-        show_alert_message(start_y, start_x, "Password must contain at least one small letter.");
+        show_alert_message(start_y, start_x, "Password must contain at least one small letter.", 2.5);
         return false;
     }
 
@@ -283,23 +283,23 @@ void password_recovery(char *username, char *email, int start_y, int start_x)
             {
                 if (strcmp(email, stored_email) == 0)
                 {
-                    show_success_message(start_y, start_x, "Password recovered successfully!");
+                    show_success_message(start_y, start_x, "Password recovered successfully!", 1);
 
                     char recovered_password[124];
                     strcpy(recovered_password, "Your password is: ");
                     strcat(recovered_password, stored_password);
 
-                    show_success_message(start_y + 1, start_x, recovered_password);
+                    show_success_message(start_y + 1, start_x, recovered_password, 1);
 
-                    show_success_message(start_y + 3, start_x, "Use this password to login again.");
-                    show_alert_message(start_y + 5, start_x, "Press any key to continue...");
+                    show_success_message(start_y + 3, start_x, "Use this password to login again.", 1);
+                    show_alert_message(start_y + 5, start_x, "Press any key to continue...", 0);
                     getch();
 
                     fclose(file);
                 }
                 else
                 {
-                    show_alert_message(start_y, start_x, "Password recovery failed!");
+                    show_alert_message(start_y, start_x, "Password recovery failed!", 2);
 
                     fclose(file);
                 }

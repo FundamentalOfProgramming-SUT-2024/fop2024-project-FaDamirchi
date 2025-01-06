@@ -60,7 +60,7 @@ void show_signup_form()
 
     do
     {
-        show_alert_message(start_y + 2, start_x, "Do you want to generate random password? (y/n)");
+        show_alert_message(start_y + 2, start_x, "Do you want to generate random password? (y/n)", 0);
         char ch = getch();
 
         if (ch == YES)
@@ -70,9 +70,9 @@ void show_signup_form()
 
             move(start_y + 2, start_x);
             clrtoeol();
-            show_success_message(start_y + 2, start_x, "Your password is: ");
-            show_success_message(start_y + 2, start_x + strlen("Your password is: "), newUser.password);
-            show_alert_message(start_y + 3, start_x, "Do you want to keep this passord? (y/n)");
+            show_success_message(start_y + 2, start_x, "Your password is: ", 0);
+            show_success_message(start_y + 2, start_x + strlen("Your password is: "), newUser.password, 1.5);
+            show_alert_message(start_y + 3, start_x, "Do you want to keep this passord? (y/n)", 0);
             ch = getch();
 
             move(start_y + 3, start_x);
@@ -98,13 +98,15 @@ void show_signup_form()
                 getstr(newUser.password);
                 noecho();
             } while (is_password_valid(start_y + 3, start_x, newUser.password) == false);
+            
+            break;
         }
 
     } while (1);
 
     create_new_user(newUser.email, newUser.username, newUser.password);
 
-    show_success_message(start_y + 4, start_x, "New user created successfully!");
+    show_success_message(start_y + 4, start_x, "New user created successfully!", 2);
 
     // heading to the rest of the game
 }

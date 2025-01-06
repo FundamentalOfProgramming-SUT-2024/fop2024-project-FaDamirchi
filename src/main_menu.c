@@ -12,8 +12,9 @@ void show_main_menu()
     int choice = 0;
 
     const char *options[NUM_CHOICES] = {
-        "Login",
+        "Log in",
         "Sign up",
+        "Play as a Guest",
         "Exit"};
 
     init_colors();
@@ -35,7 +36,7 @@ void show_main_menu()
         int start_x = (max_x / 2) - 10;
 
         // displaying the menu
-        int height = NUM_CHOICES + 2;
+        int height = NUM_CHOICES + 1;
         int width = strlen("=== Main Menu ===");
         draw_border(start_y, start_x, height, width);
 
@@ -70,7 +71,12 @@ void show_main_menu()
             }
             else if (choice == 2)
             {
-                show_alert_message(start_y + NUM_CHOICES + 2, start_x, "Exiting...");
+                // show game
+            }
+
+            else if (choice == 3)
+            {
+                show_alert_message(start_y + NUM_CHOICES + 2, start_x, "Exiting...", 1.5);
                 return;
             }
             break;

@@ -18,7 +18,7 @@ void draw_border(int start_y, int start_x, int height, int width);
 void highlight_choice(int start_y, int start_x, const char **options, int num_choices, int choice);
 void show_title(int start_y, int start_x, char *title);
 void show_field(int start_y, int start_x, char *filed);
-void show_alert_message(int start_y, int start_x, char message[]);
-void show_success_message(int start_y, int start_x, char message[]);
+void show_alert_message(int start_y, int start_x, char message[], float sleep_time);
+void show_success_message(int start_y, int start_x, char message[], float sleep_time);
 
 #endif
