@@ -3,6 +3,7 @@
 #include "ui_utils.h"
 #include "signup.h"
 #include "login.h"
+#include "pregame_menu.h"
 #include <ncurses.h>
 #include <string.h>
 #include <unistd.h>
@@ -74,7 +75,8 @@ void show_main_menu()
                 show_alert_message(start_y + NUM_CHOICES + 2, start_x, "Attention:", 1);
                 show_success_message(start_y + NUM_CHOICES + 3, start_x, "By playing as a guest,", 0);
                 show_success_message(start_y + NUM_CHOICES + 4, start_x, "your progress won\'t be saved!", 3);
-                // pre-game menu
+                
+                show_pregame_menu(NULL);
             }
 
             else if (choice == 3)

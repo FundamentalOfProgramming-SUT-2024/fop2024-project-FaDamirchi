@@ -3,6 +3,7 @@
 #include "ui_utils.h"
 #include "manage_users.h"
 #include "signup.h"
+#include "pregame_menu.h"
 #include <string.h>
 
 typedef struct
@@ -111,4 +112,6 @@ void show_login_form()
         }
 
     } while (1);
+
+    show_pregame_menu(NULL);
 }

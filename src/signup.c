@@ -2,6 +2,7 @@
 #include "global_defines.h"
 #include "ui_utils.h"
 #include "manage_users.h"
+#include "pregame_menu.h"
 #include <ncurses.h>
 #include <string.h>
 
@@ -108,5 +109,5 @@ void show_signup_form()
 
     show_success_message(start_y + 4, start_x, "New user created successfully!", 2);
 
-    // heading to the rest of the game
+    show_pregame_menu(NULL);
 }

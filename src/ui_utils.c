@@ -18,7 +18,7 @@ void init_colors()
 void draw_border(int start_y, int start_x, int height, int width)
 {
     attron(COLOR_PAIR(COLOR_BORDER) | A_BOLD);
-    for (int i = start_x; i < start_x + width; i++)
+    for (int i = start_x - 1; i < start_x + width + 2; i++)
     {
         mvprintw(start_y - 1, i, "-");          // top border
         mvprintw(start_y + height - 1, i, "-"); // bottom border
@@ -26,14 +26,14 @@ void draw_border(int start_y, int start_x, int height, int width)
 
     for (int i = start_y; i < start_y + height; i++)
     {
-        mvprintw(i, start_x - 1, "|");         // left border
-        mvprintw(i, start_x + width - 1, "|"); // right border
+        mvprintw(i, start_x - 2, "|");         // left border
+        mvprintw(i, start_x + width + 1, "|"); // right border
     }
 
-    mvprintw(start_y - 1, start_x - 1, "+");                  // top-left corner
-    mvprintw(start_y - 1, start_x + width - 1, "+");          // top-right corner
-    mvprintw(start_y + height - 1, start_x - 1, "+");         // bottom-left corner
-    mvprintw(start_y + height - 1, start_x + width - 1, "+"); // bottom-right corner
+    mvprintw(start_y - 1, start_x - 2, "+");                  // top-left corner
+    mvprintw(start_y - 1, start_x + width + 1, "+");          // top-right corner
+    mvprintw(start_y + height - 1, start_x - 2, "+");         // bottom-left corner
+    mvprintw(start_y + height - 1, start_x + width + 1, "+"); // bottom-right corner
 
     attroff(COLOR_PAIR(COLOR_BORDER) | A_BOLD);
 }
