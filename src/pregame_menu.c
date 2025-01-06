@@ -1,6 +1,7 @@
 #include "pregame_menu.h"
 #include "ui_utils.h"
 #include "global_defines.h"
+#include "settings.h"
 #include <ncurses.h>
 #include <string.h>
 
@@ -23,7 +24,7 @@ void show_pregame_menu(char *username)
 
         curs_set(0); // hiding cursor
 
-        // displaying the main menu
+        // displaying the pregame menu
         // ********* START **********
         while (1)
         {
@@ -61,15 +62,15 @@ void show_pregame_menu(char *username)
             case ENTER:
                 if (choice == 0)
                 {
-                    // start new game
+                    // start game
                 }
                 else if (choice == 1)
                 {
-                    // resume old game
+                    // show score board
                 }
                 else if (choice == 2)
                 {
-                    // show score board
+                    show_settings_menu(NULL);
                 }
 
                 break;
@@ -99,7 +100,7 @@ void show_pregame_menu(char *username)
 
         curs_set(0); // hiding cursor
 
-        // displaying the main menu
+        // displaying the pregame menu
         // ********* START **********
         while (1)
         {
@@ -150,7 +151,7 @@ void show_pregame_menu(char *username)
 
                 else if (choice == 3)
                 {
-                    // show settings
+                    show_settings_menu(NULL);
                 }
                 break;
 
