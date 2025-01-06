@@ -64,7 +64,7 @@ void show_signup_form()
         show_alert_message(start_y + 2, start_x, "Do you want to generate random password? (y/n)", 0);
         char ch = getch();
 
-        if (ch == YES)
+        if (IS_YES(ch))
         {
             strcpy(newUser.password, "");
             generate_password(newUser.password);
@@ -79,12 +79,12 @@ void show_signup_form()
             move(start_y + 3, start_x);
             clrtoeol();
             
-            if (ch == YES)
+            if (IS_YES(ch))
             {
                 break;
             }            
         }
-        else if (ch == NO)
+        else if (IS_NO(ch))
         {
             do
             {

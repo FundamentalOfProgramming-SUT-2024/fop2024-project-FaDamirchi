@@ -5,7 +5,7 @@
 
 // characters
 #define ENTER 10
-#define YES 'y'
-#define NO 'n'
+#define IS_YES(c) ((c) == 'y' || (c) == 'Y')
+#define IS_NO(c)  ((c) == 'n' || (c) == 'N')
 
 #endif

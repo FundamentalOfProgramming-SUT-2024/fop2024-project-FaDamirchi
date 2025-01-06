@@ -50,7 +50,7 @@ void show_login_form()
 
             char ch = getch();
 
-            if (ch == YES)
+            if (IS_YES(ch))
             {
                 move(start_y + 3, start_x); // move cursor to the start of the line
                 clrtoeol();                 // clear the line
@@ -64,7 +64,7 @@ void show_login_form()
                 password_recovery(user.username, recovery_email, start_y + 5, start_x);
                 break;
             }
-            else if (ch == NO)
+            else if (IS_NO(ch))
             {
                 move(start_y + 3, start_x);                    // move cursor to the start of the line
                 clrtoeol();                                    // clear the line
@@ -92,11 +92,11 @@ void show_login_form()
 
             char ch = getch();
 
-            if (ch == YES)
+            if (IS_YES(ch))
             {
                 show_signup_form();
             }
-            else if (ch == NO)
+            else if (IS_NO(ch))
             {
                 break;
             }
