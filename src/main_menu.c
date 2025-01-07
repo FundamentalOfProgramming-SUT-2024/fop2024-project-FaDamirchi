@@ -72,11 +72,11 @@ void show_main_menu()
             }
             else if (choice == 2)
             {
-                show_alert_message(start_y + NUM_CHOICES_MAINMENU + 2, start_x, "Attention:", 1);
-                show_success_message(start_y + NUM_CHOICES_MAINMENU + 3, start_x, "By playing as a guest,", 0);
-                show_success_message(start_y + NUM_CHOICES_MAINMENU + 4, start_x, "your progress won\'t be saved!", 3);
+                show_alert_message(start_y + NUM_CHOICES_MAINMENU + 2, start_x - 2, "Attention:", 1);
+                show_success_message(start_y + NUM_CHOICES_MAINMENU + 3, start_x - 2, "By playing as a guest,", 0);
+                show_success_message(start_y + NUM_CHOICES_MAINMENU + 4, start_x - 2, "your progress won\'t be saved!", 2.5);
                 
-                show_pregame_menu(NULL);
+                show_pregame_menu("53e00d37bf3fdef41c074b9d53b509b07c32b459");
             }
 
             else if (choice == 3)
