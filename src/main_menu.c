@@ -76,7 +76,7 @@ void show_main_menu()
                 show_success_message(start_y + NUM_CHOICES_MAINMENU + 3, start_x - 2, "By playing as a guest,", 0);
                 show_success_message(start_y + NUM_CHOICES_MAINMENU + 4, start_x - 2, "your progress won\'t be saved!", 2.5);
                 
-                show_pregame_menu("53e00d37bf3fdef41c074b9d53b509b07c32b459");
+                show_pregame_menu("53e00d37bf3fdef41c074b9d53b509b07c32b459", 1);
             }
 
             else if (choice == 3)

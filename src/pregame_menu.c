@@ -5,9 +5,9 @@
 #include <ncurses.h>
 #include <string.h>
 
-void show_pregame_menu(char *username)
+void show_pregame_menu(char *username, int isNew)
 {
-    if (strcmp(username, "53e00d37bf3fdef41c074b9d53b509b07c32b459") == 0)
+    if (isNew == 1)
     {
         const char *options[NUM_CHOICES_NEW_USER] = {
             "Start game",
@@ -70,7 +70,7 @@ void show_pregame_menu(char *username)
                 }
                 else if (choice == 2)
                 {
-                    show_settings_menu("53e00d37bf3fdef41c074b9d53b509b07c32b459");
+                    show_settings_menu(username);
                 }
 
                 break;
