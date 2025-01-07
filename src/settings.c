@@ -70,9 +70,9 @@ void show_settings_menu(char *username)
 
     int choice = 0;
     int unsaved_changes = 0;
-    const char *level_options[] = {"Easy", "Medium", "Hard"};
-    const char *color_options[] = {"Red", "Green", "Blue"};
-    const char *music_options[] = {"OFF", "ON"};
+    const char *level_options[] = {" Easy ", "Medium", " Hard "};
+    const char *color_options[] = {" Red ", "Green", "Blue "};
+    const char *music_options[] = {"OFF", "ON "};
 
     const char *options[NUM_FIELDS_SETTINGS + 1] = {
         "Level",
@@ -97,10 +97,10 @@ void show_settings_menu(char *username)
         int start_x = (max_x / 2) - 10;
 
         int height = NUM_FIELDS_SETTINGS + 1;
-        int width = strlen("=== Settings ===") + 1;
+        int width = strlen("=== Settings ===") + 5;
         draw_border(start_y, start_x, height, width);
 
-        show_title(start_y - 2, start_x, "=== Settings ===");
+        show_title(start_y - 2, start_x + 2, "=== Settings ===");
 
         for (int i = 0; i < NUM_FIELDS_SETTINGS; i++)
         {
@@ -110,11 +110,11 @@ void show_settings_menu(char *username)
             mvprintw(start_y + i, start_x, "%s", options[i]);
 
             if (i == 0)
-                mvprintw(start_y + i, start_x + 10, "%s", level_options[level]);
+                mvprintw(start_y + i, start_x + 10, "< %s >", level_options[level]);
             else if (i == 1)
-                mvprintw(start_y + i, start_x + 10, "%s", color_options[color]);
+                mvprintw(start_y + i, start_x + 10, "< %s >", color_options[color]);
             else if (i == 2)
-                mvprintw(start_y + i, start_x + 10, "%s", music_options[music]);
+                mvprintw(start_y + i, start_x + 10, "< %s >", music_options[music]);
 
             if (choice == i)
                 attroff(A_REVERSE);
@@ -182,10 +182,10 @@ void show_settings_menu(char *username)
             {
                 if (unsaved_changes)
                 {
-                    int confirm_y = start_y + NUM_FIELDS_SETTINGS + 1;
-                    mvprintw(confirm_y, start_x, "You have unsaved changes. Save before exiting? (y/n)");
-                    char confirm = getch();
-                    if (IS_YES(confirm))
+                    show_alert_message(start_y + 7, start_x - 2, "You have unsaved changes. Save before exiting? (y/n)", 0);
+                    char ch = getch();
+
+                    if (IS_YES(ch))
                     {
                         update_settings(username, level, color, music);
                     }
