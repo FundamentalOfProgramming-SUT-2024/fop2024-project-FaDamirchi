@@ -151,7 +151,7 @@ void show_pregame_menu(char *username)
 
                 else if (choice == 3)
                 {
-                    show_settings_menu(NULL);
+                    show_settings_menu(username);
                 }
                 break;
 

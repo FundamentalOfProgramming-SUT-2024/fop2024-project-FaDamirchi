@@ -109,5 +109,5 @@ void show_signup_form()
 
     show_success_message(start_y + 4, start_x, "New user created successfully!", 2);
 
-    show_pregame_menu(NULL);
+    show_pregame_menu(newUser.username);
 }

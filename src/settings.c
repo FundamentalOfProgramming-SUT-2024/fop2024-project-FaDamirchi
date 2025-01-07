@@ -176,13 +176,16 @@ void show_settings_menu(char *username)
             if (choice == 3) // save
             {
                 update_settings(username, level, color, music);
+                show_success_message(start_y + 7, start_x - 2, "Changes successfully saved!", 1.5);
+                return;
                 unsaved_changes = 0;
             }
             else if (choice == 4) // return
             {
                 if (unsaved_changes)
                 {
-                    show_alert_message(start_y + 7, start_x - 2, "You have unsaved changes. Save before exiting? (y/n)", 0);
+                    show_alert_message(start_y + 7, start_x - 2, "You have unsaved changes.", 0);
+                    show_alert_message(start_y + 8, start_x - 2, "Save before exiting? (y/n)", 0);
                     char ch = getch();
 
                     if (IS_YES(ch))

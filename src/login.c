@@ -113,5 +113,5 @@ void show_login_form()
 
     } while (1);
 
-    show_pregame_menu(NULL);
+    show_pregame_menu(user.username);
 }
