@@ -223,8 +223,14 @@ void generate_password(char *password)
 
 void create_new_user(char *email, char *username, char *password)
 {
+    // add identity
     FILE *file = fopen(USERS_FILE, "a");
     fprintf(file, "%s:%s:%s\n", email, username, password);
+    fclose(file);
+
+    // add default settings
+    file = fopen(SETTINGS_FILE, "a");
+    fprintf(file, "%s:%d-%d-%d\n", username, 1, 1, 1);
     fclose(file);
 }
 
