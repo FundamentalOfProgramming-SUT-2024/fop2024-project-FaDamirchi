@@ -55,12 +55,12 @@ Room *generate_room(int grid)
         break;
     }
 
-    newRoom->width = 4 + rand() % 6; // min: 4, max: 9
-    newRoom->height = 4 + rand() % 10; // min: 4, max: 13
+    newRoom->width = 6 + rand() % 9;  // min: 4, max: 14
+    newRoom->height = 4 + rand() % 9; // min: 4, max: 12
 
     // generate random starting points
-    newRoom->start.x += rand() % (10 - newRoom->width);
-    newRoom->start.y += rand() % (14 - newRoom->height);
+    newRoom->start.x += rand() % (15 - newRoom->width);
+    newRoom->start.y += rand() % (13 - newRoom->height);
 
     return newRoom;
 }
