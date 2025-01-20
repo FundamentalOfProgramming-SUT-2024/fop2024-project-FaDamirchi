@@ -12,6 +12,9 @@
 #define COLOR_BORDER          6
 #define COLOR_FIELD           7
 
+#define COLOR_WALLS 8
+#define COLOR_DOORS 9
+
 // functions
 void init_colors();
 void draw_border(int start_y, int start_x, int height, int width);
