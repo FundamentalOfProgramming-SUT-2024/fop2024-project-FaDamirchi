@@ -12,6 +12,7 @@ typedef struct
     int height;
 
     Position doors[4];
+    int doors_number;
 
     // other options...
 } Room;
