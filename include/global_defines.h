@@ -15,7 +15,5 @@ typedef struct
 
 // characters
 #define ENTER 10
-#define IS_YES(c) ((c) == 'y' || (c) == 'Y')
-#define IS_NO (c) ((c) == 'n' || (c) == 'N')
 
 #endif

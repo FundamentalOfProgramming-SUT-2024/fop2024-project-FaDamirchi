@@ -6,6 +6,6 @@
 void start_game()
 {
     clear();
-    rooms_setup();
+    map_setup();
     getch();
 }

@@ -188,7 +188,7 @@ void show_settings_menu(char *username)
                     show_alert_message(start_y + 8, start_x - 2, "Save before exiting? (y/n)", 0);
                     char ch = getch();
 
-                    if (IS_YES(ch))
+                    if (ch == 'y' || ch == 'Y')
                     {
                         update_settings(username, level, color, music);
                     }
