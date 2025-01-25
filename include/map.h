@@ -2,16 +2,24 @@
 #define MAP
 
 #include "global_defines.h"
+
 // consts
+bool map[25][120][2] = {0};
 
 // objects
+typedef struct
+{
+    Position position;
+    bool isConnected;
+} Door;
+
 typedef struct
 {
     Position start; // starting point - upper left
     int width;
     int height;
 
-    Position doors[4];
+    Door doors[4];
     int doors_number;
 
     // other options...

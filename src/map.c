@@ -11,7 +11,7 @@ Room *generate_room(int grid)
     switch (grid)
     {
     case 0:
-        newRoom->start.x = 1;
+        newRoom->start.x = 3;
         newRoom->start.y = 1;
         break;
     case 1:
@@ -31,7 +31,7 @@ Room *generate_room(int grid)
         newRoom->start.y = 1;
         break;
     case 5:
-        newRoom->start.x = 1;
+        newRoom->start.x = 3;
         newRoom->start.y = 15;
         break;
     case 6:
@@ -81,23 +81,23 @@ Room *generate_room(int grid)
         // placing the doors
         if (side == 0) // top
         {
-            newRoom->doors[i].x = newRoom->start.x + 1 + rand() % (newRoom->width - 2);
-            newRoom->doors[i].y = newRoom->start.y;
+            newRoom->doors[i].position.x = newRoom->start.x + 1 + rand() % (newRoom->width - 2);
+            newRoom->doors[i].position.y = newRoom->start.y;
         }
         else if (side == 1) // right
         {
-            newRoom->doors[i].x = newRoom->start.x + newRoom->width - 1;
-            newRoom->doors[i].y = newRoom->start.y + 1 + rand() % (newRoom->height - 2);
+            newRoom->doors[i].position.x = newRoom->start.x + newRoom->width - 1;
+            newRoom->doors[i].position.y = newRoom->start.y + 1 + rand() % (newRoom->height - 2);
         }
         else if (side == 2) // bottom
         {
-            newRoom->doors[i].x = newRoom->start.x + 1 + rand() % (newRoom->width - 2);
-            newRoom->doors[i].y = newRoom->start.y + newRoom->height - 1;
+            newRoom->doors[i].position.x = newRoom->start.x + 1 + rand() % (newRoom->width - 2);
+            newRoom->doors[i].position.y = newRoom->start.y + newRoom->height - 1;
         }
         else if (side == 3) // left
         {
-            newRoom->doors[i].x = newRoom->start.x;
-            newRoom->doors[i].y = newRoom->start.y + 1 + rand() % (newRoom->height - 2);
+            newRoom->doors[i].position.x = newRoom->start.x;
+            newRoom->doors[i].position.y = newRoom->start.y + 1 + rand() % (newRoom->height - 2);
         }
     }
 
@@ -135,10 +135,11 @@ void draw_room(Room *room)
     attron(COLOR_PAIR(COLOR_DOORS) | A_BOLD);
     for (int i = 0; i < room->doors_number; i++)
     {
-        mvprintw(room->doors[i].y, room->doors[i].x, "+");
+        mvprintw(room->doors[i].position.y, room->doors[i].position.x, "+");
     }
     attroff(COLOR_PAIR(COLOR_DOORS) | A_BOLD);
 }
+
 
 void rooms_setup()
 {

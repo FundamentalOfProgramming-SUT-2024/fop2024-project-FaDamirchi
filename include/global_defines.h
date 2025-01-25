@@ -3,6 +3,9 @@
 #ifndef GLOBAL_DEFINES
 #define GLOBAL_DEFINES
 
+// includes
+#include <stdbool.h>
+
 // objects
 typedef struct
 {
