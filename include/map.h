@@ -49,10 +49,8 @@ typedef struct
 } Room;
 
 // functions
-void add_to_room(Room *room);
-
 Room *generate_room(int grid);
-void draw_room(Room *room);
+void draw_room(Room **room, int rooms_number);
 
 void is_nextto_door(Room **rooms, int rooms_number, int y, int x);
 void import_hallway(Room **rooms, int rooms_number, Position pos, Position start);
@@ -62,6 +60,6 @@ void connect_rooms(Room **rooms, int rooms_number);
 
 void place_stairs(Room **room, int rooms_number);
 
-void map_setup();
+Room **map_setup(int *rooms_number);
 
 #endif

@@ -1,4 +1,5 @@
 #include "map.h"
+#include "player.h"
 #include "ui_utils.h"
 #include "global_defines.h"
 #include <time.h>
@@ -7,6 +8,7 @@
 
 Position come_from[40][130];
 bool map[40][130][2] = {0};
+
 int connected_doors = 0;
 
 Room *generate_room(int grid)
@@ -122,7 +124,7 @@ Room *generate_room(int grid)
             while (newRoom->windows[i].side == UP || hasWindow[newRoom->windows[i].side])
             {
                 newRoom->windows[i].side = rand() % 4;
-            }  
+            }
         }
 
         if (grid >= 4 && grid <= 8)
@@ -130,45 +132,45 @@ Room *generate_room(int grid)
             while (newRoom->windows[i].side == DOWN || hasWindow[newRoom->windows[i].side])
             {
                 newRoom->windows[i].side = rand() % 4;
-            }  
+            }
         }
 
         if (grid == 0)
         {
             while ((newRoom->windows[i].side == UP || newRoom->windows[i].side == LEFT) ||
-                    hasWindow[newRoom->windows[i].side])
+                   hasWindow[newRoom->windows[i].side])
             {
                 newRoom->windows[i].side = rand() % 4;
-            }  
+            }
         }
 
         if (grid == 4)
         {
             while ((newRoom->windows[i].side == UP || newRoom->windows[i].side == RIGHT) ||
-                    hasWindow[newRoom->windows[i].side])
+                   hasWindow[newRoom->windows[i].side])
             {
                 newRoom->windows[i].side = rand() % 4;
-            }  
+            }
         }
 
         if (grid == 5)
         {
-            while ((newRoom->windows[i].side == DOWN || newRoom->windows[i].side == LEFT) || 
+            while ((newRoom->windows[i].side == DOWN || newRoom->windows[i].side == LEFT) ||
                    hasWindow[newRoom->windows[i].side])
             {
                 newRoom->windows[i].side = rand() % 4;
-            }  
+            }
         }
 
         if (grid == 9)
         {
             while ((newRoom->windows[i].side == DOWN || newRoom->windows[i].side == RIGHT) ||
-                    hasWindow[newRoom->windows[i].side])
+                   hasWindow[newRoom->windows[i].side])
             {
                 newRoom->windows[i].side = rand() % 4;
-            }  
+            }
         }
-        
+
         hasWindow[newRoom->windows[i].side] = 1;
 
         // placing the windows
@@ -217,61 +219,64 @@ Room *generate_room(int grid)
     return newRoom;
 }
 
-void draw_room(Room *room)
+void draw_room(Room **room, int rooms_number)
 {
-    // if (!room->isSeen)
-    // {
-    //     return;
-    // }
-
-    // draw top and bottom
-    attron(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
-    for (int i = room->start.x; i < room->start.x + room->width; i++)
+    for (int idx = 0; idx < rooms_number; idx++)
     {
-        mvprintw(room->start.y, i, "-");                    // top border
-        mvprintw(room->start.y + room->height - 1, i, "-"); // bottom border
-    }
-    attroff(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
+        if (!room[idx]->isSeen)
+        {
+            continue;;
+        }
 
-    // draw floor and side walls
-    for (int i = room->start.y + 1; i < room->start.y + room->height - 1; i++)
-    {
+        // draw top and bottom
         attron(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
-        mvprintw(i, room->start.x, "|");                   // left border
-        mvprintw(i, room->start.x + room->width - 1, "|"); // right border
+        for (int i = room[idx]->start.x; i < room[idx]->start.x + room[idx]->width; i++)
+        {
+            mvprintw(room[idx]->start.y, i, "-");                    // top border
+            mvprintw(room[idx]->start.y + room[idx]->height - 1, i, "-"); // bottom border
+        }
         attroff(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
 
-        attron(COLOR_PAIR(COLOR_DEFAULT));
-        for (int j = room->start.x + 1; j < room->start.x + room->width - 1; j++)
+        // draw floor and side walls
+        for (int i = room[idx]->start.y + 1; i < room[idx]->start.y + room[idx]->height - 1; i++)
         {
-            mvprintw(i, j, ".");
+            attron(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
+            mvprintw(i, room[idx]->start.x, "|");                   // left border
+            mvprintw(i, room[idx]->start.x + room[idx]->width - 1, "|"); // right border
+            attroff(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
+
+            attron(COLOR_PAIR(COLOR_DEFAULT));
+            for (int j = room[idx]->start.x + 1; j < room[idx]->start.x + room[idx]->width - 1; j++)
+            {
+                mvprintw(i, j, ".");
+            }
+            attroff(COLOR_PAIR(COLOR_DEFAULT));
         }
-        attroff(COLOR_PAIR(COLOR_DEFAULT));
-    }
 
-    // draw doors
-    attron(COLOR_PAIR(COLOR_DOORS));
-    for (int i = 0; i < room->doors_number; i++)
-    {
-        mvprintw(room->doors[i].position.y, room->doors[i].position.x, "+");
-    }
-    attroff(COLOR_PAIR(COLOR_DOORS));
+        // draw doors
+        attron(COLOR_PAIR(COLOR_DOORS));
+        for (int i = 0; i < room[idx]->doors_number; i++)
+        {
+            mvprintw(room[idx]->doors[i].position.y, room[idx]->doors[i].position.x, "+");
+        }
+        attroff(COLOR_PAIR(COLOR_DOORS));
 
-    // draw windows
-    attron(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
-    for (int i = 0; i < room->windows_number; i++)
-    {
-        mvprintw(room->windows[i].position.y, room->windows[i].position.x, "=");
-    }
-    attroff(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
+        // draw windows
+        attron(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
+        for (int i = 0; i < room[idx]->windows_number; i++)
+        {
+            mvprintw(room[idx]->windows[i].position.y, room[idx]->windows[i].position.x, "=");
+        }
+        attroff(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
 
-    // draw stairs
-    attron(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
-    if (room->has_stair)
-    {
-        mvprintw(room->stair.y, room->stair.x, "#");
+        // draw stairs
+        attron(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
+        if (room[idx]->has_stair)
+        {
+            mvprintw(room[idx]->stair.y, room[idx]->stair.x, "#");
+        }
+        attroff(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
     }
-    attroff(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
 }
 
 void is_nextto_door(Room **rooms, int rooms_number, int y, int x)
@@ -459,18 +464,18 @@ void place_stairs(Room **rooms, int rooms_number)
     rooms[chosen_room]->stair.x = rooms[chosen_room]->start.x + 1 + rand() % (rooms[chosen_room]->width - 2);
 }
 
-void map_setup()
+Room **map_setup(int *rooms_number)
 {
     srand(time(NULL));
 
     // setting up rooms
-    int rooms_number = 6 + rand() % 5;
+    *rooms_number = 6 + rand() % 5;
 
-    Room **rooms = (Room **)malloc(sizeof(Room *) * rooms_number);
+    Room **rooms = (Room **)malloc(sizeof(Room *) * *rooms_number);
 
     bool isFilled[10] = {0};
 
-    for (int i = 0; i < rooms_number; i++)
+    for (int i = 0; i < *rooms_number; i++)
     {
         int grid;
         while (1)
@@ -485,17 +490,8 @@ void map_setup()
         rooms[i] = generate_room(grid);
     }
 
-    connect_rooms(rooms, rooms_number);
-    place_stairs(rooms, rooms_number);
+    connect_rooms(rooms, *rooms_number);
+    place_stairs(rooms, *rooms_number);
 
-    for (int i = 0; i < rooms_number; i++)
-    {
-        draw_room(rooms[i]);
-    }
-
-    for (int i = 0; i < rooms_number; i++)
-    {
-        free(rooms[i]);
-    }
-    free(rooms);
+    return rooms;
 }
