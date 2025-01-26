@@ -4,7 +4,7 @@
 #include "global_defines.h"
 
 // consts
-#define MAP_WIDTH  120
+#define MAP_WIDTH 120
 #define MAP_HEIGHT 30
 
 // variables
@@ -37,7 +37,7 @@ void draw_room(Room *room);
 
 bool is_room(Room **rooms, int rooms_number, int y, int x);
 void find_path(Room **rooms, int rooms_number, Position start, Position end);
-void import_path(Position start,Position currunt_position);
+void import_path(Position start, Position currunt_position);
 void connect_rooms(Room **rooms, int rooms_number);
 
 void map_setup();

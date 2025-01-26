@@ -6,6 +6,7 @@
 
 Position frontier[40 * 130];
 Position come_from[40][130];
+int connected_doors = 0;
 
 Room *generate_room(int grid)
 {
@@ -147,6 +148,44 @@ void draw_room(Room *room)
     attroff(COLOR_PAIR(COLOR_DOORS) | A_BOLD);
 }
 
+void is_nextto_door(Room **rooms, int rooms_number, int y, int x)
+{
+    for (int i = 0; i < rooms_number; i++)
+    {
+        for (int j = 0; j < rooms[i]->doors_number; j++)
+        {
+            if (y == rooms[i]->doors[j].position.y && x == rooms[i]->doors[j].position.x)
+            {
+                if (!rooms[i]->doors[j].isConnected)
+                {
+                    rooms[i]->doors[j].isConnected = true;
+                    connected_doors++;
+                }
+                return;
+            }
+        }
+    }
+}
+
+void print_hallway(Room **rooms, int rooms_number, Position pos, Position start)
+{
+    if (pos.y == start.y && pos.x == start.x)
+    {
+        return;
+    }
+
+    mvprintw(pos.y, pos.x, "#");
+
+    int delta_x[4] = {1, 0, -1, 0};
+    int delta_y[4] = {0, 1, 0, -1};
+    for (int i = 0; i < 4; i++)
+    {
+        is_nextto_door(rooms, rooms_number, pos.y + delta_y[i], pos.x + delta_x[i]);
+    }
+
+    print_hallway(rooms, rooms_number, come_from[pos.y][pos.x], start);
+}
+
 bool is_room(Room **rooms, int rooms_number, int y, int x)
 {
     for (int i = 0; i < rooms_number; i++)
@@ -166,17 +205,6 @@ bool is_room(Room **rooms, int rooms_number, int y, int x)
         }
     }
     return false;
-}
-
-void print_hallway(Position pos, Position start)
-{
-    if (pos.y == start.y && pos.x == start.x)
-    {
-        return;
-    }
-
-    mvprintw(pos.y, pos.x, "#");
-    print_hallway(come_from[pos.y][pos.x], start);
 }
 
 void find_path(Room **rooms, int rooms_number, Position start, Position end)
@@ -248,7 +276,7 @@ void find_path(Room **rooms, int rooms_number, Position start, Position end)
         }
     }
 
-    print_hallway(come_from[end.y][end.x], start);
+    print_hallway(rooms, rooms_number, come_from[end.y][end.x], start);
 }
 
 /* void import_path(Position start, Position currunt_position)
@@ -265,48 +293,45 @@ void find_path(Room **rooms, int rooms_number, Position start, Position end)
 
 void connect_rooms(Room **rooms, int rooms_number)
 {
-    // choosing two random rooms
-    int room_1 = rand() % rooms_number;
-    while (rooms[room_1]->connected_doors_number == rooms[room_1]->doors_number) // check if there is a door to connect
+    int total_doors_count = 0;
+    for (int i = 0; i < rooms_number; i++)
     {
-        room_1 = rand() % rooms_number;
+        total_doors_count += rooms[i]->doors_number;
     }
 
-    int room_2 = rand() % rooms_number;
-    while (rooms[room_2]->connected_doors_number == rooms[room_2]->doors_number || room_2 == room_1) // also checks for duplicate rooms
+    // reset connected doors and their statuses
+    connected_doors = 0;
+    for (int i = 0; i < rooms_number; i++)
     {
-        room_2 = rand() % rooms_number;
-    }
-
-    // choosing random doors
-    int door_1 = rand() % rooms[room_1]->doors_number;
-    while (rooms[room_1]->doors[door_1].isConnected)
-    {
-        door_1 = rand() % rooms[room_1]->doors_number;
-    }
-
-    int door_2 = rand() % rooms[room_2]->doors_number;
-    while (rooms[room_2]->doors[door_2].isConnected)
-    {
-        door_2 = rand() % rooms[room_2]->doors_number;
-    }
-
-    for (int i = 0; i < MAP_HEIGHT; i++)
-    {
-        for (int j = 0; j < MAP_WIDTH; j++)
+        for (int j = 0; j < rooms[i]->doors_number; j++)
         {
-            come_from[i][j].x = -1;
-            come_from[i][j].y = -1;
+            rooms[i]->doors[j].isConnected = false;
         }
     }
 
-    find_path(rooms, rooms_number, rooms[room_1]->doors[door_1].position, rooms[room_2]->doors[door_2].position);
-    // import_path(rooms[room_1]->doors[door_1].position, rooms[room_2]->doors[door_2].position);
+    while (connected_doors < total_doors_count)
+    {
+        int room_1 = rand() % rooms_number;
+        int room_2;
+        do
+        {
+            room_2 = rand() % rooms_number;
+        } while (room_2 == room_1);
 
-    rooms[room_1]->doors[door_1].isConnected = true;
-    rooms[room_1]->connected_doors_number++;
-    rooms[room_2]->doors[door_2].isConnected = true;
-    rooms[room_2]->connected_doors_number++;
+        int door_1 = rand() % rooms[room_1]->doors_number;
+        int door_2 = rand() % rooms[room_2]->doors_number;
+
+        for (int i = 0; i < MAP_HEIGHT; i++)
+        {
+            for (int j = 0; j < MAP_WIDTH; j++)
+            {
+                come_from[i][j].x = -1;
+                come_from[i][j].y = -1;
+            }
+        }
+
+        find_path(rooms, rooms_number, rooms[room_1]->doors[door_1].position, rooms[room_2]->doors[door_2].position);
+    }
 }
 
 void map_setup()
@@ -337,19 +362,6 @@ void map_setup()
     }
 
     connect_rooms(rooms, rooms_number);
-
-    // for (int i = 0; i < MAP_HEIGHT; i++)
-    // {
-    //     for (int j = 0; j < MAP_WIDTH; j++)
-    //     {
-    //         if (map[i][j][0] == 1)
-    //         {
-    //             mvprintw(i, j, "#");
-    //         }
-
-    //     }
-
-    // }
 
     for (int i = 0; i < rooms_number; i++)
     {
