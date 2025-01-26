@@ -35,6 +35,8 @@ typedef struct
 Room *generate_room(int grid);
 void draw_room(Room *room);
 
+void is_nextto_door(Room **rooms, int rooms_number, int y, int x);
+void print_hallway(Room **rooms, int rooms_number, Position pos, Position start);
 bool is_room(Room **rooms, int rooms_number, int y, int x);
 void find_path(Room **rooms, int rooms_number, Position start, Position end);
 void import_path(Position start, Position currunt_position);
