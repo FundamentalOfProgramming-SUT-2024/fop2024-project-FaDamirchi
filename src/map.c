@@ -3,8 +3,10 @@
 #include "global_defines.h"
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 
 Position come_from[40][130];
+bool map[40][130][2] = {0};
 int connected_doors = 0;
 
 Room *generate_room(int grid)
@@ -67,7 +69,6 @@ Room *generate_room(int grid)
 
     // generating doors
     newRoom->doors_number = 1 + rand() % 4; // min: 1, max: 4
-    newRoom->connected_doors_number = 0;
     bool hasDoor[4] = {0};
 
     for (int i = 0; i < newRoom->doors_number; i++)
@@ -84,22 +85,22 @@ Room *generate_room(int grid)
         }
 
         // placing the doors
-        if (side == 0) // top
+        if (side == UP)
         {
             newRoom->doors[i].position.x = newRoom->start.x + 1 + rand() % (newRoom->width - 2);
             newRoom->doors[i].position.y = newRoom->start.y;
         }
-        else if (side == 1) // right
+        else if (side == RIGHT)
         {
             newRoom->doors[i].position.x = newRoom->start.x + newRoom->width - 1;
             newRoom->doors[i].position.y = newRoom->start.y + 1 + rand() % (newRoom->height - 2);
         }
-        else if (side == 2) // bottom
+        else if (side == DOWN)
         {
             newRoom->doors[i].position.x = newRoom->start.x + 1 + rand() % (newRoom->width - 2);
             newRoom->doors[i].position.y = newRoom->start.y + newRoom->height - 1;
         }
-        else if (side == 3) // left
+        else if (side == LEFT)
         {
             newRoom->doors[i].position.x = newRoom->start.x;
             newRoom->doors[i].position.y = newRoom->start.y + 1 + rand() % (newRoom->height - 2);
@@ -108,11 +109,121 @@ Room *generate_room(int grid)
         newRoom->doors[i].isConnected = false;
     }
 
+    // generating windows
+    newRoom->windows_number = rand() % 3;
+    bool hasWindow[4] = {0};
+
+    for (int i = 0; i < newRoom->windows_number; i++)
+    {
+        newRoom->windows[i].side = rand() % 4;
+
+        if (grid >= 1 && grid <= 3)
+        {
+            while (newRoom->windows[i].side == UP || hasWindow[newRoom->windows[i].side])
+            {
+                newRoom->windows[i].side = rand() % 4;
+            }  
+        }
+
+        if (grid >= 4 && grid <= 8)
+        {
+            while (newRoom->windows[i].side == DOWN || hasWindow[newRoom->windows[i].side])
+            {
+                newRoom->windows[i].side = rand() % 4;
+            }  
+        }
+
+        if (grid == 0)
+        {
+            while ((newRoom->windows[i].side == UP || newRoom->windows[i].side == LEFT) ||
+                    hasWindow[newRoom->windows[i].side])
+            {
+                newRoom->windows[i].side = rand() % 4;
+            }  
+        }
+
+        if (grid == 4)
+        {
+            while ((newRoom->windows[i].side == UP || newRoom->windows[i].side == RIGHT) ||
+                    hasWindow[newRoom->windows[i].side])
+            {
+                newRoom->windows[i].side = rand() % 4;
+            }  
+        }
+
+        if (grid == 5)
+        {
+            while ((newRoom->windows[i].side == DOWN || newRoom->windows[i].side == LEFT) || 
+                   hasWindow[newRoom->windows[i].side])
+            {
+                newRoom->windows[i].side = rand() % 4;
+            }  
+        }
+
+        if (grid == 9)
+        {
+            while ((newRoom->windows[i].side == DOWN || newRoom->windows[i].side == RIGHT) ||
+                    hasWindow[newRoom->windows[i].side])
+            {
+                newRoom->windows[i].side = rand() % 4;
+            }  
+        }
+        
+        hasWindow[newRoom->windows[i].side] = 1;
+
+        // placing the windows
+        bool valid_position = false;
+        while (!valid_position)
+        {
+            if (newRoom->windows[i].side == UP)
+            {
+                newRoom->windows[i].position.x = newRoom->start.x + 1 + rand() % (newRoom->width - 2);
+                newRoom->windows[i].position.y = newRoom->start.y;
+            }
+            else if (newRoom->windows[i].side == RIGHT)
+            {
+                newRoom->windows[i].position.x = newRoom->start.x + newRoom->width - 1;
+                newRoom->windows[i].position.y = newRoom->start.y + 1 + rand() % (newRoom->height - 2);
+            }
+            else if (newRoom->windows[i].side == DOWN)
+            {
+                newRoom->windows[i].position.x = newRoom->start.x + 1 + rand() % (newRoom->width - 2);
+                newRoom->windows[i].position.y = newRoom->start.y + newRoom->height - 1;
+            }
+            else if (newRoom->windows[i].side == LEFT)
+            {
+                newRoom->windows[i].position.x = newRoom->start.x;
+                newRoom->windows[i].position.y = newRoom->start.y + 1 + rand() % (newRoom->height - 2);
+            }
+
+            // check if the window position overlaps with any door
+            valid_position = true;
+            for (int j = 0; j < newRoom->doors_number; j++)
+            {
+                if (newRoom->windows[i].position.x == newRoom->doors[j].position.x &&
+                    newRoom->windows[i].position.y == newRoom->doors[j].position.y)
+                {
+                    valid_position = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    // initializing other properties
+    newRoom->isSeen = false;
+    newRoom->has_stair = false;
+
     return newRoom;
 }
 
 void draw_room(Room *room)
 {
+    // if (!room->isSeen)
+    // {
+    //     return;
+    // }
+
     // draw top and bottom
     attron(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
     for (int i = room->start.x; i < room->start.x + room->width; i++)
@@ -139,12 +250,28 @@ void draw_room(Room *room)
     }
 
     // draw doors
-    attron(COLOR_PAIR(COLOR_DOORS) | A_BOLD);
+    attron(COLOR_PAIR(COLOR_DOORS));
     for (int i = 0; i < room->doors_number; i++)
     {
         mvprintw(room->doors[i].position.y, room->doors[i].position.x, "+");
     }
-    attroff(COLOR_PAIR(COLOR_DOORS) | A_BOLD);
+    attroff(COLOR_PAIR(COLOR_DOORS));
+
+    // draw windows
+    attron(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
+    for (int i = 0; i < room->windows_number; i++)
+    {
+        mvprintw(room->windows[i].position.y, room->windows[i].position.x, "=");
+    }
+    attroff(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
+
+    // draw stairs
+    attron(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
+    if (room->has_stair)
+    {
+        mvprintw(room->stair.y, room->stair.x, "#");
+    }
+    attroff(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
 }
 
 void is_nextto_door(Room **rooms, int rooms_number, int y, int x)
@@ -166,16 +293,15 @@ void is_nextto_door(Room **rooms, int rooms_number, int y, int x)
     }
 }
 
-void print_hallway(Room **rooms, int rooms_number, Position pos, Position start)
+void import_hallway(Room **rooms, int rooms_number, Position pos, Position start)
 {
     if (pos.y == start.y && pos.x == start.x)
     {
         return;
     }
 
-    attron(COLOR_PAIR(COLOR_HALLS));
-    mvprintw(pos.y, pos.x, "#");
-    attroff(COLOR_PAIR(COLOR_HALLS));
+    map[pos.y][pos.x][0] = 1;
+    map[pos.y][pos.x][1] = 0;
 
     int delta_x[4] = {1, 0, -1, 0};
     int delta_y[4] = {0, 1, 0, -1};
@@ -184,7 +310,7 @@ void print_hallway(Room **rooms, int rooms_number, Position pos, Position start)
         is_nextto_door(rooms, rooms_number, pos.y + delta_y[i], pos.x + delta_x[i]);
     }
 
-    print_hallway(rooms, rooms_number, come_from[pos.y][pos.x], start);
+    import_hallway(rooms, rooms_number, come_from[pos.y][pos.x], start);
 }
 
 bool is_room(Room **rooms, int rooms_number, int y, int x)
@@ -278,20 +404,8 @@ void find_path(Room **rooms, int rooms_number, Position start, Position end)
         }
     }
 
-    print_hallway(rooms, rooms_number, come_from[end.y][end.x], start);
+    import_hallway(rooms, rooms_number, come_from[end.y][end.x], start);
 }
-
-/* void import_path(Position start, Position currunt_position)
-// {
-//     if (currunt_position.x == start.x && currunt_position.y == start.y)
-//     {
-//         return;
-//     }
-
-//     map[currunt_position.y][currunt_position.x][0] = 1;
-
-//     import_path(start, come_from[currunt_position.y][currunt_position.x]);
-// } */
 
 void connect_rooms(Room **rooms, int rooms_number)
 {
@@ -336,6 +450,15 @@ void connect_rooms(Room **rooms, int rooms_number)
     }
 }
 
+void place_stairs(Room **rooms, int rooms_number)
+{
+    int chosen_room = rand() % rooms_number;
+
+    rooms[chosen_room]->has_stair = true;
+    rooms[chosen_room]->stair.y = rooms[chosen_room]->start.y + 1 + rand() % (rooms[chosen_room]->height - 2);
+    rooms[chosen_room]->stair.x = rooms[chosen_room]->start.x + 1 + rand() % (rooms[chosen_room]->width - 2);
+}
+
 void map_setup()
 {
     srand(time(NULL));
@@ -360,10 +483,15 @@ void map_setup()
             }
         }
         rooms[i] = generate_room(grid);
-        draw_room(rooms[i]);
     }
 
     connect_rooms(rooms, rooms_number);
+    place_stairs(rooms, rooms_number);
+
+    for (int i = 0; i < rooms_number; i++)
+    {
+        draw_room(rooms[i]);
+    }
 
     for (int i = 0; i < rooms_number; i++)
     {
