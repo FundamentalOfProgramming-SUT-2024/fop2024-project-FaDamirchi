@@ -12,9 +12,11 @@
 #define COLOR_BORDER          6
 #define COLOR_FIELD           7
 
-#define COLOR_WALLS 8
-#define COLOR_DOORS 9
-#define COLOR_HALLS 10
+#define COLOR_WALLS   8
+#define COLOR_DOORS   9
+#define COLOR_HALLS   10
+#define COLOR_STAIRS  11
+#define COLOR_WINDOWS 12
 
 #define COLOR_GRAY 100
 

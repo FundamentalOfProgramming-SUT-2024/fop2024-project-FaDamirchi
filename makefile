@@ -1,7 +1,7 @@
 # Compiler
 CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude -no-pie
-LDFLAGS = -lncurses
+LDFLAGS = -lncurses -lm
 SRC_DIR = src
 BIN_DIR = bin
 INCLUDE_DIR = include

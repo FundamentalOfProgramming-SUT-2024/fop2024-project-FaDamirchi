@@ -19,7 +19,8 @@ void init_colors()
     init_pair(COLOR_DOORS, COLOR_GREEN, COLOR_BLACK);
     init_pair(COLOR_WALLS, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLOR_HALLS, COLOR_GRAY, COLOR_BLACK);
-    
+    init_pair(COLOR_STAIRS, COLOR_RED, COLOR_BLACK);
+    init_pair(COLOR_WINDOWS, COLOR_BLUE, COLOR_BLACK);
 }
 
 void draw_border(int start_y, int start_x, int height, int width)
