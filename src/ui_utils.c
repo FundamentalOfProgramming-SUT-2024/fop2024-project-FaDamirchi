@@ -6,6 +6,8 @@
 void init_colors()
 {
     start_color();
+    init_color(COLOR_GRAY, 500, 500, 500);
+
     init_pair(COLOR_DEFAULT, COLOR_WHITE, COLOR_BLACK);
     init_pair(COLOR_HIGHLIGHT, COLOR_BLACK, COLOR_GREEN);
     init_pair(COLOR_TITLE, COLOR_CYAN, COLOR_BLACK);
@@ -14,8 +16,10 @@ void init_colors()
     init_pair(COLOR_BORDER, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLOR_FIELD, COLOR_MAGENTA, COLOR_BLACK);
 
-    init_pair(COLOR_WALLS, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLOR_DOORS, COLOR_GREEN, COLOR_BLACK);
+    init_pair(COLOR_WALLS, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(COLOR_HALLS, COLOR_GRAY, COLOR_BLACK);
+    
 }
 
 void draw_border(int start_y, int start_x, int height, int width)

@@ -4,7 +4,6 @@
 #include <time.h>
 #include <stdlib.h>
 
-Position frontier[40 * 130];
 Position come_from[40][130];
 int connected_doors = 0;
 
@@ -174,7 +173,9 @@ void print_hallway(Room **rooms, int rooms_number, Position pos, Position start)
         return;
     }
 
+    attron(COLOR_PAIR(COLOR_HALLS));
     mvprintw(pos.y, pos.x, "#");
+    attroff(COLOR_PAIR(COLOR_HALLS));
 
     int delta_x[4] = {1, 0, -1, 0};
     int delta_y[4] = {0, 1, 0, -1};
@@ -209,6 +210,7 @@ bool is_room(Room **rooms, int rooms_number, int y, int x)
 
 void find_path(Room **rooms, int rooms_number, Position start, Position end)
 {
+    Position frontier[40 * 130];
     int frontier_count = 0;
     int frontier_index = 0;
 

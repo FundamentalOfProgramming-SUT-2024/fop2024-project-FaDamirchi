@@ -31,12 +31,16 @@ void show_login_form()
 
     show_field(start_y, start_x, "Username: ");     // start getting the username
     echo();
+    curs_set(1);
     getstr(user.username);
+    curs_set(0);
     noecho();
 
     show_field(start_y + 1, start_x, "Password: "); // start getting the password
     echo();
+    curs_set(1);
     getstr(user.password);
+    curs_set(0);
     noecho();
 
     do
@@ -58,7 +62,9 @@ void show_login_form()
                 char recovery_email[320];
                 show_title(start_y + 3, start_x, "Enter your email: ");
                 echo();
+                curs_set(1);
                 getstr(recovery_email);
+                curs_set(0);
                 noecho();
 
                 password_recovery(user.username, recovery_email, start_y + 5, start_x);
@@ -76,12 +82,16 @@ void show_login_form()
 
                 show_field(start_y, start_x, "Username: ");    // start getting the username
                 echo();
+                curs_set(1);
                 getstr(user.username);
+                curs_set(0);
                 noecho();
 
                 show_field(start_y + 1, start_x, "Password: "); // start getting the password
                 echo();
+                curs_set(1);
                 getstr(user.password);
+                curs_set(0);
                 noecho();
             }
         }
@@ -98,7 +108,7 @@ void show_login_form()
             }
             else if (ch == 'n' || ch == 'N')
             {
-                break;
+                return;
             }
         }
         else if (login_status == SUCCESSFULL_LOGIN)

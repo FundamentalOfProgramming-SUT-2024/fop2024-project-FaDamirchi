@@ -40,7 +40,9 @@ void show_signup_form()
 
         show_field(start_y, start_x, "Email: ");    // start getting the email again
         echo();
+        curs_set(1);
         getstr(newUser.email);
+        curs_set(0);
         noecho();
     } while (is_email_valid(start_y + 1, start_x, newUser.email) == false ||
              is_email_unique(start_y + 1, start_x, newUser.email) == false);
@@ -55,7 +57,9 @@ void show_signup_form()
 
         show_field(start_y + 1, start_x, "Username: ");    // start getting the username again
         echo();
+        curs_set(1);
         getstr(newUser.username);
+        curs_set(0);
         noecho();
     } while (is_username_unique(start_y + 2, start_x, newUser.username) == false);
 
@@ -96,7 +100,9 @@ void show_signup_form()
 
                 show_field(start_y + 2, start_x, "Password: ");    // start getting the password again
                 echo();
+                curs_set(1);
                 getstr(newUser.password);
+                curs_set(0);
                 noecho();
             } while (is_password_valid(start_y + 3, start_x, newUser.password) == false);
             

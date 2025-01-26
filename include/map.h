@@ -8,7 +8,6 @@
 #define MAP_HEIGHT 30
 
 // variables
-extern Position frontier[40 * 130];
 extern Position come_from[40][130];
 
 // objects
