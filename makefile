@@ -8,7 +8,7 @@ INCLUDE_DIR = include
 DATA_DIR = data
 
 # Source
-SRCS = $(SRC_DIR)/main.c $(SRC_DIR)/main_menu.c $(SRC_DIR)/ui_utils.c $(SRC_DIR)/signup.c $(SRC_DIR)/login.c $(SRC_DIR)/manage_users.c $(SRC_DIR)/pregame_menu.c $(SRC_DIR)/settings.c $(SRC_DIR)/map.c $(SRC_DIR)/start_game.c
+SRCS = $(SRC_DIR)/main.c $(SRC_DIR)/main_menu.c $(SRC_DIR)/ui_utils.c $(SRC_DIR)/signup.c $(SRC_DIR)/login.c $(SRC_DIR)/manage_users.c $(SRC_DIR)/pregame_menu.c $(SRC_DIR)/settings.c $(SRC_DIR)/map.c $(SRC_DIR)/new_game.c $(SRC_DIR)/player.c
 
 # Objects
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BIN_DIR)/%.o)
