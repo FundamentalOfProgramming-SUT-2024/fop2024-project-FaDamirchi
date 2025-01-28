@@ -11,8 +11,6 @@ typedef struct Room Room;
 typedef struct Player
 {
     Position position;
-
-    bool is_in_room;
     Room *currunt_room;
 
     // other options...

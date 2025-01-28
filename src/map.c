@@ -213,40 +213,41 @@ Room *generate_room(int grid)
     }
 
     // initializing other properties
+    newRoom->grid = grid;
     newRoom->isSeen = false;
     newRoom->has_stair = false;
 
     return newRoom;
 }
 
-void draw_map(Room **room, int rooms_number)
+void draw_map(Room **rooms, int rooms_number)
 {
     for (int idx = 0; idx < rooms_number; idx++)
     {
-        if (!room[idx]->isSeen)
+        if (!rooms[idx]->isSeen)
         {
-            continue;;
+            continue;
         }
 
         // draw top and bottom
         attron(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
-        for (int i = room[idx]->start.x; i < room[idx]->start.x + room[idx]->width; i++)
+        for (int i = rooms[idx]->start.x; i < rooms[idx]->start.x + rooms[idx]->width; i++)
         {
-            mvprintw(room[idx]->start.y, i, "-");                    // top border
-            mvprintw(room[idx]->start.y + room[idx]->height - 1, i, "-"); // bottom border
+            mvprintw(rooms[idx]->start.y, i, "-");                          // top border
+            mvprintw(rooms[idx]->start.y + rooms[idx]->height - 1, i, "-"); // bottom border
         }
         attroff(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
 
         // draw floor and side walls
-        for (int i = room[idx]->start.y + 1; i < room[idx]->start.y + room[idx]->height - 1; i++)
+        for (int i = rooms[idx]->start.y + 1; i < rooms[idx]->start.y + rooms[idx]->height - 1; i++)
         {
             attron(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
-            mvprintw(i, room[idx]->start.x, "|");                   // left border
-            mvprintw(i, room[idx]->start.x + room[idx]->width - 1, "|"); // right border
+            mvprintw(i, rooms[idx]->start.x, "|");                         // left border
+            mvprintw(i, rooms[idx]->start.x + rooms[idx]->width - 1, "|"); // right border
             attroff(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
 
             attron(COLOR_PAIR(COLOR_DEFAULT));
-            for (int j = room[idx]->start.x + 1; j < room[idx]->start.x + room[idx]->width - 1; j++)
+            for (int j = rooms[idx]->start.x + 1; j < rooms[idx]->start.x + rooms[idx]->width - 1; j++)
             {
                 mvprintw(i, j, ".");
             }
@@ -255,25 +256,25 @@ void draw_map(Room **room, int rooms_number)
 
         // draw doors
         attron(COLOR_PAIR(COLOR_DOORS));
-        for (int i = 0; i < room[idx]->doors_number; i++)
+        for (int i = 0; i < rooms[idx]->doors_number; i++)
         {
-            mvprintw(room[idx]->doors[i].position.y, room[idx]->doors[i].position.x, "+");
+            mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
         }
         attroff(COLOR_PAIR(COLOR_DOORS));
 
         // draw windows
         attron(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
-        for (int i = 0; i < room[idx]->windows_number; i++)
+        for (int i = 0; i < rooms[idx]->windows_number; i++)
         {
-            mvprintw(room[idx]->windows[i].position.y, room[idx]->windows[i].position.x, "=");
+            mvprintw(rooms[idx]->windows[i].position.y, rooms[idx]->windows[i].position.x, "=");
         }
         attroff(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
 
         // draw stairs
         attron(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
-        if (room[idx]->has_stair)
+        if (rooms[idx]->has_stair)
         {
-            mvprintw(room[idx]->stair.y, room[idx]->stair.x, "<");
+            mvprintw(rooms[idx]->stair.y, rooms[idx]->stair.x, "<");
         }
         attroff(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
     }
@@ -291,7 +292,142 @@ void draw_map(Room **room, int rooms_number)
         }
     }
     attroff(COLOR_PAIR(COLOR_HALLS));
-    
+}
+
+void draw_room(Room *room)
+{
+    attron(COLOR_PAIR(COLOR_UNSEEN) | A_BOLD);
+    for (int i = room->start.x; i < room->start.x + room->width; i++)
+    {
+        mvprintw(room->start.y, i, "-");                    // top border
+        mvprintw(room->start.y + room->height - 1, i, "-"); // bottom border
+    }
+    attroff(A_BOLD);
+
+    // draw floor and side walls
+    for (int i = room->start.y + 1; i < room->start.y + room->height - 1; i++)
+    {
+        attron(A_BOLD);
+        mvprintw(i, room->start.x, "|");                   // left border
+        mvprintw(i, room->start.x + room->width - 1, "|"); // right border
+        attroff(A_BOLD);
+
+        for (int j = room->start.x + 1; j < room->start.x + room->width - 1; j++)
+        {
+            mvprintw(i, j, ".");
+        }
+    }
+
+    // draw doors
+    for (int i = 0; i < room->doors_number; i++)
+    {
+        mvprintw(room->doors[i].position.y, room->doors[i].position.x, "+");
+    }
+
+    // draw windows
+    attron(A_BOLD);
+    for (int i = 0; i < room->windows_number; i++)
+    {
+        mvprintw(room->windows[i].position.y, room->windows[i].position.x, "=");
+    }
+    attroff(A_BOLD);
+
+    // draw stairs
+    attron(A_BOLD | A_BLINK);
+    if (room->has_stair)
+    {
+        mvprintw(room->stair.y, room->stair.x, "<");
+    }
+    attroff(COLOR_PAIR(COLOR_UNSEEN) | A_BOLD | A_BLINK);
+}
+
+void use_windows(Player *player, Room **rooms, int rooms_number)
+{
+    if (!player->currunt_room)
+    {
+        return;
+    }
+
+    int delta_y[4] = {-1, 0, 1, 0};
+    int delta_x[4] = {0, 1, 0, -1};
+
+    // check four directions for windows
+    for (int win = 0; win < player->currunt_room->windows_number; win++)
+    {
+        for (int idx = 0; idx < 4; idx++)
+        {
+            bool isDoor = false;
+
+            if (player->position.y + delta_y[idx] == player->currunt_room->windows[win].position.y &&
+                player->position.x + delta_x[idx] == player->currunt_room->windows[win].position.x)
+            {
+                // don't show the next room if player is on a door next to the window
+                for (int i = 0; i < player->currunt_room->doors_number; i++)
+                {
+                    if (player->position.y == player->currunt_room->doors[i].position.y &&
+                        player->position.x == player->currunt_room->doors[i].position.x)
+                    {
+                        isDoor = true;
+                        break;
+                    }
+                }
+
+                if (isDoor)
+                {
+                    continue;
+                }
+
+                // start showing the next room in dark gray
+                if (player->currunt_room->windows[win].side == UP)
+                {
+                    for (int i = 0; i < rooms_number; i++)
+                    {
+                        if (rooms[i]->grid == player->currunt_room->grid - 5 && !rooms[i]->isSeen)
+                        {
+                            draw_room(rooms[i]);
+                            return;
+                        }
+                    }
+                }
+
+                else if (player->currunt_room->windows[win].side == RIGHT)
+                {
+                    for (int i = 0; i < rooms_number; i++)
+                    {
+                        if (rooms[i]->grid == player->currunt_room->grid + 1 && !rooms[i]->isSeen)
+                        {
+                            draw_room(rooms[i]);
+                            return;
+                        }
+                    }
+                }
+
+                else if (player->currunt_room->windows[win].side == DOWN)
+                {
+                    for (int i = 0; i < rooms_number; i++)
+                    {
+                        if (rooms[i]->grid == player->currunt_room->grid + 5 && !rooms[i]->isSeen)
+                        {
+                            draw_room(rooms[i]);
+                            return;
+                        }
+                    }
+                }
+
+                else if (player->currunt_room->windows[win].side == LEFT)
+                {
+                    for (int i = 0; i < rooms_number; i++)
+                    {
+                        if (rooms[i]->grid == player->currunt_room->grid - 1 && !rooms[i]->isSeen)
+                        {
+                            draw_room(rooms[i]);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void is_nextto_door(Room **rooms, int rooms_number, int y, int x)

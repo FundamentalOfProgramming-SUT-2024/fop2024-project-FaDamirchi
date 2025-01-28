@@ -37,6 +37,8 @@ typedef struct Room
     int width;
     int height;
 
+    int grid;
+
     Door doors[4];
     int doors_number;
 
@@ -53,7 +55,9 @@ typedef struct Room
 
 // functions
 Room *generate_room(int grid);
-void draw_map(Room **room, int rooms_number);
+void draw_map(Room **rooms, int rooms_number);
+void draw_room(Room *room);
+void use_windows(Player *player, Room **rooms, int rooms_number);
 
 void is_nextto_door(Room **rooms, int rooms_number, int y, int x);
 void import_hallway(Room **rooms, int rooms_number, Position pos, Position start);
@@ -61,7 +65,7 @@ bool is_room(Room **rooms, int rooms_number, int y, int x);
 void find_path(Room **rooms, int rooms_number, Position start, Position end);
 void connect_rooms(Room **rooms, int rooms_number);
 
-void place_stairs(Room **room, int rooms_number);
+void place_stairs(Room **rooms, int rooms_number);
 
 Room **map_setup(int *rooms_number);
 void show_next_step(Room **rooms, Player *player, int rooms_number);

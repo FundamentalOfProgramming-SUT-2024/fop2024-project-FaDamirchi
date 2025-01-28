@@ -10,7 +10,7 @@ bool can_move(Room **rooms, int rooms_number, Player *player, int next_y, int ne
         return false;
     }
 
-    if (player->is_in_room)
+    if (player->currunt_room)
     {
         for (int i = 0; i < player->currunt_room->doors_number; i++)
         {
@@ -38,7 +38,6 @@ bool can_move(Room **rooms, int rooms_number, Player *player, int next_y, int ne
                 {
                     player->currunt_room = rooms[i];
                     player->currunt_room->isSeen = true;
-                    player->is_in_room = true;
                     return true;
                 }
             }
@@ -150,7 +149,6 @@ Player *player_setup(Room **rooms, int rooms_number)
     rooms[initial_room]->isSeen = true;
 
     newPlayer->currunt_room = rooms[initial_room];
-    newPlayer->is_in_room = true;
 
     return newPlayer;
 }
@@ -158,9 +156,8 @@ Player *player_setup(Room **rooms, int rooms_number)
 void player_update(Room **rooms, int rooms_number, Player *player)
 {
     mvprintw(player->position.y, player->position.x, "@");
-    move_player(rooms, rooms_number, player);
 
-    if (player->is_in_room)
+    if (player->currunt_room)
     {
         if (player->position.y < player->currunt_room->start.y ||
             player->position.y > player->currunt_room->start.y + player->currunt_room->height - 1 ||
@@ -168,9 +165,10 @@ void player_update(Room **rooms, int rooms_number, Player *player)
             player->position.x > player->currunt_room->start.x + player->currunt_room->width - 1)
         {
             player->currunt_room = NULL;
-            player->is_in_room = false;
         }
-        
+
+        use_windows(player, rooms, rooms_number);
     }
-    
+
+    move_player(rooms, rooms_number, player);
 }
