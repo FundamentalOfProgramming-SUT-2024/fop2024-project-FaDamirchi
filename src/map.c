@@ -273,7 +273,7 @@ void draw_map(Room **room, int rooms_number)
         attron(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
         if (room[idx]->has_stair)
         {
-            mvprintw(room[idx]->stair.y, room[idx]->stair.x, "#");
+            mvprintw(room[idx]->stair.y, room[idx]->stair.x, "<");
         }
         attroff(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
     }

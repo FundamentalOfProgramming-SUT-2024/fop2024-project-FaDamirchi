@@ -1,7 +1,5 @@
 #include "ui_utils.h"
-#include <ncurses.h>
-#include <string.h>
-#include <unistd.h>
+#include "global_defines.h"
 
 void init_colors()
 {

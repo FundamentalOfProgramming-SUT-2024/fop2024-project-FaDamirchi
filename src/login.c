@@ -1,10 +1,8 @@
 #include "login.h"
 #include "global_defines.h"
-#include "ui_utils.h"
 #include "manage_users.h"
 #include "signup.h"
 #include "pregame_menu.h"
-#include <string.h>
 
 typedef struct
 {

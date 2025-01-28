@@ -39,3 +39,7 @@ clean:
 # Create essentials
 install:
 	mkdir -p $(BIN_DIR) $(DATA_DIR)
+
+# Run the program
+run: $(TARGET) copy_data
+	./$(TARGET)

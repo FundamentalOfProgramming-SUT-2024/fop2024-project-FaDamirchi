@@ -1,10 +1,5 @@
 #include "manage_users.h"
 #include "global_defines.h"
-#include "ui_utils.h"
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <time.h>
 
 bool is_email_valid(int start_y, int start_x, char *email)
 {

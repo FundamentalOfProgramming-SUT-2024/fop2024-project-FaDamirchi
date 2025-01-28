@@ -1,12 +1,8 @@
 #include "main_menu.h"
 #include "global_defines.h"
-#include "ui_utils.h"
 #include "signup.h"
 #include "login.h"
 #include "pregame_menu.h"
-#include <ncurses.h>
-#include <string.h>
-#include <unistd.h>
 
 void show_main_menu()
 {

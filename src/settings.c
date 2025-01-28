@@ -1,9 +1,6 @@
 #include "settings.h"
-#include "ui_utils.h"
 #include "global_defines.h"
 #include "manage_users.h"
-#include <string.h>
-#include <stdlib.h>
 
 void update_settings(const char *username, int level, int color, int music)
 {

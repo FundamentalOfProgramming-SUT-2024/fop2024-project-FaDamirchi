@@ -1,8 +1,7 @@
 #include "new_game.h"
+#include "global_defines.h"
 #include "player.h"
 #include "map.h"
-#include <stdlib.h>
-#include <ncurses.h>
 
 Room **rooms;
 Player *player;

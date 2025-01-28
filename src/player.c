@@ -1,6 +1,5 @@
 #include "player.h"
-#include "ui_utils.h"
-#include <stdlib.h>
+#include "global_defines.h"
 
 bool can_move(Room **rooms, int rooms_number, Player *player, int next_y, int next_x)
 {

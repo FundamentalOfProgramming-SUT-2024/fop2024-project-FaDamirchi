@@ -4,7 +4,17 @@
 #define GLOBAL_DEFINES
 
 // includes
+#include <ncurses.h>
+#include <unistd.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <time.h>
+#include <math.h>
+
+#include "ui_utils.h"
 
 // objects
 typedef struct

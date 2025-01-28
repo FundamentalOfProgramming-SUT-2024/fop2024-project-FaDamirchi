@@ -1,10 +1,7 @@
 #include "pregame_menu.h"
-#include "ui_utils.h"
 #include "global_defines.h"
 #include "settings.h"
 #include "new_game.h"
-#include <ncurses.h>
-#include <string.h>
 
 void show_pregame_menu(char *username, int isNew)
 {
