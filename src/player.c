@@ -2,7 +2,7 @@
 #include "ui_utils.h"
 #include <stdlib.h>
 
-bool can_move(Player *player, int next_y, int next_x)
+bool can_move(Room **rooms, int rooms_number, Player *player, int next_y, int next_x)
 {
     if (next_y < 0 || next_y > MAP_HEIGHT ||
         next_x < 0 || next_x > MAP_WIDTH)
@@ -27,6 +27,23 @@ bool can_move(Player *player, int next_y, int next_x)
             return true;
         }
     }
+    else
+    {
+        for (int i = 0; i < rooms_number; i++)
+        {
+            for (int j = 0; j < rooms[i]->doors_number; j++)
+            {
+                if (next_y == rooms[i]->doors[j].position.y &&
+                    next_x == rooms[i]->doors[j].position.x)
+                {
+                    player->currunt_room = rooms[i];
+                    player->currunt_room->isSeen = true;
+                    player->is_in_room = true;
+                    return true;
+                }
+            }
+        }
+    }
 
     if (map[next_y][next_x][0] == 1)
     {
@@ -37,13 +54,13 @@ bool can_move(Player *player, int next_y, int next_x)
     return false;
 }
 
-void move_player(Player *player)
+void move_player(Room **rooms, int rooms_number, Player *player)
 {
     int ch = getch();
 
     if (ch == KEY_UP || ch == 'w' || ch == 'W' || ch == '8')
     {
-        if (can_move(player, player->position.y - 1, player->position.x))
+        if (can_move(rooms, rooms_number, player, player->position.y - 1, player->position.x))
         {
             player->position.y--;
             return;
@@ -52,7 +69,7 @@ void move_player(Player *player)
 
     if (ch == KEY_DOWN || ch == 'x' || ch == 'X' || ch == '2')
     {
-        if (can_move(player, player->position.y + 1, player->position.x))
+        if (can_move(rooms, rooms_number, player, player->position.y + 1, player->position.x))
         {
             player->position.y++;
             return;
@@ -61,7 +78,7 @@ void move_player(Player *player)
 
     if (ch == KEY_LEFT || ch == 'a' || ch == 'A' || ch == '4')
     {
-        if (can_move(player, player->position.y, player->position.x - 1))
+        if (can_move(rooms, rooms_number, player, player->position.y, player->position.x - 1))
         {
             player->position.x--;
             return;
@@ -70,7 +87,7 @@ void move_player(Player *player)
 
     if (ch == KEY_RIGHT || ch == 'd' || ch == 'D' || ch == '6')
     {
-        if (can_move(player, player->position.y, player->position.x + 1))
+        if (can_move(rooms, rooms_number, player, player->position.y, player->position.x + 1))
         {
             player->position.x++;
             return;
@@ -79,7 +96,7 @@ void move_player(Player *player)
 
     if (ch == 'q' || ch == 'Q' || ch == '7')
     {
-        if (can_move(player, player->position.y - 1, player->position.x - 1))
+        if (can_move(rooms, rooms_number, player, player->position.y - 1, player->position.x - 1))
         {
             player->position.y--;
             player->position.x--;
@@ -88,7 +105,7 @@ void move_player(Player *player)
     }
     if (ch == 'e' || ch == 'E' || ch == '9')
     {
-        if (can_move(player, player->position.y - 1, player->position.x + 1))
+        if (can_move(rooms, rooms_number, player, player->position.y - 1, player->position.x + 1))
         {
             player->position.y--;
             player->position.x++;
@@ -98,7 +115,7 @@ void move_player(Player *player)
 
     if (ch == 'z' || ch == 'Z' || ch == '1')
     {
-        if (can_move(player, player->position.y + 1, player->position.x - 1))
+        if (can_move(rooms, rooms_number, player, player->position.y + 1, player->position.x - 1))
         {
             player->position.y++;
             player->position.x--;
@@ -108,7 +125,7 @@ void move_player(Player *player)
 
     if (ch == 'c' || ch == 'C' || ch == '3')
     {
-        if (can_move(player, player->position.y + 1, player->position.x + 1))
+        if (can_move(rooms, rooms_number, player, player->position.y + 1, player->position.x + 1))
         {
             player->position.y++;
             player->position.x++;
@@ -138,39 +155,35 @@ Player *player_setup(Room **rooms, int rooms_number)
     return newPlayer;
 }
 
-void draw_next(Room **rooms, Player *player, int rooms_number)
+void show_next(Room **rooms, Player *player, int rooms_number)
 {
     int delta_y[4] = {-1, 0, 1, 0};
     int delta_x[4] = {0, 1, 0, -1};
 
-    attron(COLOR_PAIR(COLOR_HALLS));
+    // show near hallways
+    attron(COLOR_PAIR(COLOR_UNSEEN));
     for (int i = 0; i < 4; i++)
     {
-        for (int j = 0; j < 4; j++)
+        if (map[player->position.y + delta_y[i]][player->position.x + delta_x[i]][0] &&
+            !map[player->position.y + delta_y[i]][player->position.x + delta_x[i]][1])
         {
-            if (map[player->position.y + delta_y[i]][player->position.x + delta_x[j]][0])
-            {
-                map[player->position.y + delta_y[i]][player->position.x + delta_x[j]][1] = 1;
-                mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[j], "#");
-            }
+            mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[i], "#");
         }
     }
-    attroff(COLOR_PAIR(COLOR_HALLS));
+    attroff(COLOR_PAIR(COLOR_UNSEEN));
 
+    // show near doors
     attron(COLOR_PAIR(COLOR_DOORS));
     for (int i = 0; i < 4; i++)
     {
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < rooms_number; j++)
         {
-            for (int k = 0; k < rooms_number; k++)
+            for (int k = 0; k < rooms[j]->doors_number; k++)
             {
-                for (int h = 0; h < rooms[k]->doors_number; h++)
+                if (player->position.y + delta_y[i] == rooms[j]->doors[k].position.y &&
+                    player->position.x + delta_x[i] == rooms[j]->doors[k].position.x)
                 {
-                    if (player->position.y + delta_y[i] == rooms[k]->doors[h].position.y &&
-                        player->position.x + delta_x[j] == rooms[k]->doors[h].position.x)
-                    {
-                        mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[j], "+");
-                    }
+                    mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[i], "+");
                 }
             }
         }
@@ -178,8 +191,22 @@ void draw_next(Room **rooms, Player *player, int rooms_number)
     attroff(COLOR_PAIR(COLOR_DOORS));
 }
 
-void player_update(Player *player)
+void player_update(Room **rooms, int rooms_number, Player *player)
 {
     mvprintw(player->position.y, player->position.x, "@");
-    move_player(player);
+    move_player(rooms, rooms_number, player);
+
+    if (player->is_in_room)
+    {
+        if (player->position.y < player->currunt_room->start.y ||
+            player->position.y > player->currunt_room->start.y + player->currunt_room->height - 1 ||
+            player->position.x < player->currunt_room->start.x ||
+            player->position.x > player->currunt_room->start.x + player->currunt_room->width - 1)
+        {
+            player->currunt_room = NULL;
+            player->is_in_room = false;
+        }
+        
+    }
+    
 }
