@@ -15,10 +15,12 @@
 #define COLOR_WALLS   8
 #define COLOR_DOORS   9
 #define COLOR_HALLS   10
-#define COLOR_STAIRS  11
-#define COLOR_WINDOWS 12
+#define COLOR_UNSEEN  11
+#define COLOR_STAIRS  12
+#define COLOR_WINDOWS 13
 
-#define COLOR_GRAY 100
+#define COLOR_DARK_GRAY  100
+#define COLOR_LIGHT_GRAY 101
 
 // functions
 void init_colors();

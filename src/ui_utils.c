@@ -6,7 +6,8 @@
 void init_colors()
 {
     start_color();
-    init_color(COLOR_GRAY, 500, 500, 500);
+    init_color(COLOR_DARK_GRAY, 300, 300, 300);
+    init_color(COLOR_LIGHT_GRAY, 600, 600, 600);
 
     init_pair(COLOR_DEFAULT, COLOR_WHITE, COLOR_BLACK);
     init_pair(COLOR_HIGHLIGHT, COLOR_BLACK, COLOR_GREEN);
@@ -18,7 +19,8 @@ void init_colors()
 
     init_pair(COLOR_DOORS, COLOR_GREEN, COLOR_BLACK);
     init_pair(COLOR_WALLS, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(COLOR_HALLS, COLOR_GRAY, COLOR_BLACK);
+    init_pair(COLOR_HALLS, COLOR_LIGHT_GRAY, COLOR_BLACK);
+    init_pair(COLOR_UNSEEN, COLOR_DARK_GRAY, COLOR_BLACK);
     init_pair(COLOR_STAIRS, COLOR_RED, COLOR_BLACK);
     init_pair(COLOR_WINDOWS, COLOR_BLUE, COLOR_BLACK);
 }

@@ -14,7 +14,7 @@ SRCS = $(SRC_DIR)/main.c $(SRC_DIR)/main_menu.c $(SRC_DIR)/ui_utils.c $(SRC_DIR)
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BIN_DIR)/%.o)
 
 # Program
-TARGET = $(BIN_DIR)/my_program
+TARGET = $(BIN_DIR)/rouge
 
 # Target
 all: $(TARGET)
