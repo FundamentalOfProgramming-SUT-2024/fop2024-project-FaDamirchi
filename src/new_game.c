@@ -16,7 +16,7 @@ void new_game()
     {
         clear();
         draw_map(rooms, rooms_number);
-        show_next(rooms, player, rooms_number);
+        show_next_step(rooms, player, rooms_number);
         player_update(rooms, rooms_number, player);
         refresh();
     }

@@ -1,7 +1,9 @@
 #ifndef MAP
 #define MAP
 
+// includes
 #include "global_defines.h"
+#include "player.h"
 
 // consts
 #define MAP_WIDTH 120
@@ -17,18 +19,19 @@ extern Position come_from[40][130];
 extern bool map[40][130][2];
 
 // objects
-typedef struct
+typedef struct Door
 {
     Position position;
     bool isConnected;
 } Door;
 
-typedef struct {
+typedef struct Window
+{
     Position position;
     int side;
 } Window;
 
-typedef struct
+typedef struct Room
 {
     Position start; // starting point - upper left
     int width;
@@ -61,5 +64,6 @@ void connect_rooms(Room **rooms, int rooms_number);
 void place_stairs(Room **room, int rooms_number);
 
 Room **map_setup(int *rooms_number);
+void show_next_step(Room **rooms, Player *player, int rooms_number);
 
 #endif

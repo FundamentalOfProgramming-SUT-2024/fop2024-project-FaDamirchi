@@ -510,3 +510,39 @@ Room **map_setup(int *rooms_number)
 
     return rooms;
 }
+
+void show_next_step(Room **rooms, Player *player, int rooms_number)
+{
+    int delta_y[4] = {-1, 0, 1, 0};
+    int delta_x[4] = {0, 1, 0, -1};
+
+    // show near hallways
+    attron(COLOR_PAIR(COLOR_UNSEEN));
+    for (int i = 0; i < 4; i++)
+    {
+        if (map[player->position.y + delta_y[i]][player->position.x + delta_x[i]][0] &&
+            !map[player->position.y + delta_y[i]][player->position.x + delta_x[i]][1])
+        {
+            mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[i], "#");
+        }
+    }
+    attroff(COLOR_PAIR(COLOR_UNSEEN));
+
+    // show near doors
+    attron(COLOR_PAIR(COLOR_DOORS));
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < rooms_number; j++)
+        {
+            for (int k = 0; k < rooms[j]->doors_number; k++)
+            {
+                if (player->position.y + delta_y[i] == rooms[j]->doors[k].position.y &&
+                    player->position.x + delta_x[i] == rooms[j]->doors[k].position.x)
+                {
+                    mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[i], "+");
+                }
+            }
+        }
+    }
+    attroff(COLOR_PAIR(COLOR_DOORS));
+}
