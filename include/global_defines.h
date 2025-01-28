@@ -17,7 +17,7 @@
 #include "ui_utils.h"
 
 // objects
-typedef struct
+typedef struct Position
 {
     int x;
     int y;
