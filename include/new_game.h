@@ -11,6 +11,6 @@ extern Player *player;
 extern int rooms_number;
 
 // functions
-void start_game();
+void new_game();
 
 #endif

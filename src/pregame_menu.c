@@ -2,7 +2,7 @@
 #include "ui_utils.h"
 #include "global_defines.h"
 #include "settings.h"
-#include "start_game.h"
+#include "new_game.h"
 #include <ncurses.h>
 #include <string.h>
 
@@ -63,7 +63,7 @@ void show_pregame_menu(char *username, int isNew)
             case ENTER:
                 if (choice == 0)
                 {
-                    start_game();
+                    new_game();
                 }
                 else if (choice == 1)
                 {
@@ -139,11 +139,11 @@ void show_pregame_menu(char *username, int isNew)
             case ENTER:
                 if (choice == 0)
                 {
-                    start_game();
+                    new_game();
                 }
                 else if (choice == 1)
                 {
-                    start_game();
+                    new_game();
                 }
                 else if (choice == 2)
                 {

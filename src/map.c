@@ -219,7 +219,7 @@ Room *generate_room(int grid)
     return newRoom;
 }
 
-void draw_room(Room **room, int rooms_number)
+void draw_map(Room **room, int rooms_number)
 {
     for (int idx = 0; idx < rooms_number; idx++)
     {
@@ -277,6 +277,21 @@ void draw_room(Room **room, int rooms_number)
         }
         attroff(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
     }
+
+    attron(COLOR_PAIR(COLOR_HALLS));
+    // draw hallways
+    for (int i = 0; i < MAP_HEIGHT; i++)
+    {
+        for (int j = 0; j < MAP_WIDTH; j++)
+        {
+            if (map[i][j][1])
+            {
+                mvprintw(i, j, "#");
+            }
+        }
+    }
+    attroff(COLOR_PAIR(COLOR_HALLS));
+    
 }
 
 void is_nextto_door(Room **rooms, int rooms_number, int y, int x)

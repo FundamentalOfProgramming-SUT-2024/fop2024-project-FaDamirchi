@@ -50,7 +50,7 @@ typedef struct
 
 // functions
 Room *generate_room(int grid);
-void draw_room(Room **room, int rooms_number);
+void draw_map(Room **room, int rooms_number);
 
 void is_nextto_door(Room **rooms, int rooms_number, int y, int x);
 void import_hallway(Room **rooms, int rooms_number, Position pos, Position start);
