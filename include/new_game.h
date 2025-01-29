@@ -4,11 +4,33 @@
 // includes
 #include "map.h"
 #include "player.h"
+#include "monsters.h"
 
-// variables
-extern Room **rooms;
-extern Player *player;
-extern int rooms_number;
+// objects
+typedef struct Floor
+{
+    int rooms_number;
+    Room **rooms;
+    
+    int mosters_number;
+    Monster **monsters;
+
+    bool map[40][130][2];
+
+    // other options...
+} Floor;
+
+typedef struct Game
+{
+    Player *player;
+
+    int floors_number;
+    Floor **floors;
+
+    // int level;
+
+    // other options...
+} Game;
 
 // functions
 void new_game();
