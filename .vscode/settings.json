@@ -57,6 +57,7 @@
     "string.h": "c",
     "ui_utils.h": "c",
     "global_defines.h": "c",
-    "manage_users.h": "c"
+    "manage_users.h": "c",
+    "map": "c"
   }
 }

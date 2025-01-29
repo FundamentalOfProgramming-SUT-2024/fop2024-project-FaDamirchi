@@ -3,15 +3,18 @@
 
 // includes
 #include "global_defines.h"
+#include "new_game.h"
 
 // forward declaration
 typedef struct Room Room;
+typedef struct Floor Floor;
 
 // objects
 typedef struct Player
 {
     Position position;
     Room *currunt_room;
+    Floor *currunt_floor;
 
     // other options...
 } Player;

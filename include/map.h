@@ -5,6 +5,9 @@
 #include "global_defines.h"
 #include "player.h"
 
+// forward declaration
+typedef struct Player Player;
+
 // consts
 #define MAP_WIDTH 120
 #define MAP_HEIGHT 30
@@ -16,7 +19,6 @@
 
 // variables
 extern Position come_from[40][130];
-extern bool map[40][130][2];
 
 // objects
 typedef struct Door
@@ -55,19 +57,19 @@ typedef struct Room
 
 // functions
 Room *generate_room(int grid);
-void draw_map(Room **rooms, int rooms_number);
+void draw_map(Room **rooms, int rooms_number, bool ***map);
 void draw_room(Room *room);
 void use_windows(Player *player, Room **rooms, int rooms_number);
 
 void is_nextto_door(Room **rooms, int rooms_number, int y, int x);
-void import_hallway(Room **rooms, int rooms_number, Position pos, Position start);
+void import_hallway(Room **rooms, int rooms_number, Position pos, Position start, bool ***map);
 bool is_room(Room **rooms, int rooms_number, int y, int x);
-void find_path(Room **rooms, int rooms_number, Position start, Position end);
-void connect_rooms(Room **rooms, int rooms_number);
+void find_path(Room **rooms, int rooms_number, Position start, Position end, bool ***map);
+void connect_rooms(Room **rooms, int rooms_number, bool ***map);
 
 void place_stairs(Room **rooms, int rooms_number);
 
-Room **map_setup(int *rooms_number);
-void show_next_step(Room **rooms, Player *player, int rooms_number);
+Room **map_setup(int rooms_number, bool ***map);
+void show_next_step(Room **rooms, Player *player, int rooms_number, bool ***map);
 
 #endif

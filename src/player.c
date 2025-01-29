@@ -44,9 +44,9 @@ bool can_move(Room **rooms, int rooms_number, Player *player, int next_y, int ne
         }
     }
 
-    if (map[next_y][next_x][0] == 1)
+    if (player->currunt_floor->map[next_y][next_x][0] == 1)
     {
-        map[next_y][next_x][1] = 1;
+        player->currunt_floor->map[next_y][next_x][1] = 1;
         return true;
     }
 

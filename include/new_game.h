@@ -6,6 +6,10 @@
 #include "player.h"
 #include "monsters.h"
 
+// forward declaration
+typedef struct Room Room;
+typedef struct Player Player;
+
 // objects
 typedef struct Floor
 {
@@ -15,7 +19,7 @@ typedef struct Floor
     int mosters_number;
     Monster **monsters;
 
-    bool map[40][130][2];
+    bool ***map;
 
     // other options...
 } Floor;

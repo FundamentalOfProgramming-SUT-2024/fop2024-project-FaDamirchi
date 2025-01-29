@@ -16,16 +16,27 @@ void new_game()
     {
         newGame->floors[i] = (Floor *)malloc(sizeof(Floor));
         newGame->floors[i]->rooms_number = 6 + rand() % 5;
+
+        newGame->floors[i]->map = (bool ***)malloc(40 * sizeof(bool **));
+        for (int j = 0; j < 40; j++)
+        {
+            newGame->floors[i]->map[j] = (bool **)malloc(130 * sizeof(bool *));
+            for (int k = 0; k < 130; k++)
+            {
+                newGame->floors[i]->map[j][k] = (bool *)malloc(2 * sizeof(bool));
+            }
+        }
+
         newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map);
     }
 
-    newGame->player = player_setup(newGame->floors[0]);
+    newGame->player = player_setup(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number);
 
     while (1)
     {
         clear();
-        draw_map(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number);
-        show_next_step(newGame->floors[0]->rooms, newGame->player, newGame->floors[0]->rooms_number);
+        draw_map(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number, newGame->floors[0]->map);
+        show_next_step(newGame->floors[0]->rooms, newGame->player, newGame->floors[0]->rooms_number, newGame->floors[0]->map);
         player_update(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number, newGame->player);
         refresh();
     }

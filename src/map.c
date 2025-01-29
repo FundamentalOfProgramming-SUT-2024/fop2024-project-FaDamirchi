@@ -7,7 +7,6 @@
 #include <math.h>
 
 Position come_from[40][130];
-bool map[40][130][2] = {0};
 
 int connected_doors = 0;
 
@@ -220,7 +219,7 @@ Room *generate_room(int grid)
     return newRoom;
 }
 
-void draw_map(Room **rooms, int rooms_number)
+void draw_map(Room **rooms, int rooms_number, bool ***map)
 {
     for (int idx = 0; idx < rooms_number; idx++)
     {
@@ -449,7 +448,7 @@ void is_nextto_door(Room **rooms, int rooms_number, int y, int x)
     }
 }
 
-void import_hallway(Room **rooms, int rooms_number, Position pos, Position start)
+void import_hallway(Room **rooms, int rooms_number, Position pos, Position start, bool ***map)
 {
     if (pos.y == start.y && pos.x == start.x)
     {
@@ -466,7 +465,7 @@ void import_hallway(Room **rooms, int rooms_number, Position pos, Position start
         is_nextto_door(rooms, rooms_number, pos.y + delta_y[i], pos.x + delta_x[i]);
     }
 
-    import_hallway(rooms, rooms_number, come_from[pos.y][pos.x], start);
+    import_hallway(rooms, rooms_number, come_from[pos.y][pos.x], start, map);
 }
 
 bool is_room(Room **rooms, int rooms_number, int y, int x)
@@ -490,7 +489,7 @@ bool is_room(Room **rooms, int rooms_number, int y, int x)
     return false;
 }
 
-void find_path(Room **rooms, int rooms_number, Position start, Position end)
+void find_path(Room **rooms, int rooms_number, Position start, Position end, bool ***map)
 {
     Position frontier[40 * 130];
     int frontier_count = 0;
@@ -560,10 +559,10 @@ void find_path(Room **rooms, int rooms_number, Position start, Position end)
         }
     }
 
-    import_hallway(rooms, rooms_number, come_from[end.y][end.x], start);
+    import_hallway(rooms, rooms_number, come_from[end.y][end.x], start, map);
 }
 
-void connect_rooms(Room **rooms, int rooms_number)
+void connect_rooms(Room **rooms, int rooms_number, bool ***map)
 {
     int total_doors_count = 0;
     for (int i = 0; i < rooms_number; i++)
@@ -602,7 +601,7 @@ void connect_rooms(Room **rooms, int rooms_number)
             }
         }
 
-        find_path(rooms, rooms_number, rooms[room_1]->doors[door_1].position, rooms[room_2]->doors[door_2].position);
+        find_path(rooms, rooms_number, rooms[room_1]->doors[door_1].position, rooms[room_2]->doors[door_2].position, map);
     }
 }
 
@@ -615,18 +614,16 @@ void place_stairs(Room **rooms, int rooms_number)
     rooms[chosen_room]->stair.x = rooms[chosen_room]->start.x + 1 + rand() % (rooms[chosen_room]->width - 2);
 }
 
-Room **map_setup(int *rooms_number)
+Room **map_setup(int rooms_number, bool ***map)
 {
     srand(time(NULL));
 
     // setting up rooms
-    *rooms_number = 6 + rand() % 5;
-
-    Room **rooms = (Room **)malloc(sizeof(Room *) * *rooms_number);
+    Room **rooms = (Room **)malloc(sizeof(Room *) * rooms_number);
 
     bool isFilled[10] = {0};
 
-    for (int i = 0; i < *rooms_number; i++)
+    for (int i = 0; i < rooms_number; i++)
     {
         int grid;
         while (1)
@@ -641,13 +638,13 @@ Room **map_setup(int *rooms_number)
         rooms[i] = generate_room(grid);
     }
 
-    connect_rooms(rooms, *rooms_number);
-    place_stairs(rooms, *rooms_number);
+    connect_rooms(rooms, rooms_number, map);
+    place_stairs(rooms, rooms_number);
 
     return rooms;
 }
 
-void show_next_step(Room **rooms, Player *player, int rooms_number)
+void show_next_step(Room **rooms, Player *player, int rooms_number, bool ***map)
 {
     int delta_y[4] = {-1, 0, 1, 0};
     int delta_x[4] = {0, 1, 0, -1};
