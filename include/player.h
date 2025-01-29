@@ -13,16 +13,15 @@ typedef struct Floor Floor;
 typedef struct Player
 {
     Position position;
-    Room *currunt_room;
     Floor *currunt_floor;
 
     // other options...
 } Player;
 
 // functions
-bool can_move(Room **rooms, int rooms_number, Player *player, int next_y, int next_x);
+bool can_move(Room **rooms, int rooms_number, bool ***map, int next_y, int next_x);
 void move_player(Room **rooms, int rooms_number, Player *player);
-Player *player_setup(Room **rooms, int rooms_number);
+Player *player_setup(Floor *floor, Room **rooms, int rooms_number);
 
 void player_update(Room **rooms, int rooms_number, Player *player);
 

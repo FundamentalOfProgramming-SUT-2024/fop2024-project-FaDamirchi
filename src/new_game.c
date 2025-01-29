@@ -30,7 +30,7 @@ void new_game()
         newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map);
     }
 
-    newGame->player = player_setup(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number);
+    newGame->player = player_setup(newGame->floors[0], newGame->floors[0]->rooms, newGame->floors[0]->rooms_number);
 
     while (1)
     {

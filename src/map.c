@@ -342,7 +342,19 @@ void draw_room(Room *room)
 
 void use_windows(Player *player, Room **rooms, int rooms_number)
 {
-    if (!player->currunt_room)
+    int currunt_room = -1;
+
+    for (int i = 0; i < rooms_number; i++)
+    {
+        if (player->position.y > rooms[i]->start.y && player->position.y < rooms[i]->start.y + rooms[i]->height - 1 &&
+            player->position.x > rooms[i]->start.x && player->position.x < rooms[i]->start.x + rooms[i]->width - 1)
+        {
+            currunt_room = i;
+            break;
+        }
+    }
+
+    if (currunt_room == -1)
     {
         return;
     }
@@ -351,20 +363,20 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
     int delta_x[4] = {0, 1, 0, -1};
 
     // check four directions for windows
-    for (int win = 0; win < player->currunt_room->windows_number; win++)
+    for (int win = 0; win < rooms[currunt_room]->windows_number; win++)
     {
         for (int idx = 0; idx < 4; idx++)
         {
             bool isDoor = false;
 
-            if (player->position.y + delta_y[idx] == player->currunt_room->windows[win].position.y &&
-                player->position.x + delta_x[idx] == player->currunt_room->windows[win].position.x)
+            if (player->position.y + delta_y[idx] == rooms[currunt_room]->windows[win].position.y &&
+                player->position.x + delta_x[idx] == rooms[currunt_room]->windows[win].position.x)
             {
                 // don't show the next room if player is on a door next to the window
-                for (int i = 0; i < player->currunt_room->doors_number; i++)
+                for (int i = 0; i < rooms[currunt_room]->doors_number; i++)
                 {
-                    if (player->position.y == player->currunt_room->doors[i].position.y &&
-                        player->position.x == player->currunt_room->doors[i].position.x)
+                    if (player->position.y == rooms[currunt_room]->doors[i].position.y &&
+                        player->position.x == rooms[currunt_room]->doors[i].position.x)
                     {
                         isDoor = true;
                         break;
@@ -377,11 +389,11 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
                 }
 
                 // start showing the next room in dark gray
-                if (player->currunt_room->windows[win].side == UP)
+                if (rooms[currunt_room]->windows[win].side == UP)
                 {
                     for (int i = 0; i < rooms_number; i++)
                     {
-                        if (rooms[i]->grid == player->currunt_room->grid - 5 && !rooms[i]->isSeen)
+                        if (rooms[i]->grid == rooms[currunt_room]->grid - 5 && !rooms[i]->isSeen)
                         {
                             draw_room(rooms[i]);
                             return;
@@ -389,11 +401,11 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
                     }
                 }
 
-                else if (player->currunt_room->windows[win].side == RIGHT)
+                else if (rooms[currunt_room]->windows[win].side == RIGHT)
                 {
                     for (int i = 0; i < rooms_number; i++)
                     {
-                        if (rooms[i]->grid == player->currunt_room->grid + 1 && !rooms[i]->isSeen)
+                        if (rooms[i]->grid == rooms[currunt_room]->grid + 1 && !rooms[i]->isSeen)
                         {
                             draw_room(rooms[i]);
                             return;
@@ -401,11 +413,11 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
                     }
                 }
 
-                else if (player->currunt_room->windows[win].side == DOWN)
+                else if (rooms[currunt_room]->windows[win].side == DOWN)
                 {
                     for (int i = 0; i < rooms_number; i++)
                     {
-                        if (rooms[i]->grid == player->currunt_room->grid + 5 && !rooms[i]->isSeen)
+                        if (rooms[i]->grid == rooms[currunt_room]->grid + 5 && !rooms[i]->isSeen)
                         {
                             draw_room(rooms[i]);
                             return;
@@ -413,11 +425,11 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
                     }
                 }
 
-                else if (player->currunt_room->windows[win].side == LEFT)
+                else if (rooms[currunt_room]->windows[win].side == LEFT)
                 {
                     for (int i = 0; i < rooms_number; i++)
                     {
-                        if (rooms[i]->grid == player->currunt_room->grid - 1 && !rooms[i]->isSeen)
+                        if (rooms[i]->grid == rooms[currunt_room]->grid - 1 && !rooms[i]->isSeen)
                         {
                             draw_room(rooms[i]);
                             return;
