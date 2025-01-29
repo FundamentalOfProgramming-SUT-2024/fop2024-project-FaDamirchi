@@ -9,7 +9,8 @@ typedef struct Monster
 {
     char symbol;
     Position position;
-    int lives;
+    
+    // other options...
 } Monster;
 
 
