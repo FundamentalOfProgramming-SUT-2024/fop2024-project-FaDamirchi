@@ -5,10 +5,11 @@
 #include "global_defines.h"
 
 // objects
-typedef struct
+typedef struct Monster
 {
     char symbol;
     Position position;
+    int lives;
 } Monster;
 
 
