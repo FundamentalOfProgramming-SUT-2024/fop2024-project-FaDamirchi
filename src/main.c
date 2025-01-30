@@ -9,6 +9,7 @@ int main()
     noecho();
     keypad(stdscr, TRUE);
 
+    reset_guest_settings();
     show_main_menu();
 
     endwin();

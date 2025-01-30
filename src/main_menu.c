@@ -3,6 +3,50 @@
 #include "signup.h"
 #include "login.h"
 #include "pregame_menu.h"
+#include "manage_users.h"
+
+void reset_guest_settings()
+{
+    FILE *file = fopen(SETTINGS_FILE, "r");
+    if (file == NULL)
+    {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    // read the first line
+    char first_line[256];
+    if (fgets(first_line, sizeof(first_line), file) == NULL)
+    {
+        perror("Error reading file");
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
+
+    // modify the first line
+    char *colon = strchr(first_line, ':');
+    if (colon != NULL)
+    {
+        sprintf(colon + 1, "1-1-1\n");
+    }
+
+    // read the rest of the file
+    char rest_of_file[4096];
+    size_t rest_size = fread(rest_of_file, 1, sizeof(rest_of_file), file);
+    fclose(file);
+
+    // write the modified first line and the rest of the file back
+    file = fopen(SETTINGS_FILE, "w");
+    if (file == NULL)
+    {
+        perror("Error opening file for writing");
+        exit(EXIT_FAILURE);
+    }
+
+    fputs(first_line, file);
+    fwrite(rest_of_file, 1, rest_size, file);
+    fclose(file);
+}
 
 void show_main_menu()
 {
@@ -71,7 +115,7 @@ void show_main_menu()
                 show_alert_message(start_y + NUM_CHOICES_MAINMENU + 2, start_x - 2, "Attention:", 1);
                 show_success_message(start_y + NUM_CHOICES_MAINMENU + 3, start_x - 2, "By playing as a guest,", 0);
                 show_success_message(start_y + NUM_CHOICES_MAINMENU + 4, start_x - 2, "your progress won\'t be saved!", 2.5);
-                
+
                 show_pregame_menu("53e00d37bf3fdef41c074b9d53b509b07c32b459", 1);
             }
 
