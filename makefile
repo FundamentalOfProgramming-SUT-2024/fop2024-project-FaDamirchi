@@ -1,6 +1,6 @@
 # Compiler
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude -no-pie
+CFLAGS = -Wall -Wextra -Iinclude -no-pie -g
 LDFLAGS = -lncurses -lm
 SRC_DIR = src
 BIN_DIR = bin
