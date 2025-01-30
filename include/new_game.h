@@ -31,10 +31,12 @@ typedef struct Game
     int floors_number;
     Floor **floors;
 
+    // int level;
+
     // other options...
 } Game;
 
 // functions
-void new_game(int level, int color);
+void new_game();
 
 #endif
