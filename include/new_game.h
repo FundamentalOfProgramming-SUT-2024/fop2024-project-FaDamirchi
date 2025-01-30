@@ -31,8 +31,6 @@ typedef struct Game
     int floors_number;
     Floor **floors;
 
-    // int level;
-
     // other options...
 } Game;
 
