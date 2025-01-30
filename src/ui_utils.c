@@ -21,6 +21,10 @@ void init_colors()
     init_pair(COLOR_UNSEEN, COLOR_DARK_GRAY, COLOR_BLACK);
     init_pair(COLOR_STAIRS, COLOR_RED, COLOR_BLACK);
     init_pair(COLOR_WINDOWS, COLOR_BLUE, COLOR_BLACK);
+
+    init_pair(COLOR_PLAYER_WHITE, COLOR_WHITE, COLOR_BLACK);
+    init_pair(COLOR_PLAYER_PURPULE, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(COLOR_PLAYER_BLUE, COLOR_CYAN, COLOR_BLACK);
 }
 
 void draw_border(int start_y, int start_x, int height, int width)
