@@ -5,8 +5,6 @@
 
 void new_game(int level, int color, int music)
 {
-    srand(time(NULL));
-
     Game *newGame = (Game *)malloc(sizeof(Game));
 
     // generating random number of floors based on the level

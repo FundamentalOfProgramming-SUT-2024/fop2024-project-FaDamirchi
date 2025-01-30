@@ -191,8 +191,6 @@ void generate_password(char *password)
     const char uppercase[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const char digit[] = "0123456789";
 
-    srand(time(NULL));
-
     int length = 7 + (rand() % 10);
 
     password[0] = lowercase[rand() % 26];
