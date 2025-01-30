@@ -66,15 +66,18 @@ void new_game(int level, int color)
                 newGame->floors[i]->map[j][k][0] = 0;
             }
         }
-        
+
         newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map);
     }
 
     newGame->player = player_setup(newGame->floors[0], newGame->floors[0]->rooms, newGame->floors[0]->rooms_number);
 
+    
     while (1)
     {
         clear();
+        mvprintw(0, 0, "SHOWING THE RELATED MESSAGE");
+        mvprintw(25, 0, "SHOWING THE GAME STATUS");
         draw_map(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number, newGame->floors[0]->map);
         show_next_step(newGame->floors[0]->rooms, newGame->player, newGame->floors[0]->rooms_number, newGame->floors[0]->map);
         player_update(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number, newGame->player, color);

@@ -523,7 +523,7 @@ void find_path(Room **rooms, int rooms_number, Position start, Position end, boo
         }
 
         // adding the upper neighbor
-        if (currunt_position.y > 0 &&
+        if (currunt_position.y > 1 &&
             come_from[currunt_position.y - 1][currunt_position.x].y == -1 &&
             !is_room(rooms, rooms_number, currunt_position.y - 1, currunt_position.x))
         {
@@ -547,7 +547,7 @@ void find_path(Room **rooms, int rooms_number, Position start, Position end, boo
         }
 
         // adding the lower neighbor
-        if (currunt_position.y < MAP_HEIGHT - 1 &&
+        if (currunt_position.y < MAP_HEIGHT - 2 &&
             come_from[currunt_position.y + 1][currunt_position.x].y == -1 &&
             !is_room(rooms, rooms_number, currunt_position.y + 1, currunt_position.x))
         {
@@ -559,7 +559,7 @@ void find_path(Room **rooms, int rooms_number, Position start, Position end, boo
         }
 
         // adding the left neighbor
-        if (currunt_position.x > 0 &&
+        if (currunt_position.x > 1 &&
             come_from[currunt_position.y][currunt_position.x - 1].y == -1 &&
             !is_room(rooms, rooms_number, currunt_position.y, currunt_position.x - 1))
         {
