@@ -68,7 +68,7 @@ void show_settings_menu(char *username)
     int choice = 0;
     int unsaved_changes = 0;
     const char *level_options[] = {" Easy ", "Medium", " Hard "};
-    const char *color_options[] = {" Red ", "Green", "Blue "};
+    const char *color_options[] = {" White ", "Purpule", " Blue  "};
     const char *music_options[] = {"OFF", "ON "};
 
     const char *options[NUM_FIELDS_SETTINGS + 1] = {

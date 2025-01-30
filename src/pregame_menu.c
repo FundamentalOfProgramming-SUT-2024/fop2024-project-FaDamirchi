@@ -2,10 +2,11 @@
 #include "global_defines.h"
 #include "settings.h"
 #include "new_game.h"
+#include "manage_users.h"
 
 void show_pregame_menu(char *username, int isNew)
 {
-    if (isNew == 1)
+    if (isNew)
     {
         const char *options[NUM_CHOICES_NEW_USER] = {
             "Start game",
@@ -60,7 +61,30 @@ void show_pregame_menu(char *username, int isNew)
             case ENTER:
                 if (choice == 0)
                 {
-                    new_game();
+                    // load user settings
+                    FILE *file = fopen(SETTINGS_FILE, "r");
+
+                    char line[1024];
+                    int level = 1;
+                    int color = 1;
+                    int music = 1;
+
+                    while (fgets(line, sizeof(line), file))
+                    {
+                        char stored_username[320];
+                        sscanf(line, "%[^:]:", stored_username);
+
+                        if (strcmp(stored_username, username) == 0)
+                        {
+                            sscanf(line, "%*[^:]:%d-%d-%d", &level, &color, &music);
+                            break;
+                        }
+                    }
+
+                    fclose(file);
+
+                    // start the game with saved settings
+                    new_game(level, color, music);
                 }
                 else if (choice == 1)
                 {
@@ -136,11 +160,57 @@ void show_pregame_menu(char *username, int isNew)
             case ENTER:
                 if (choice == 0)
                 {
-                    new_game();
+                    // load user settings
+                    FILE *file = fopen(SETTINGS_FILE, "r");
+
+                    char line[1024];
+                    int level; 
+                    int color; 
+                    int music;
+
+                    while (fgets(line, sizeof(line), file))
+                    {
+                        char stored_username[320];
+                        sscanf(line, "%[^:]:", stored_username);
+
+                        if (strcmp(stored_username, username) == 0)
+                        {
+                            sscanf(line, "%*[^:]:%d-%d-%d", &level, &color, &music);
+                            break;
+                        }
+                    }
+
+                    fclose(file);
+
+                    // start the game with saved settings
+                    new_game(level, color, music);
                 }
                 else if (choice == 1)
                 {
-                    new_game();
+                    // load user settings
+                    FILE *file = fopen(SETTINGS_FILE, "r");
+
+                    char line[1024];
+                    int level;
+                    int color;
+                    int music;
+
+                    while (fgets(line, sizeof(line), file))
+                    {
+                        char stored_username[320];
+                        sscanf(line, "%[^:]:", stored_username);
+
+                        if (strcmp(stored_username, username) == 0)
+                        {
+                            sscanf(line, "%*[^:]:%d-%d-%d", &level, &color, &music);
+                            break;
+                        }
+                    }
+
+                    fclose(file);
+
+                    // start the game with saved settings
+                    new_game(level, color, music);
                 }
                 else if (choice == 2)
                 {
