@@ -18,23 +18,23 @@ Room *generate_room(int grid)
     {
     case 0:
         newRoom->start.x = 3;
-        newRoom->start.y = 1;
+        newRoom->start.y = 2;
         break;
     case 1:
         newRoom->start.x = 24;
-        newRoom->start.y = 1;
+        newRoom->start.y = 2;
         break;
     case 2:
         newRoom->start.x = 48;
-        newRoom->start.y = 1;
+        newRoom->start.y = 2;
         break;
     case 3:
         newRoom->start.x = 72;
-        newRoom->start.y = 1;
+        newRoom->start.y = 2;
         break;
     case 4:
         newRoom->start.x = 96;
-        newRoom->start.y = 1;
+        newRoom->start.y = 2;
         break;
     case 5:
         newRoom->start.x = 3;
@@ -523,7 +523,7 @@ void find_path(Room **rooms, int rooms_number, Position start, Position end, boo
         }
 
         // adding the upper neighbor
-        if (currunt_position.y > 0 &&
+        if (currunt_position.y > 1 &&
             come_from[currunt_position.y - 1][currunt_position.x].y == -1 &&
             !is_room(rooms, rooms_number, currunt_position.y - 1, currunt_position.x))
         {

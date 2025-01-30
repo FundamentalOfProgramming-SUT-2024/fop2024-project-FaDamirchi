@@ -10,7 +10,7 @@ typedef struct Player Player;
 
 // consts
 #define MAP_WIDTH 120
-#define MAP_HEIGHT 30
+#define MAP_HEIGHT 35
 
 #define UP    0
 #define RIGHT 1

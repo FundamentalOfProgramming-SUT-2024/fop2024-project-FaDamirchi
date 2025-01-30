@@ -35,6 +35,8 @@ void new_game()
     while (1)
     {
         clear();
+        mvprintw(0, 0, "RELATED MESSAGE");
+        mvprintw(30, 0, "GAME STATUS");
         draw_map(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number, newGame->floors[0]->map);
         show_next_step(newGame->floors[0]->rooms, newGame->player, newGame->floors[0]->rooms_number, newGame->floors[0]->map);
         player_update(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number, newGame->player);
