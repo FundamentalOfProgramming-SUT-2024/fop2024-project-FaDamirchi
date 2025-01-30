@@ -3,7 +3,7 @@
 #include "player.h"
 #include "map.h"
 
-void new_game(int level, int color, int music)
+void new_game(int level, int color)
 {
     Game *newGame = (Game *)malloc(sizeof(Game));
 
@@ -59,6 +59,14 @@ void new_game(int level, int color, int music)
             }
         }
 
+        for (int j = 0; j < MAP_HEIGHT; j++)
+        {
+            for (int k = 0; k < MAP_HEIGHT; k++)
+            {
+                newGame->floors[i]->map[j][k][0] = 0;
+            }
+        }
+        
         newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map);
     }
 

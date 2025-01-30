@@ -4,12 +4,6 @@
 
 bool can_move(Room **rooms, int rooms_number, bool ***map, int next_y, int next_x)
 {
-    if (next_y < 0 || next_y > MAP_HEIGHT ||
-        next_x < 0 || next_x > MAP_WIDTH)
-    {
-        return false;
-    }
-
     for (int i = 0; i < rooms_number; i++)
     {
         if (next_y > rooms[i]->start.y && next_y < rooms[i]->start.y + rooms[i]->height - 1 &&

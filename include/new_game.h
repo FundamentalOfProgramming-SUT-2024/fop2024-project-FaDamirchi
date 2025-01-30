@@ -37,6 +37,6 @@ typedef struct Game
 } Game;
 
 // functions
-void new_game(int level, int color, int music);
+void new_game(int level, int color);
 
 #endif

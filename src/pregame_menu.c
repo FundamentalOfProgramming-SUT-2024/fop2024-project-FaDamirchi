@@ -84,7 +84,7 @@ void show_pregame_menu(char *username, int isNew)
                     fclose(file);
 
                     // start the game with saved settings
-                    new_game(level, color, music);
+                    new_game(level, color);
                 }
                 else if (choice == 1)
                 {
@@ -183,7 +183,7 @@ void show_pregame_menu(char *username, int isNew)
                     fclose(file);
 
                     // start the game with saved settings
-                    new_game(level, color, music);
+                    new_game(level, color);
                 }
                 else if (choice == 1)
                 {
@@ -210,7 +210,7 @@ void show_pregame_menu(char *username, int isNew)
                     fclose(file);
 
                     // start the game with saved settings
-                    new_game(level, color, music);
+                    new_game(level, color);
                 }
                 else if (choice == 2)
                 {
