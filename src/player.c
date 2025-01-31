@@ -370,6 +370,13 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
     }
 }
 
+void show_status(Player *player)
+{
+    mvprintw(30, 0, "Current floor: (%d / 4)", player->current_floor);
+    mvprintw(30, 30, "Health: %d\%", player->health);
+    mvprintw(30, 50, "Gold: %d", player->gold);
+}
+
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color)
 {
     move(0, 0);

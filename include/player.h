@@ -43,6 +43,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player);
 Player *player_setup(Room **rooms, int rooms_number);
 void handle_player_actions(Floor **floors, Room **rooms, Player *player);
 
+void show_status(Player *player);
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color);
 
 #endif

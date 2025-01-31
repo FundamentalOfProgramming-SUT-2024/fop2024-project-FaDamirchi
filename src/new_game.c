@@ -94,8 +94,7 @@ void new_game(int level, int color)
     while (1)
     {
         clear();
-        mvprintw(30, 0, "GAME STATUS");
-
+        show_status(newGame->player);
         draw_map(newGame->floors[newGame->player->current_floor]->rooms,
                  newGame->floors[newGame->player->current_floor]->rooms_number,
                  newGame->floors[newGame->player->current_floor]->map,
