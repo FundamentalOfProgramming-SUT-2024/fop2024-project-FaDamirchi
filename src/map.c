@@ -224,10 +224,10 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
 {
     for (int idx = 0; idx < rooms_number; idx++)
     {
-        // if (!rooms[idx]->isSeen)
-        // {
-        //     continue;
-        // }
+        if (!rooms[idx]->isSeen)
+        {
+            continue;
+        }
 
         if (rooms[idx]->type == TREASURE)
         {
@@ -345,6 +345,71 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
         }
     }
     attroff(COLOR_PAIR(COLOR_HALLS));
+}
+
+void draw_all_map(Room **rooms, int rooms_number, bool ***map)
+{
+    attron(COLOR_PAIR(COLOR_UNSEEN));
+    for (int idx = 0; idx < rooms_number; idx++)
+    {
+        // draw top and bottom
+        attron(A_BOLD);
+        for (int i = rooms[idx]->start.x; i < rooms[idx]->start.x + rooms[idx]->width; i++)
+        {
+            mvprintw(rooms[idx]->start.y, i, "-");                          // top border
+            mvprintw(rooms[idx]->start.y + rooms[idx]->height - 1, i, "-"); // bottom border
+        }
+        attroff(A_BOLD);
+
+        // draw floor and side walls
+        for (int i = rooms[idx]->start.y + 1; i < rooms[idx]->start.y + rooms[idx]->height - 1; i++)
+        {
+            attron(A_BOLD);
+            mvprintw(i, rooms[idx]->start.x, "|");                         // left border
+            mvprintw(i, rooms[idx]->start.x + rooms[idx]->width - 1, "|"); // right border
+            attroff(A_BOLD);
+
+            for (int j = rooms[idx]->start.x + 1; j < rooms[idx]->start.x + rooms[idx]->width - 1; j++)
+            {
+                mvprintw(i, j, ".");
+            }
+        }
+
+        // draw doors
+        for (int i = 0; i < rooms[idx]->doors_number; i++)
+        {
+            mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+        }
+
+        // draw windows
+        attron(A_BOLD);
+        for (int i = 0; i < rooms[idx]->windows_number; i++)
+        {
+            mvprintw(rooms[idx]->windows[i].position.y, rooms[idx]->windows[i].position.x, "=");
+        }
+        attroff(A_BOLD);
+
+        // draw stairs
+        if (rooms[idx]->stairs.has_stairs)
+        {
+            attron(A_BOLD | A_BLINK);
+            mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
+            attroff(A_BOLD | A_BLINK);
+        }
+    }
+
+    // draw hallways
+    for (int i = 0; i < MAP_HEIGHT; i++)
+    {
+        for (int j = 0; j < MAP_WIDTH; j++)
+        {
+            if (map[i][j][0])
+            {
+                mvprintw(i, j, "#");
+            }
+        }
+    }
+    attroff(COLOR_PAIR(COLOR_UNSEEN));
 }
 
 void draw_room(Room *room)

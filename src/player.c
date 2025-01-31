@@ -46,10 +46,8 @@ bool can_move(Room **rooms, int rooms_number, bool ***map, int next_y, int next_
     return false;
 }
 
-void move_player(Floor **floors, Room **rooms, int rooms_number, Player *player)
+void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player *player)
 {
-    int ch = getch();
-
     if (ch == KEY_UP || ch == 'w' || ch == 'W' || ch == '8')
     {
         if (can_move(rooms, rooms_number,
@@ -150,6 +148,139 @@ void move_player(Floor **floors, Room **rooms, int rooms_number, Player *player)
     }
 }
 
+void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
+{
+    int ch = getch();
+
+    if (ch == 'f' || ch == 'F')
+    {
+        return;
+    }
+
+    if (ch == KEY_UP || ch == 'w' || ch == 'W' || ch == '8')
+    {
+        int counter = 0;
+        while (can_move(rooms, rooms_number,
+                        floors[player->current_floor]->map,
+                        player->position.y - counter,
+                        player->position.x))
+        {
+            counter++;
+        }
+
+        player->position.y -= (counter - 1);
+        return;
+    }
+
+    if (ch == KEY_DOWN || ch == 'x' || ch == 'X' || ch == '2')
+    {
+        int counter = 0;
+        while (can_move(rooms, rooms_number,
+                        floors[player->current_floor]->map,
+                        player->position.y + counter,
+                        player->position.x))
+        {
+            counter++;
+        }
+
+        player->position.y += (counter - 1);
+        return;
+    }
+
+    if (ch == KEY_LEFT || ch == 'a' || ch == 'A' || ch == '4')
+    {
+        int counter = 0;
+        while (can_move(rooms, rooms_number,
+                        floors[player->current_floor]->map,
+                        player->position.y,
+                        player->position.x - counter))
+        {
+            counter++;
+        }
+
+        player->position.x -= (counter - 1);
+        return;
+    }
+
+    if (ch == KEY_RIGHT || ch == 'd' || ch == 'D' || ch == '6')
+    {
+        int counter = 0;
+        while (can_move(rooms, rooms_number,
+                        floors[player->current_floor]->map,
+                        player->position.y,
+                        player->position.x + counter))
+        {
+            counter++;
+        }
+
+        player->position.x += (counter - 1);
+        return;
+    }
+
+    if (ch == 'q' || ch == 'Q' || ch == '7')
+    {
+        int counter = 0;
+        while (can_move(rooms, rooms_number,
+                        floors[player->current_floor]->map,
+                        player->position.y - counter,
+                        player->position.x - counter))
+        {
+            counter++;
+        }
+
+        player->position.y -= (counter - 1);
+        player->position.x -= (counter - 1);
+        return;
+    }
+    if (ch == 'e' || ch == 'E' || ch == '9')
+    {
+        int counter = 0;
+        while (can_move(rooms, rooms_number,
+                        floors[player->current_floor]->map,
+                        player->position.y - counter,
+                        player->position.x + counter))
+        {
+            counter++;
+        }
+
+        player->position.y -= (counter - 1);
+        player->position.x += (counter - 1);
+        return;
+    }
+
+    if (ch == 'z' || ch == 'Z' || ch == '1')
+    {
+        int counter = 0;
+        while (can_move(rooms, rooms_number,
+                        floors[player->current_floor]->map,
+                        player->position.y + counter,
+                        player->position.x - counter))
+        {
+            counter++;
+        }
+
+        player->position.y += (counter - 1);
+        player->position.x -= (counter - 1);
+        return;
+    }
+
+    if (ch == 'c' || ch == 'C' || ch == '3')
+    {
+        int counter = 0;
+        while (can_move(rooms, rooms_number,
+                        floors[player->current_floor]->map,
+                        player->position.y + counter,
+                        player->position.x + counter))
+        {
+            counter++;
+        }
+
+        player->position.y += (counter - 1);
+        player->position.x += (counter - 1);
+        return;
+    }
+}
+
 Player *player_setup(Room **rooms, int rooms_number)
 {
     Player *newPlayer = (Player *)malloc(sizeof(Player));
@@ -181,7 +312,7 @@ bool handle_player_actions(Floor **floors, Room **rooms, Player *player)
 
     if (current_room == NULL)
     {
-        return;
+        return false;
     }
 
     // check for stairs
@@ -221,6 +352,9 @@ bool handle_player_actions(Floor **floors, Room **rooms, Player *player)
 
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color)
 {
+    move(0, 0);
+    clrtoeol();
+
     // displaying the player with the chosen color
     switch (color)
     {
@@ -246,6 +380,22 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
     if (!handle_player_actions(floors, rooms, player))
     {
         use_windows(player, rooms, rooms_number);
-        move_player(floors, rooms, rooms_number, player);
+        int ch = getch();
+
+        if (ch == 'm' || ch == 'M')
+        {
+            mvprintw(0, 0, "Showing whole map. Press any key to continue.");
+            draw_all_map(rooms, rooms_number, floors[player->current_floor]->map);
+            getch();
+        }
+        else if (ch == 'f' || ch == 'F')
+        {
+            mvprintw(0, 0, "Fast mode activated. Choose a direction. (press F key again to cancel)");
+            fast_move(floors, rooms, rooms_number, player);
+        }
+        else
+        {
+            move_player(ch, floors, rooms, rooms_number, player);
+        }
     }
 }

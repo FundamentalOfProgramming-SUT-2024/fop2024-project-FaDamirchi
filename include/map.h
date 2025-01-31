@@ -70,6 +70,7 @@ typedef struct Room
 // functions
 Room *generate_room(int grid);
 void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor);
+void draw_all_map(Room **rooms, int rooms_number, bool ***map);
 void draw_room(Room *room);
 void use_windows(Player *player, Room **rooms, int rooms_number);
 
