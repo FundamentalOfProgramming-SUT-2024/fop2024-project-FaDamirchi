@@ -23,6 +23,6 @@ bool can_move(Room **rooms, int rooms_number, bool ***map, int next_y, int next_
 void move_player(Room **rooms, int rooms_number, Player *player);
 Player *player_setup(Floor *floor, Room **rooms, int rooms_number);
 
-void player_update(Room **rooms, int rooms_number, Player *player);
+void player_update(Room **rooms, int rooms_number, Player *player, int color);
 
 #endif

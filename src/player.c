@@ -145,9 +145,30 @@ Player *player_setup(Floor *floor, Room **rooms, int rooms_number)
     return newPlayer;
 }
 
-void player_update(Room **rooms, int rooms_number, Player *player)
+void player_update(Room **rooms, int rooms_number, Player *player, int color)
 {
-    mvprintw(player->position.y, player->position.x, "@");
+    // displaying the player with the chosen color
+    switch (color)
+    {
+    case 1:
+        attron(COLOR_PAIR(COLOR_PLAYER_WHITE));
+        mvprintw(player->position.y, player->position.x, "@");
+        attroff(COLOR_PAIR(COLOR_PLAYER_WHITE));
+        break;
+    case 2:
+        attron(COLOR_PAIR(COLOR_PLAYER_PURPULE));
+        mvprintw(player->position.y, player->position.x, "@");
+        attroff(COLOR_PAIR(COLOR_PLAYER_PURPULE));
+        break;
+    case 3:
+        attron(COLOR_PAIR(COLOR_PLAYER_BLUE));
+        mvprintw(player->position.y, player->position.x, "@");
+        attroff(COLOR_PAIR(COLOR_PLAYER_BLUE));
+        break;
+    default:
+        break;
+    }
+
     use_windows(player, rooms, rooms_number);
     move_player(rooms, rooms_number, player);
 }
