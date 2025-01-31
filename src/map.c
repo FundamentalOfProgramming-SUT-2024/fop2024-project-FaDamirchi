@@ -214,12 +214,12 @@ Room *generate_room(int grid)
     // initializing other properties
     newRoom->grid = grid;
     newRoom->isSeen = false;
-    newRoom->stair_type = EMPTY;
+    newRoom->stairs.has_stairs = false;
 
     return newRoom;
 }
 
-void draw_map(Room **rooms, int rooms_number, bool ***map)
+void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
 {
     for (int idx = 0; idx < rooms_number; idx++)
     {
@@ -270,19 +270,21 @@ void draw_map(Room **rooms, int rooms_number, bool ***map)
         attroff(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
 
         // draw stairs
-        if (rooms[idx]->stair_type == GOING)
+        if (rooms[idx]->stairs.has_stairs)
         {
-            attron(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
-            mvprintw(rooms[idx]->stair.y, rooms[idx]->stair.x, "<");
-            attroff(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+            if (rooms[idx]->stairs.previous_floor == current_floor)
+            {
+                attron(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+                mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
+                attroff(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+            }
+            else
+            {
+                attron(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+                mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
+                attroff(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+            }
         }
-        else if (rooms[idx]->stair_type == COMING)
-        {
-            attron(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
-            mvprintw(rooms[idx]->stair.y, rooms[idx]->stair.x, "<");
-            attroff(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
-        }
-        
     }
 
     attron(COLOR_PAIR(COLOR_HALLS));
@@ -340,9 +342,9 @@ void draw_room(Room *room)
 
     // draw stairs
     attron(A_BOLD | A_BLINK);
-    if (!room->stair_type)
+    if (room->stairs.has_stairs)
     {
-        mvprintw(room->stair.y, room->stair.x, "<");
+        mvprintw(room->stairs.position.y, room->stairs.position.x, "<");
     }
     attroff(COLOR_PAIR(COLOR_UNSEEN) | A_BOLD | A_BLINK);
 }
@@ -624,16 +626,23 @@ void connect_rooms(Room **rooms, int rooms_number, bool ***map)
     }
 }
 
-void place_stairs(Room **rooms, int rooms_number)
+void place_stairs(Room **rooms, int rooms_number, int curruent_floor)
 {
     int chosen_room = rand() % rooms_number;
 
-    rooms[chosen_room]->stair_type = GOING;
-    rooms[chosen_room]->stair.y = rooms[chosen_room]->start.y + 1 + rand() % (rooms[chosen_room]->height - 2);
-    rooms[chosen_room]->stair.x = rooms[chosen_room]->start.x + 1 + rand() % (rooms[chosen_room]->width - 2);
+    while (rooms[chosen_room]->stairs.has_stairs)
+    {
+        chosen_room = rand() % rooms_number;
+    }
+
+    rooms[chosen_room]->stairs.has_stairs = true;
+    rooms[chosen_room]->stairs.position.y = rooms[chosen_room]->start.y + 1 + rand() % (rooms[chosen_room]->height - 2);
+    rooms[chosen_room]->stairs.position.x = rooms[chosen_room]->start.x + 1 + rand() % (rooms[chosen_room]->width - 2);
+    rooms[chosen_room]->stairs.previous_floor = curruent_floor;
+    rooms[chosen_room]->stairs.next_floor = curruent_floor + 1;
 }
 
-Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast)
+Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast, int current_floor)
 {
     Room **rooms = (Room **)malloc(sizeof(Room *) * rooms_number);
 
@@ -642,7 +651,6 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
         if (previous_room) // check if it's the first floor
         {
             rooms[0] = previous_room;
-            rooms[0]->stair_type = COMING;
 
             // setting up rooms
             bool isFilled[10] = {0};
@@ -664,7 +672,7 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
             }
 
             connect_rooms(rooms, rooms_number, map);
-            place_stairs(rooms, rooms_number);
+            place_stairs(rooms, rooms_number, current_floor);
         }
         else
         {
@@ -686,13 +694,12 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
             }
 
             connect_rooms(rooms, rooms_number, map);
-            place_stairs(rooms, rooms_number);
+            place_stairs(rooms, rooms_number, current_floor);
         }
     }
     else
     {
         rooms[0] = previous_room;
-        rooms[0]->stair_type = COMING;
 
         // setting up rooms
         bool isFilled[10] = {0};

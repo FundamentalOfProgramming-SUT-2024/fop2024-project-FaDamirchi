@@ -17,10 +17,6 @@ typedef struct Player Player;
 #define DOWN  2
 #define LEFT  3
 
-#define COMING 4
-#define GOING  5
-#define EMPTY  6
-
 // variables
 extern Position come_from[40][130];
 
@@ -36,6 +32,15 @@ typedef struct Window
     Position position;
     int side;
 } Window;
+
+typedef struct Stair
+{
+    bool has_stairs;
+    Position position;
+    int previous_floor;
+    int next_floor;
+} Stair;
+
 
 typedef struct Room
 {
@@ -53,15 +58,14 @@ typedef struct Room
 
     bool isSeen;
 
-    int stair_type;
-    Position stair;
+    Stair stairs;
 
     // other options...
 } Room;
 
 // functions
 Room *generate_room(int grid);
-void draw_map(Room **rooms, int rooms_number, bool ***map);
+void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor);
 void draw_room(Room *room);
 void use_windows(Player *player, Room **rooms, int rooms_number);
 
@@ -71,9 +75,9 @@ bool is_room(Room **rooms, int rooms_number, int y, int x);
 void find_path(Room **rooms, int rooms_number, Position start, Position end, bool ***map);
 void connect_rooms(Room **rooms, int rooms_number, bool ***map);
 
-void place_stairs(Room **rooms, int rooms_number);
+void place_stairs(Room **rooms, int rooms_number, int curruent_floor);
 
-Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast);
+Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast, int current_floor);
 void show_next_step(Room **rooms, Player *player, int rooms_number, bool ***map);
 
 #endif

@@ -64,15 +64,24 @@ void new_game(int level, int color)
         // initializing every floor according to its place
         if (i == 0) // first floor only has a GOING stairs
         {
-            newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map, NULL, false);
+            newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number,
+                                                  newGame->floors[i]->map,
+                                                  NULL,
+                                                  false,
+                                                  i);
         }
         else if (i == newGame->floors_number - 1) // last floor only a COMING stairs
         {
             for (int j = 0; j < newGame->floors[i - 1]->rooms_number; j++)
             {
-                if (newGame->floors[i - 1]->rooms[j]->stair_type == GOING)
+                if (newGame->floors[i - 1]->rooms[j]->stairs.has_stairs &&
+                    newGame->floors[i - 1]->rooms[j]->stairs.previous_floor == i - 1)
                 {
-                    newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map, newGame->floors[i - 1]->rooms[j], true);
+                    newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number,
+                                                          newGame->floors[i]->map,
+                                                          newGame->floors[i - 1]->rooms[j],
+                                                          true,
+                                                          i);
                 }
             }
         }
@@ -80,24 +89,40 @@ void new_game(int level, int color)
         {
             for (int j = 0; j < newGame->floors[i - 1]->rooms_number; j++)
             {
-                if (newGame->floors[i - 1]->rooms[j]->stair_type == GOING)
+                if (newGame->floors[i - 1]->rooms[j]->stairs.has_stairs &&
+                    newGame->floors[i - 1]->rooms[j]->stairs.previous_floor == i - 1)
                 {
-                    newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map, newGame->floors[i - 1]->rooms[j], false);
+                    newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number,
+                                                          newGame->floors[i]->map,
+                                                          newGame->floors[i - 1]->rooms[j],
+                                                          false,
+                                                          i);
                 }
             }
         }
     }
 
-    newGame->player = player_setup(newGame->floors[0], newGame->floors[0]->rooms, newGame->floors[0]->rooms_number);
+    newGame->player = player_setup(newGame->floors[0]->rooms,
+                                   newGame->floors[0]->rooms_number);
 
     while (1)
     {
         clear();
-        mvprintw(0, 0, "RELATED MESSAGE");
         mvprintw(30, 0, "GAME STATUS");
-        draw_map(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number, newGame->floors[0]->map);
-        show_next_step(newGame->floors[0]->rooms, newGame->player, newGame->floors[0]->rooms_number, newGame->floors[0]->map);
-        player_update(newGame->floors[0]->rooms, newGame->floors[0]->rooms_number, newGame->player, color);
+
+        draw_map(newGame->floors[newGame->player->current_floor]->rooms,
+                 newGame->floors[newGame->player->current_floor]->rooms_number,
+                 newGame->floors[newGame->player->current_floor]->map,
+                 newGame->player->current_floor);
+        show_next_step(newGame->floors[newGame->player->current_floor]->rooms,
+                       newGame->player,
+                       newGame->floors[newGame->player->current_floor]->rooms_number,
+                       newGame->floors[newGame->player->current_floor]->map);
+        player_update(newGame->floors,
+                      newGame->floors[newGame->player->current_floor]->rooms,
+                      newGame->floors[newGame->player->current_floor]->rooms_number,
+                      newGame->player,
+                      color);
         refresh();
     }
 }
