@@ -3,9 +3,42 @@
 #include "settings.h"
 #include "new_game.h"
 #include "manage_users.h"
+#include "music.h"
 
 void show_pregame_menu(char *username, int isNew)
 {
+    // settings properties
+    int level = 1;
+    int color = 1;
+    int music = 1;
+
+    FILE *file = fopen(SETTINGS_FILE, "r");
+
+    char line[1024];
+
+    while (fgets(line, sizeof(line), file))
+    {
+        char stored_username[320];
+        sscanf(line, "%[^:]:", stored_username);
+
+        if (strcmp(stored_username, username) == 0)
+        {
+            sscanf(line, "%*[^:]:%d-%d-%d", &level, &color, &music);
+            break;
+        }
+    }
+
+    if (music)
+    {
+        play_music(1);
+    }
+    else
+    {
+        stop_music();
+    }
+
+    fclose(file);
+
     if (isNew)
     {
         const char *options[NUM_CHOICES_NEW_USER] = {
@@ -65,9 +98,6 @@ void show_pregame_menu(char *username, int isNew)
                     FILE *file = fopen(SETTINGS_FILE, "r");
 
                     char line[1024];
-                    int level = 1;
-                    int color = 1;
-                    int music = 1;
 
                     while (fgets(line, sizeof(line), file))
                     {
@@ -93,6 +123,34 @@ void show_pregame_menu(char *username, int isNew)
                 else if (choice == 2)
                 {
                     show_settings_menu(username);
+
+                    // load user settings
+                    FILE *file = fopen(SETTINGS_FILE, "r");
+
+                    char line[1024];
+
+                    while (fgets(line, sizeof(line), file))
+                    {
+                        char stored_username[320];
+                        sscanf(line, "%[^:]:", stored_username);
+
+                        if (strcmp(stored_username, username) == 0)
+                        {
+                            sscanf(line, "%*[^:]:%d-%d-%d", &level, &color, &music);
+                            break;
+                        }
+                    }
+
+                    if (music)
+                    {
+                        play_music(1);
+                    }
+                    else
+                    {
+                        stop_music();
+                    }
+
+                    fclose(file);
                 }
 
                 break;
@@ -164,9 +222,6 @@ void show_pregame_menu(char *username, int isNew)
                     FILE *file = fopen(SETTINGS_FILE, "r");
 
                     char line[1024];
-                    int level; 
-                    int color; 
-                    int music;
 
                     while (fgets(line, sizeof(line), file))
                     {
@@ -191,9 +246,6 @@ void show_pregame_menu(char *username, int isNew)
                     FILE *file = fopen(SETTINGS_FILE, "r");
 
                     char line[1024];
-                    int level;
-                    int color;
-                    int music;
 
                     while (fgets(line, sizeof(line), file))
                     {
@@ -220,6 +272,34 @@ void show_pregame_menu(char *username, int isNew)
                 else if (choice == 3)
                 {
                     show_settings_menu(username);
+
+                    // load user settings
+                    FILE *file = fopen(SETTINGS_FILE, "r");
+
+                    char line[1024];
+
+                    while (fgets(line, sizeof(line), file))
+                    {
+                        char stored_username[320];
+                        sscanf(line, "%[^:]:", stored_username);
+
+                        if (strcmp(stored_username, username) == 0)
+                        {
+                            sscanf(line, "%*[^:]:%d-%d-%d", &level, &color, &music);
+                            break;
+                        }
+                    }
+
+                    if (music)
+                    {
+                        play_music(1);
+                    }
+                    else
+                    {
+                        stop_music();
+                    }
+
+                    fclose(file);
                 }
                 break;
 
