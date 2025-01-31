@@ -17,6 +17,9 @@ typedef struct Player Player;
 #define DOWN  2
 #define LEFT  3
 
+#define ORDINARY 4
+#define TREASURE 5
+
 // variables
 extern Position come_from[40][130];
 
@@ -60,6 +63,7 @@ typedef struct Room
 
     Stair stairs;
 
+    int type;
     // other options...
 } Room;
 

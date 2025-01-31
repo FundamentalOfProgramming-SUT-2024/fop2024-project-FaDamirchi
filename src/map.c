@@ -215,6 +215,7 @@ Room *generate_room(int grid)
     newRoom->grid = grid;
     newRoom->isSeen = false;
     newRoom->stairs.has_stairs = false;
+    newRoom->type = ORDINARY;
 
     return newRoom;
 }
@@ -223,66 +224,110 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
 {
     for (int idx = 0; idx < rooms_number; idx++)
     {
-        if (!rooms[idx]->isSeen)
-        {
-            continue;
-        }
+        // if (!rooms[idx]->isSeen)
+        // {
+        //     continue;
+        // }
 
-        // draw top and bottom
-        attron(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
-        for (int i = rooms[idx]->start.x; i < rooms[idx]->start.x + rooms[idx]->width; i++)
+        if (rooms[idx]->type == TREASURE)
         {
-            mvprintw(rooms[idx]->start.y, i, "-");                          // top border
-            mvprintw(rooms[idx]->start.y + rooms[idx]->height - 1, i, "-"); // bottom border
-        }
-        attroff(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
+            // draw top and bottom
+            attron(COLOR_PAIR(COLOR_WALLS_TREASURE) | A_BOLD);
+            for (int i = rooms[idx]->start.x; i < rooms[idx]->start.x + rooms[idx]->width; i++)
+            {
+                mvprintw(rooms[idx]->start.y, i, "-");                          // top border
+                mvprintw(rooms[idx]->start.y + rooms[idx]->height - 1, i, "-"); // bottom border
+            }
+            attroff(COLOR_PAIR(COLOR_WALLS_TREASURE) | A_BOLD);
 
-        // draw floor and side walls
-        for (int i = rooms[idx]->start.y + 1; i < rooms[idx]->start.y + rooms[idx]->height - 1; i++)
+            // draw floor and side walls
+            for (int i = rooms[idx]->start.y + 1; i < rooms[idx]->start.y + rooms[idx]->height - 1; i++)
+            {
+                attron(COLOR_PAIR(COLOR_WALLS_TREASURE) | A_BOLD);
+                mvprintw(i, rooms[idx]->start.x, "|");                         // left border
+                mvprintw(i, rooms[idx]->start.x + rooms[idx]->width - 1, "|"); // right border
+                attroff(COLOR_PAIR(COLOR_WALLS_TREASURE) | A_BOLD);
+
+                attron(COLOR_PAIR(COLOR_FLOOR_TREASURE) | A_BOLD);
+                for (int j = rooms[idx]->start.x + 1; j < rooms[idx]->start.x + rooms[idx]->width - 1; j++)
+                {
+                    mvprintw(i, j, ".");
+                }
+                attroff(COLOR_PAIR(COLOR_FLOOR_TREASURE) | A_BOLD);
+            }
+
+            // draw doors
+            attron(COLOR_PAIR(COLOR_STUFF_TREASURE));
+            for (int i = 0; i < rooms[idx]->doors_number; i++)
+            {
+                mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+            }
+
+            // draw windows
+            for (int i = 0; i < rooms[idx]->windows_number; i++)
+            {
+                mvprintw(rooms[idx]->windows[i].position.y, rooms[idx]->windows[i].position.x, "=");
+            }
+            attroff(COLOR_PAIR(COLOR_STUFF_TREASURE));
+        }
+        else
         {
+            // draw top and bottom
             attron(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
-            mvprintw(i, rooms[idx]->start.x, "|");                         // left border
-            mvprintw(i, rooms[idx]->start.x + rooms[idx]->width - 1, "|"); // right border
+            for (int i = rooms[idx]->start.x; i < rooms[idx]->start.x + rooms[idx]->width; i++)
+            {
+                mvprintw(rooms[idx]->start.y, i, "-");                          // top border
+                mvprintw(rooms[idx]->start.y + rooms[idx]->height - 1, i, "-"); // bottom border
+            }
             attroff(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
 
-            attron(COLOR_PAIR(COLOR_DEFAULT));
-            for (int j = rooms[idx]->start.x + 1; j < rooms[idx]->start.x + rooms[idx]->width - 1; j++)
+            // draw floor and side walls
+            for (int i = rooms[idx]->start.y + 1; i < rooms[idx]->start.y + rooms[idx]->height - 1; i++)
             {
-                mvprintw(i, j, ".");
+                attron(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
+                mvprintw(i, rooms[idx]->start.x, "|");                         // left border
+                mvprintw(i, rooms[idx]->start.x + rooms[idx]->width - 1, "|"); // right border
+                attroff(COLOR_PAIR(COLOR_WALLS) | A_BOLD);
+
+                attron(COLOR_PAIR(COLOR_DEFAULT));
+                for (int j = rooms[idx]->start.x + 1; j < rooms[idx]->start.x + rooms[idx]->width - 1; j++)
+                {
+                    mvprintw(i, j, ".");
+                }
+                attroff(COLOR_PAIR(COLOR_DEFAULT));
             }
-            attroff(COLOR_PAIR(COLOR_DEFAULT));
-        }
 
-        // draw doors
-        attron(COLOR_PAIR(COLOR_DOORS));
-        for (int i = 0; i < rooms[idx]->doors_number; i++)
-        {
-            mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
-        }
-        attroff(COLOR_PAIR(COLOR_DOORS));
-
-        // draw windows
-        attron(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
-        for (int i = 0; i < rooms[idx]->windows_number; i++)
-        {
-            mvprintw(rooms[idx]->windows[i].position.y, rooms[idx]->windows[i].position.x, "=");
-        }
-        attroff(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
-
-        // draw stairs
-        if (rooms[idx]->stairs.has_stairs)
-        {
-            if (rooms[idx]->stairs.previous_floor == current_floor)
+            // draw doors
+            attron(COLOR_PAIR(COLOR_DOORS));
+            for (int i = 0; i < rooms[idx]->doors_number; i++)
             {
-                attron(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
-                mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
-                attroff(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+                mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
             }
-            else
+            attroff(COLOR_PAIR(COLOR_DOORS));
+
+            // draw windows
+            attron(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
+            for (int i = 0; i < rooms[idx]->windows_number; i++)
             {
-                attron(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
-                mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
-                attroff(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+                mvprintw(rooms[idx]->windows[i].position.y, rooms[idx]->windows[i].position.x, "=");
+            }
+            attroff(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
+
+            // draw stairs
+            if (rooms[idx]->stairs.has_stairs)
+            {
+                if (rooms[idx]->stairs.previous_floor == current_floor)
+                {
+                    attron(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+                    mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
+                    attroff(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+                    mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
+                    attroff(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+                }
             }
         }
     }
@@ -721,6 +766,13 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
         }
 
         connect_rooms(rooms, rooms_number, map);
+
+        int treasure_room = rand() % rooms_number;
+        while (treasure_room == 0)
+        {
+            treasure_room = rand() % rooms_number;
+        }
+        rooms[treasure_room]->type = TREASURE;
     }
 
     return rooms;
