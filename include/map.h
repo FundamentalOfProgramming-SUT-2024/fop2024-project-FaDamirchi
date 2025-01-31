@@ -10,12 +10,16 @@ typedef struct Player Player;
 
 // consts
 #define MAP_WIDTH 120
-#define MAP_HEIGHT 35
+#define MAP_HEIGHT 30
 
 #define UP    0
 #define RIGHT 1
 #define DOWN  2
 #define LEFT  3
+
+#define COMING 4
+#define GOING  5
+#define EMPTY  6
 
 // variables
 extern Position come_from[40][130];
@@ -49,7 +53,7 @@ typedef struct Room
 
     bool isSeen;
 
-    bool has_stair;
+    int stair_type;
     Position stair;
 
     // other options...
@@ -69,7 +73,7 @@ void connect_rooms(Room **rooms, int rooms_number, bool ***map);
 
 void place_stairs(Room **rooms, int rooms_number);
 
-Room **map_setup(int rooms_number, bool ***map);
+Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast);
 void show_next_step(Room **rooms, Player *player, int rooms_number, bool ***map);
 
 #endif

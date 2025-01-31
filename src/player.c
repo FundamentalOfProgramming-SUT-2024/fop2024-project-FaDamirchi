@@ -131,11 +131,7 @@ Player *player_setup(Floor *floor, Room **rooms, int rooms_number)
     Player *newPlayer = (Player *)malloc(sizeof(Player));
 
     int initial_room = rand() % rooms_number;
-    while (rooms[initial_room]->has_stair) // the initial room shouldn't have stairs
-    {
-        initial_room = rand() % rooms_number;
-    }
-
+    
     newPlayer->position.y = rooms[initial_room]->start.y + 1 + rand() % (rooms[initial_room]->height - 2);
     newPlayer->position.x = rooms[initial_room]->start.x + 1 + rand() % (rooms[initial_room]->width - 2);
 

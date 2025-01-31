@@ -214,7 +214,7 @@ Room *generate_room(int grid)
     // initializing other properties
     newRoom->grid = grid;
     newRoom->isSeen = false;
-    newRoom->has_stair = false;
+    newRoom->stair_type = EMPTY;
 
     return newRoom;
 }
@@ -270,12 +270,19 @@ void draw_map(Room **rooms, int rooms_number, bool ***map)
         attroff(COLOR_PAIR(COLOR_WINDOWS) | A_BOLD);
 
         // draw stairs
-        attron(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
-        if (rooms[idx]->has_stair)
+        if (rooms[idx]->stair_type == GOING)
         {
+            attron(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
             mvprintw(rooms[idx]->stair.y, rooms[idx]->stair.x, "<");
+            attroff(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
         }
-        attroff(COLOR_PAIR(COLOR_STAIRS) | A_BOLD | A_BLINK);
+        else if (rooms[idx]->stair_type == COMING)
+        {
+            attron(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+            mvprintw(rooms[idx]->stair.y, rooms[idx]->stair.x, "<");
+            attroff(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+        }
+        
     }
 
     attron(COLOR_PAIR(COLOR_HALLS));
@@ -333,7 +340,7 @@ void draw_room(Room *room)
 
     // draw stairs
     attron(A_BOLD | A_BLINK);
-    if (room->has_stair)
+    if (!room->stair_type)
     {
         mvprintw(room->stair.y, room->stair.x, "<");
     }
@@ -621,37 +628,93 @@ void place_stairs(Room **rooms, int rooms_number)
 {
     int chosen_room = rand() % rooms_number;
 
-    rooms[chosen_room]->has_stair = true;
+    rooms[chosen_room]->stair_type = GOING;
     rooms[chosen_room]->stair.y = rooms[chosen_room]->start.y + 1 + rand() % (rooms[chosen_room]->height - 2);
     rooms[chosen_room]->stair.x = rooms[chosen_room]->start.x + 1 + rand() % (rooms[chosen_room]->width - 2);
 }
 
-Room **map_setup(int rooms_number, bool ***map)
+Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast)
 {
-    srand(time(NULL));
-
-    // setting up rooms
     Room **rooms = (Room **)malloc(sizeof(Room *) * rooms_number);
 
-    bool isFilled[10] = {0};
-
-    for (int i = 0; i < rooms_number; i++)
+    if (!isLast) // check if it's the last floor
     {
-        int grid;
-        while (1)
+        if (previous_room) // check if it's the first floor
         {
-            grid = rand() % 10;
-            if (!isFilled[grid])
-            {
-                isFilled[grid] = 1;
-                break;
-            }
-        }
-        rooms[i] = generate_room(grid);
-    }
+            rooms[0] = previous_room;
+            rooms[0]->stair_type = COMING;
 
-    connect_rooms(rooms, rooms_number, map);
-    place_stairs(rooms, rooms_number);
+            // setting up rooms
+            bool isFilled[10] = {0};
+            isFilled[previous_room->grid] = 1;
+
+            for (int i = 1; i < rooms_number; i++)
+            {
+                int grid;
+                while (1)
+                {
+                    grid = rand() % 10;
+                    if (!isFilled[grid])
+                    {
+                        isFilled[grid] = 1;
+                        break;
+                    }
+                }
+                rooms[i] = generate_room(grid);
+            }
+
+            connect_rooms(rooms, rooms_number, map);
+            place_stairs(rooms, rooms_number);
+        }
+        else
+        {
+            bool isFilled[10] = {0};
+
+            for (int i = 0; i < rooms_number; i++)
+            {
+                int grid;
+                while (1)
+                {
+                    grid = rand() % 10;
+                    if (!isFilled[grid])
+                    {
+                        isFilled[grid] = 1;
+                        break;
+                    }
+                }
+                rooms[i] = generate_room(grid);
+            }
+
+            connect_rooms(rooms, rooms_number, map);
+            place_stairs(rooms, rooms_number);
+        }
+    }
+    else
+    {
+        rooms[0] = previous_room;
+        rooms[0]->stair_type = COMING;
+
+        // setting up rooms
+        bool isFilled[10] = {0};
+        isFilled[previous_room->grid] = 1;
+
+        for (int i = 1; i < rooms_number; i++)
+        {
+            int grid;
+            while (1)
+            {
+                grid = rand() % 10;
+                if (!isFilled[grid])
+                {
+                    isFilled[grid] = 1;
+                    break;
+                }
+            }
+            rooms[i] = generate_room(grid);
+        }
+
+        connect_rooms(rooms, rooms_number, map);
+    }
 
     return rooms;
 }
@@ -666,11 +729,11 @@ void show_next_step(Room **rooms, Player *player, int rooms_number, bool ***map)
     for (int i = 0; i < 4; i++)
     {
         if (!(player->position.y + delta_y[i] >= 0 && player->position.y + delta_y[i] <= MAP_HEIGHT &&
-            player->position.x + delta_x[i] >= 0 && player->position.x + delta_x[i] <= MAP_WIDTH))
+              player->position.x + delta_x[i] >= 0 && player->position.x + delta_x[i] <= MAP_WIDTH))
         {
             continue;
         }
-        
+
         if (map[player->position.y + delta_y[i]][player->position.x + delta_x[i]][0] &&
             !map[player->position.y + delta_y[i]][player->position.x + delta_x[i]][1])
         {

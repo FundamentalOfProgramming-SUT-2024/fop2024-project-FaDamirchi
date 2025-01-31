@@ -12,16 +12,17 @@
 #define COLOR_BORDER          6
 #define COLOR_FIELD           7
 
-#define COLOR_WALLS   8
-#define COLOR_DOORS   9
-#define COLOR_HALLS   10
-#define COLOR_UNSEEN  11
-#define COLOR_STAIRS  12
-#define COLOR_WINDOWS 13
+#define COLOR_WALLS         8
+#define COLOR_DOORS         9
+#define COLOR_HALLS         10
+#define COLOR_UNSEEN        11
+#define COLOR_WINDOWS       12
+#define COLOR_STAIRS_GOING  13
+#define COLOR_STAIRS_COMING 14
 
-#define COLOR_PLAYER_WHITE   14
-#define COLOR_PLAYER_PURPULE 15
-#define COLOR_PLAYER_BLUE    16
+#define COLOR_PLAYER_WHITE   15
+#define COLOR_PLAYER_PURPULE 16
+#define COLOR_PLAYER_BLUE    17
 
 #define COLOR_DARK_GRAY  100
 #define COLOR_LIGHT_GRAY 101

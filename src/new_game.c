@@ -61,7 +61,31 @@ void new_game(int level, int color)
             }
         }
 
-        newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map);
+        // initializing every floor according to its place
+        if (i == 0) // first floor only has a GOING stairs
+        {
+            newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map, NULL, false);
+        }
+        else if (i == newGame->floors_number - 1) // last floor only a COMING stairs
+        {
+            for (int j = 0; j < newGame->floors[i - 1]->rooms_number; j++)
+            {
+                if (newGame->floors[i - 1]->rooms[j]->stair_type == GOING)
+                {
+                    newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map, newGame->floors[i - 1]->rooms[j], true);
+                }
+            }
+        }
+        else // other floors have both stairs
+        {
+            for (int j = 0; j < newGame->floors[i - 1]->rooms_number; j++)
+            {
+                if (newGame->floors[i - 1]->rooms[j]->stair_type == GOING)
+                {
+                    newGame->floors[i]->rooms = map_setup(newGame->floors[i]->rooms_number, newGame->floors[i]->map, newGame->floors[i - 1]->rooms[j], false);
+                }
+            }
+        }
     }
 
     newGame->player = player_setup(newGame->floors[0], newGame->floors[0]->rooms, newGame->floors[0]->rooms_number);
