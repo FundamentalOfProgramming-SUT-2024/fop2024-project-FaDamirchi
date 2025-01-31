@@ -10,7 +10,7 @@ int main()
     noecho();
     keypad(stdscr, TRUE);
 
-    play_music(1);
+    //play_music(1);
 
     reset_guest_settings();
     show_main_menu();
