@@ -10,6 +10,21 @@ typedef struct Room Room;
 typedef struct Floor Floor;
 
 // objects
+typedef struct Weapon
+{
+    int type;
+    int damage;
+
+    // other options...
+} Weapon;
+
+typedef struct Spell
+{
+    int type;
+
+    // other options...
+} Spell;
+
 typedef struct Player
 {
     Position position;
@@ -26,7 +41,7 @@ bool can_move(Room **rooms, int rooms_number, bool ***map, int next_y, int next_
 void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player *player);
 void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player);
 Player *player_setup(Room **rooms, int rooms_number);
-bool handle_player_actions(Floor **floors, Room **rooms, Player *player);
+void handle_player_actions(Floor **floors, Room **rooms, Player *player);
 
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color);
 

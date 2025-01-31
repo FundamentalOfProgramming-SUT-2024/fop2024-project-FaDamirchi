@@ -329,6 +329,17 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                     attroff(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
                 }
             }
+
+            // draw golds
+            attron(COLOR_PAIR(COLOR_GOLD) | A_BOLD);
+            for (int i = 0; i < rooms[idx]->gold_number; i++)
+            {
+                if (rooms[idx]->gold_position[i].y != -1 && rooms[idx]->gold_position[i].x != -1)
+                {
+                    mvprintw(rooms[idx]->gold_position[i].y, rooms[idx]->gold_position[i].x, "$");
+                }
+            }
+            attroff(COLOR_PAIR(COLOR_GOLD) | A_BOLD);
         }
     }
 
@@ -752,6 +763,25 @@ void place_stairs(Room **rooms, int rooms_number, int curruent_floor)
     rooms[chosen_room]->stairs.next_floor = curruent_floor + 1;
 }
 
+void place_gold(Room **rooms, int rooms_number)
+{
+    for (int i = 0; i < rooms_number; i++)
+    {
+        if (rand() % 2 && rooms[i]->type != TREASURE) // the room has gold with the chance of 50%
+        {
+            rooms[i]->gold_number = 1 + rand() % 3;
+            rooms[i]->gold_position = (Position *)malloc(sizeof(Position) * rooms[i]->gold_number);
+
+            for (int j = 0; j < rooms[i]->gold_number; j++)
+            {
+                rooms[i]->gold_position[j].y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                rooms[i]->gold_position[j].x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+            }
+        }
+    }
+    
+}
+
 Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast, int current_floor)
 {
     Room **rooms = (Room **)malloc(sizeof(Room *) * rooms_number);
@@ -783,6 +813,7 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
 
             connect_rooms(rooms, rooms_number, map);
             place_stairs(rooms, rooms_number, current_floor);
+            place_gold(rooms, rooms_number);
         }
         else
         {
@@ -805,6 +836,7 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
 
             connect_rooms(rooms, rooms_number, map);
             place_stairs(rooms, rooms_number, current_floor);
+            place_gold(rooms, rooms_number);
         }
     }
     else
@@ -830,14 +862,15 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
             rooms[i] = generate_room(grid);
         }
 
-        connect_rooms(rooms, rooms_number, map);
-
         int treasure_room = rand() % rooms_number;
         while (treasure_room == 0)
         {
             treasure_room = rand() % rooms_number;
         }
         rooms[treasure_room]->type = TREASURE;
+
+        connect_rooms(rooms, rooms_number, map);
+        place_gold(rooms, rooms_number);
     }
 
     return rooms;

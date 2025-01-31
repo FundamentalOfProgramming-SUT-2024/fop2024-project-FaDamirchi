@@ -293,11 +293,13 @@ Player *player_setup(Room **rooms, int rooms_number)
     // other properties
     rooms[initial_room]->isSeen = true;
     newPlayer->current_floor = 0;
+    newPlayer->gold = 0;
+    newPlayer->health = 100;
 
     return newPlayer;
 }
 
-bool handle_player_actions(Floor **floors, Room **rooms, Player *player)
+void handle_player_actions(Floor **floors, Room **rooms, Player *player)
 {
     Room *current_room = NULL;
 
@@ -312,7 +314,27 @@ bool handle_player_actions(Floor **floors, Room **rooms, Player *player)
 
     if (current_room == NULL)
     {
-        return false;
+        return;
+    }
+
+    // check for gold
+    if (current_room->gold_number != 0)
+    {
+        for (int i = 0; i < current_room->gold_number; i++)
+        {
+            if (current_room->gold_position[i].y == player->position.y && current_room->gold_position[i].x == player->position.x)
+            {
+                move(0, 0);
+                clrtoeol();
+                mvprintw(0, 0, "You collected a gold!");
+
+                player->gold++;
+                current_room->gold_number--;
+                current_room->gold_position[i].y = -1;
+                current_room->gold_position[i].x = -1;
+                return;
+            }
+        }
     }
 
     // check for stairs
@@ -328,7 +350,7 @@ bool handle_player_actions(Floor **floors, Room **rooms, Player *player)
         if (ch == ENTER)
         {
             player->current_floor++;
-            return true;
+            return;
         }
     }
     else if (current_room->stairs.has_stairs &&
@@ -343,11 +365,9 @@ bool handle_player_actions(Floor **floors, Room **rooms, Player *player)
         if (ch == ENTER)
         {
             player->current_floor--;
-            return true;
+            return;
         }
     }
-
-    return false;
 }
 
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color)
@@ -377,25 +397,23 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         break;
     }
 
-    if (!handle_player_actions(floors, rooms, player))
-    {
-        use_windows(player, rooms, rooms_number);
-        int ch = getch();
+    handle_player_actions(floors, rooms, player);
+    use_windows(player, rooms, rooms_number);
+    int ch = getch();
 
-        if (ch == 'm' || ch == 'M')
-        {
-            mvprintw(0, 0, "Showing whole map. Press any key to continue.");
-            draw_all_map(rooms, rooms_number, floors[player->current_floor]->map);
-            getch();
-        }
-        else if (ch == 'f' || ch == 'F')
-        {
-            mvprintw(0, 0, "Fast mode activated. Choose a direction. (press F key again to cancel)");
-            fast_move(floors, rooms, rooms_number, player);
-        }
-        else
-        {
-            move_player(ch, floors, rooms, rooms_number, player);
-        }
+    if (ch == 'm' || ch == 'M')
+    {
+        mvprintw(0, 0, "Showing the whole map. Press any key to continue.");
+        draw_all_map(rooms, rooms_number, floors[player->current_floor]->map);
+        getch();
+    }
+    else if (ch == 'f' || ch == 'F')
+    {
+        mvprintw(0, 0, "Fast mode activated. Choose a direction. (press F key again to cancel)");
+        fast_move(floors, rooms, rooms_number, player);
+    }
+    else
+    {
+        move_player(ch, floors, rooms, rooms_number, player);
     }
 }
