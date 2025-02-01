@@ -390,8 +390,8 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
 
 void show_status(Player *player)
 {
-    mvprintw(30, 0, "Current floor: %d", player->current_floor);
-    mvprintw(30, 30, "Health: %d", player->health);
+    mvprintw(30, 0, "Current floor: %d", player->current_floor + 1);
+    mvprintw(30, 25, "Health: %d", player->health);
     mvprintw(30, 50, "Gold: %d", player->gold);
 }
 
@@ -426,11 +426,17 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
 
     if (ch == 'm' || ch == 'M')
     {
-        strcpy(player->message, "Showing the whole map. Press any key to continue.");
+        strcpy(player->message, "Showing the whole map. (press M key again to cancel)");
         show_message(player->message);
 
         draw_all_map(rooms, rooms_number, floors[player->current_floor]->map);
-        getch();
+
+        int ans = getch();
+        while (!(ans == 'm' || ans == "M"))
+        {
+            ans = getch();
+        }
+        player->message[0] = '\0';
     }
     else if (ch == 'f' || ch == 'F')
     {
@@ -438,6 +444,7 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         show_message(player->message);
 
         fast_move(floors, rooms, rooms_number, player);
+        player->message[0] = '\0';
     }
     else
     {
