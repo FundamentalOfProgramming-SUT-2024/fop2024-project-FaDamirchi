@@ -231,7 +231,12 @@ Room *generate_room(int grid)
     newRoom->type = ROOM_ORDINARY;
     newRoom->reserved_number = 0;
     newRoom->reserved_poitions = (Position *)malloc(sizeof(Position) * 170);
+
+    newRoom->gold_number = 0;
+    newRoom->foods_number = 0;
+    newRoom->spells_number = 0;
     newRoom->traps_number = 0;
+    newRoom->weapons_number = 0;
 
     return newRoom;
 }
@@ -542,7 +547,7 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                 }
             }
         }
-
+        
         // draw ordinary rooms
         else
         {
@@ -1257,7 +1262,7 @@ void place_weapon(Room **rooms, int rooms_number)
         if (rand() % 2 && rooms[i]->type != ROOM_TREASURE && rooms[i]->type != ROOM_ENCHANT) // the room has weapon with the chance of 50%
         {
             rooms[i]->weapons_number = rand() % 2;
-            rooms[i]->weapons = (Weapon *)malloc(sizeof(Weapon) * rooms[i]->spells_number);
+            rooms[i]->weapons = (Weapon *)malloc(sizeof(Weapon) * rooms[i]->weapons_number);
 
             for (int j = 0; j < rooms[i]->weapons_number; j++)
             {
@@ -1396,11 +1401,11 @@ void complete_map(Floor **floors, int floors_number, int level)
 
     for (int i = 0; i < floors_number; i++)
     {
+        place_trap(floors[i]->rooms, floors[i]->rooms_number, level);
         place_gold(floors[i]->rooms, floors[i]->rooms_number);
         place_food(floors[i]->rooms, floors[i]->rooms_number, level);
         place_spell(floors[i]->rooms, floors[i]->rooms_number);
         place_weapon(floors[i]->rooms, floors[i]->rooms_number);
-        place_trap(floors[i]->rooms, floors[i]->rooms_number, level);
     }
 }
 
