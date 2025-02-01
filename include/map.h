@@ -17,8 +17,14 @@ typedef struct Player Player;
 #define DOWN  2
 #define LEFT  3
 
-#define ORDINARY 4
-#define TREASURE 5
+#define ROOM_ORDINARY  4
+#define ROOM_TREASURE  5
+#define ROOM_ENCHANT   6
+#define ROOM_NIGHTMARE 7
+
+#define DOOR_ORDINARY 8
+#define DOOR_HIDDEN   9
+#define DOOR_LOCKED   10
 
 // variables
 extern Position come_from[40][130];
@@ -28,6 +34,8 @@ typedef struct Door
 {
     Position position;
     bool isConnected;
+
+    int type;
 } Door;
 
 typedef struct Window

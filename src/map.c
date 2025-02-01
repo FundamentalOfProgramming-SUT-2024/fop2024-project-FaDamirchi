@@ -108,6 +108,19 @@ Room *generate_room(int grid)
         }
 
         newRoom->doors[i].isConnected = false;
+
+        if (rand() % 3 == 0)
+        {
+            newRoom->doors[i].type = DOOR_HIDDEN;
+        }
+        else if (rand() % 10 == 0)
+        {
+            newRoom->doors[i].type = DOOR_LOCKED;
+        }
+        else
+        {
+            newRoom->doors[i].type = DOOR_ORDINARY;
+        }
     }
 
     // generating windows
@@ -215,7 +228,7 @@ Room *generate_room(int grid)
     newRoom->grid = grid;
     newRoom->isSeen = false;
     newRoom->stairs.has_stairs = false;
-    newRoom->type = ORDINARY;
+    newRoom->type = ROOM_ORDINARY;
 
     return newRoom;
 }
@@ -229,7 +242,7 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
             continue;
         }
 
-        if (rooms[idx]->type == TREASURE)
+        if (rooms[idx]->type == ROOM_TREASURE)
         {
             // draw top and bottom
             attron(COLOR_PAIR(COLOR_WALLS_TREASURE) | A_BOLD);
@@ -260,7 +273,14 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
             attron(COLOR_PAIR(COLOR_STUFF_TREASURE));
             for (int i = 0; i < rooms[idx]->doors_number; i++)
             {
-                mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+                if (rooms[idx]->doors[i].type == DOOR_ORDINARY)
+                {
+                    mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+                }
+                else if (rooms[idx]->doors[i].type == DOOR_LOCKED)
+                {
+                    mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "?");
+                }
             }
 
             // draw windows
@@ -301,7 +321,14 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
             attron(COLOR_PAIR(COLOR_DOORS));
             for (int i = 0; i < rooms[idx]->doors_number; i++)
             {
-                mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+                if (rooms[idx]->doors[i].type == DOOR_ORDINARY)
+                {
+                    mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+                }
+                else if (rooms[idx]->doors[i].type == DOOR_LOCKED)
+                {
+                    mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "?");
+                }
             }
             attroff(COLOR_PAIR(COLOR_DOORS));
 
@@ -389,7 +416,14 @@ void draw_all_map(Room **rooms, int rooms_number, bool ***map)
         // draw doors
         for (int i = 0; i < rooms[idx]->doors_number; i++)
         {
-            mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+            if (rooms[idx]->doors[i].type == DOOR_ORDINARY)
+            {
+                mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+            }
+            else if (rooms[idx]->doors[i].type == DOOR_LOCKED)
+            {
+                mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "?");
+            }
         }
 
         // draw windows
@@ -450,7 +484,14 @@ void draw_room(Room *room)
     // draw doors
     for (int i = 0; i < room->doors_number; i++)
     {
-        mvprintw(room->doors[i].position.y, room->doors[i].position.x, "+");
+        if (room->doors[i].type == DOOR_ORDINARY)
+        {
+            mvprintw(room->doors[i].position.y, room->doors[i].position.x, "+");
+        }
+        else if (room->doors[i].type == DOOR_LOCKED)
+        {
+            mvprintw(room->doors[i].position.y, room->doors[i].position.x, "?");
+        }
     }
 
     // draw windows
@@ -767,7 +808,7 @@ void place_gold(Room **rooms, int rooms_number)
 {
     for (int i = 0; i < rooms_number; i++)
     {
-        if (rand() % 2 && rooms[i]->type != TREASURE) // the room has gold with the chance of 50%
+        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE) // the room has gold with the chance of 50%
         {
             rooms[i]->gold_number = 1 + rand() % 3;
             rooms[i]->gold_position = (Position *)malloc(sizeof(Position) * rooms[i]->gold_number);
@@ -779,7 +820,6 @@ void place_gold(Room **rooms, int rooms_number)
             }
         }
     }
-    
 }
 
 Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast, int current_floor)
@@ -867,7 +907,7 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
         {
             treasure_room = rand() % rooms_number;
         }
-        rooms[treasure_room]->type = TREASURE;
+        rooms[treasure_room]->type = ROOM_TREASURE;
 
         connect_rooms(rooms, rooms_number, map);
         place_gold(rooms, rooms_number);
@@ -880,6 +920,33 @@ void show_next_step(Room **rooms, Player *player, int rooms_number, bool ***map)
 {
     int delta_y[4] = {-1, 0, 1, 0};
     int delta_x[4] = {0, 1, 0, -1};
+
+    // check if player is in a room
+    Room *current_room = NULL;
+
+    for (int i = 0; i < rooms_number; i++)
+    {
+        if (player->position.y > rooms[i]->start.y && player->position.y < rooms[i]->start.y + rooms[i]->height - 1 &&
+            player->position.x > rooms[i]->start.x && player->position.x < rooms[i]->start.x + rooms[i]->width - 1)
+        {
+            current_room = rooms[i];
+            break;
+        }
+    }
+
+    if (current_room)
+    {
+        // showing hidden doors
+        for (int i = 0; i < current_room->doors_number; i++)
+        {
+            if (player->position.y + delta_y[i] == current_room->doors[i].position.y &&
+                player->position.x + delta_x[i] == current_room->doors[i].position.x &&
+                current_room->doors[i].type == DOOR_HIDDEN)
+            {
+                mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[i], "+");
+            }
+        }
+    }
 
     // show near hallways
     attron(COLOR_PAIR(COLOR_UNSEEN));
@@ -910,7 +977,14 @@ void show_next_step(Room **rooms, Player *player, int rooms_number, bool ***map)
                 if (player->position.y + delta_y[i] == rooms[j]->doors[k].position.y &&
                     player->position.x + delta_x[i] == rooms[j]->doors[k].position.x)
                 {
-                    mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[i], "+");
+                    if (rooms[j]->doors[k].type == DOOR_ORDINARY || rooms[j]->doors[k].type == DOOR_HIDDEN)
+                    {
+                        mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[i], "+");
+                    }
+                    else if (rooms[j]->doors[k].type == DOOR_LOCKED)
+                    {
+                        mvprintw(player->position.y + delta_y[i], player->position.x + delta_x[i], "?");
+                    }
                 }
             }
         }

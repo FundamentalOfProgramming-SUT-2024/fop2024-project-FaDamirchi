@@ -2,7 +2,14 @@
 #include "map.h"
 #include "global_defines.h"
 
-bool can_move(Room **rooms, int rooms_number, bool ***map, int next_y, int next_x)
+void show_message(char *message)
+{
+    move(0, 0);
+    clrtoeol();
+    mvprintw(0, 0, "%s", message);
+}
+
+bool can_move(Player *player, Room **rooms, int rooms_number, bool ***map, int next_y, int next_x)
 {
     if (next_y < 0 || next_y > MAP_HEIGHT ||
         next_x < 0 || next_x > MAP_WIDTH)
@@ -23,7 +30,12 @@ bool can_move(Room **rooms, int rooms_number, bool ***map, int next_y, int next_
             if (next_y == rooms[i]->doors[j].position.y &&
                 next_x == rooms[i]->doors[j].position.x)
             {
-                rooms[i]->isSeen = true;
+                if (!rooms[i]->isSeen)
+                {
+                    strcpy(player->message, "You discovered a new room!");
+                    rooms[i]->isSeen = true;
+                }
+
                 return true;
             }
         }
@@ -50,7 +62,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
 {
     if (ch == KEY_UP || ch == 'w' || ch == 'W' || ch == '8')
     {
-        if (can_move(rooms, rooms_number,
+        if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
                      player->position.y - 1,
                      player->position.x))
@@ -62,7 +74,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
 
     if (ch == KEY_DOWN || ch == 'x' || ch == 'X' || ch == '2')
     {
-        if (can_move(rooms, rooms_number,
+        if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
                      player->position.y + 1,
                      player->position.x))
@@ -74,7 +86,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
 
     if (ch == KEY_LEFT || ch == 'a' || ch == 'A' || ch == '4')
     {
-        if (can_move(rooms, rooms_number,
+        if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
                      player->position.y,
                      player->position.x - 1))
@@ -86,7 +98,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
 
     if (ch == KEY_RIGHT || ch == 'd' || ch == 'D' || ch == '6')
     {
-        if (can_move(rooms, rooms_number,
+        if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
                      player->position.y,
                      player->position.x + 1))
@@ -98,7 +110,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
 
     if (ch == 'q' || ch == 'Q' || ch == '7')
     {
-        if (can_move(rooms, rooms_number,
+        if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
                      player->position.y - 1,
                      player->position.x - 1))
@@ -110,7 +122,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
     }
     if (ch == 'e' || ch == 'E' || ch == '9')
     {
-        if (can_move(rooms, rooms_number,
+        if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
                      player->position.y - 1,
                      player->position.x + 1))
@@ -123,7 +135,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
 
     if (ch == 'z' || ch == 'Z' || ch == '1')
     {
-        if (can_move(rooms, rooms_number,
+        if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
                      player->position.y + 1,
                      player->position.x - 1))
@@ -136,7 +148,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
 
     if (ch == 'c' || ch == 'C' || ch == '3')
     {
-        if (can_move(rooms, rooms_number,
+        if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
                      player->position.y + 1,
                      player->position.x + 1))
@@ -160,7 +172,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
     if (ch == KEY_UP || ch == 'w' || ch == 'W' || ch == '8')
     {
         int counter = 0;
-        while (can_move(rooms, rooms_number,
+        while (can_move(player, rooms, rooms_number,
                         floors[player->current_floor]->map,
                         player->position.y - counter,
                         player->position.x))
@@ -175,7 +187,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
     if (ch == KEY_DOWN || ch == 'x' || ch == 'X' || ch == '2')
     {
         int counter = 0;
-        while (can_move(rooms, rooms_number,
+        while (can_move(player, rooms, rooms_number,
                         floors[player->current_floor]->map,
                         player->position.y + counter,
                         player->position.x))
@@ -190,7 +202,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
     if (ch == KEY_LEFT || ch == 'a' || ch == 'A' || ch == '4')
     {
         int counter = 0;
-        while (can_move(rooms, rooms_number,
+        while (can_move(player, rooms, rooms_number,
                         floors[player->current_floor]->map,
                         player->position.y,
                         player->position.x - counter))
@@ -205,7 +217,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
     if (ch == KEY_RIGHT || ch == 'd' || ch == 'D' || ch == '6')
     {
         int counter = 0;
-        while (can_move(rooms, rooms_number,
+        while (can_move(player, rooms, rooms_number,
                         floors[player->current_floor]->map,
                         player->position.y,
                         player->position.x + counter))
@@ -220,7 +232,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
     if (ch == 'q' || ch == 'Q' || ch == '7')
     {
         int counter = 0;
-        while (can_move(rooms, rooms_number,
+        while (can_move(player, rooms, rooms_number,
                         floors[player->current_floor]->map,
                         player->position.y - counter,
                         player->position.x - counter))
@@ -235,7 +247,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
     if (ch == 'e' || ch == 'E' || ch == '9')
     {
         int counter = 0;
-        while (can_move(rooms, rooms_number,
+        while (can_move(player, rooms, rooms_number,
                         floors[player->current_floor]->map,
                         player->position.y - counter,
                         player->position.x + counter))
@@ -251,7 +263,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
     if (ch == 'z' || ch == 'Z' || ch == '1')
     {
         int counter = 0;
-        while (can_move(rooms, rooms_number,
+        while (can_move(player, rooms, rooms_number,
                         floors[player->current_floor]->map,
                         player->position.y + counter,
                         player->position.x - counter))
@@ -267,7 +279,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
     if (ch == 'c' || ch == 'C' || ch == '3')
     {
         int counter = 0;
-        while (can_move(rooms, rooms_number,
+        while (can_move(player, rooms, rooms_number,
                         floors[player->current_floor]->map,
                         player->position.y + counter,
                         player->position.x + counter))
@@ -286,6 +298,12 @@ Player *player_setup(Room **rooms, int rooms_number)
     Player *newPlayer = (Player *)malloc(sizeof(Player));
 
     int initial_room = rand() % rooms_number;
+
+    // the first room shouldn't have stairs
+    while (rooms[initial_room]->stairs.has_stairs)
+    {
+        initial_room = rand() % rooms_number;
+    }
 
     newPlayer->position.y = rooms[initial_room]->start.y + 1 + rand() % (rooms[initial_room]->height - 2);
     newPlayer->position.x = rooms[initial_room]->start.x + 1 + rand() % (rooms[initial_room]->width - 2);
@@ -324,12 +342,10 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
         {
             if (current_room->gold_position[i].y == player->position.y && current_room->gold_position[i].x == player->position.x)
             {
-                move(0, 0);
-                clrtoeol();
-                mvprintw(0, 0, "You collected a gold!");
+                strcpy(player->message, "You collected a gold!");
+                show_message(player->message);
 
                 player->gold++;
-                current_room->gold_number--;
                 current_room->gold_position[i].y = -1;
                 current_room->gold_position[i].x = -1;
                 return;
@@ -342,14 +358,15 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
         current_room->stairs.previous_floor == player->current_floor &&
         player->position.y == current_room->stairs.position.y && player->position.x == current_room->stairs.position.x)
     {
-        move(0, 0);
-        clrtoeol();
-        mvprintw(0, 0, "Do you want to go to the next floor?");
+        strcpy(player->message, "Do you want to go to the next floor?");
+        show_message(player->message);
 
         int ch = getch();
         if (ch == ENTER)
         {
             player->current_floor++;
+            strcpy(player->message, "You moved to the next floor!");
+            show_message(player->message);
             return;
         }
     }
@@ -357,14 +374,15 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
              current_room->stairs.previous_floor != player->current_floor &&
              player->position.y == current_room->stairs.position.y && player->position.x == current_room->stairs.position.x)
     {
-        move(0, 0);
-        clrtoeol();
-        mvprintw(0, 0, "Do you want to go to the previous floor?");
+        strcpy(player->message, "Do you want to go to the previous floor?");
+        show_message(player->message);
 
         int ch = getch();
         if (ch == ENTER)
         {
             player->current_floor--;
+            strcpy(player->message, "You moved to the previous floor!");
+            show_message(player->message);
             return;
         }
     }
@@ -372,16 +390,13 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
 
 void show_status(Player *player)
 {
-    mvprintw(30, 0, "Current floor: (%d / 4)", player->current_floor);
-    mvprintw(30, 30, "Health: %d\%", player->health);
+    mvprintw(30, 0, "Current floor: %d", player->current_floor);
+    mvprintw(30, 30, "Health: %d", player->health);
     mvprintw(30, 50, "Gold: %d", player->gold);
 }
 
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color)
 {
-    move(0, 0);
-    clrtoeol();
-
     // displaying the player with the chosen color
     switch (color)
     {
@@ -407,16 +422,21 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
     handle_player_actions(floors, rooms, player);
     use_windows(player, rooms, rooms_number);
     int ch = getch();
+    player->message[0] = '\0';
 
     if (ch == 'm' || ch == 'M')
     {
-        mvprintw(0, 0, "Showing the whole map. Press any key to continue.");
+        strcpy(player->message, "Showing the whole map. Press any key to continue.");
+        show_message(player->message);
+
         draw_all_map(rooms, rooms_number, floors[player->current_floor]->map);
         getch();
     }
     else if (ch == 'f' || ch == 'F')
     {
-        mvprintw(0, 0, "Fast mode activated. Choose a direction. (press F key again to cancel)");
+        strcpy(player->message, "Fast mode activated. Choose a direction. (press F key again to cancel)");
+        show_message(player->message);
+
         fast_move(floors, rooms, rooms_number, player);
     }
     else

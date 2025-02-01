@@ -33,11 +33,15 @@ typedef struct Player
     int gold;
     int health;
 
+    char message[100];
+
     // other options...
 } Player;
 
 // functions
-bool can_move(Room **rooms, int rooms_number, bool ***map, int next_y, int next_x);
+void show_message(char *message);
+
+bool can_move(Player *player, Room **rooms, int rooms_number, bool ***map, int next_y, int next_x);
 void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player *player);
 void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player);
 Player *player_setup(Room **rooms, int rooms_number);

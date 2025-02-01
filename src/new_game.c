@@ -10,7 +10,18 @@ void new_game(int level, int color)
     Game *newGame = (Game *)malloc(sizeof(Game));
 
     // generating random number of floors based on the level
-    newGame->floors_number = 4;
+    if (level == 3)
+    {
+        newGame->floors_number = 5;
+    }
+    else if (level == 2)
+    {
+        newGame->floors_number = 4 + rand() % 2;
+    }
+    else if (level == 1)
+    {
+        newGame->floors_number = 4;
+    }
 
     newGame->floors = (Floor **)malloc(sizeof(Floor *) * newGame->floors_number);
 
@@ -95,19 +106,24 @@ void new_game(int level, int color)
     {
         clear();
         show_status(newGame->player);
+        show_message(newGame->player->message);
+
         draw_map(newGame->floors[newGame->player->current_floor]->rooms,
                  newGame->floors[newGame->player->current_floor]->rooms_number,
                  newGame->floors[newGame->player->current_floor]->map,
                  newGame->player->current_floor);
+
         show_next_step(newGame->floors[newGame->player->current_floor]->rooms,
                        newGame->player,
                        newGame->floors[newGame->player->current_floor]->rooms_number,
                        newGame->floors[newGame->player->current_floor]->map);
+
         player_update(newGame->floors,
                       newGame->floors[newGame->player->current_floor]->rooms,
                       newGame->floors[newGame->player->current_floor]->rooms_number,
                       newGame->player,
                       color); 
+
         refresh();
     }
 }
