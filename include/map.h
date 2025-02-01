@@ -119,7 +119,9 @@ typedef struct Room
 
     Weapon *weapons;
     int weapons_number;
-    // other options...
+    
+    Position *traps_position;
+    int traps_number;
 } Room;
 
 // functions
@@ -140,6 +142,7 @@ void place_gold(Room **rooms, int rooms_number);
 void place_food(Room **rooms, int rooms_number, int level);
 void place_spell(Room **rooms, int rooms_number);
 void place_weapon(Room **rooms, int rooms_number);
+void place_trap(Room **rooms, int rooms_number, int level);
 
 void set_rooms_type(Floor **floors, int floors_number, int level);
 void complete_map(Floor **floors, int floors_number, int level);

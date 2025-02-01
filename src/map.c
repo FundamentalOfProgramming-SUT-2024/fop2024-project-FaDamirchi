@@ -61,8 +61,8 @@ Room *generate_room(int grid)
         break;
     }
 
-    newRoom->width = 6 + rand() % 9;  // min: 4, max: 14
-    newRoom->height = 4 + rand() % 9; // min: 4, max: 12
+    newRoom->width = 8 + rand() % 6;  // min: 8, max: 13
+    newRoom->height = 6 + rand() % 6; // min: 6, max: 11
 
     // generate random starting points
     newRoom->start.x += rand() % (15 - newRoom->width);
@@ -231,6 +231,7 @@ Room *generate_room(int grid)
     newRoom->type = ROOM_ORDINARY;
     newRoom->reserved_number = 0;
     newRoom->reserved_poitions = (Position *)malloc(sizeof(Position) * 170);
+    newRoom->traps_number = 0;
 
     return newRoom;
 }
@@ -1296,6 +1297,40 @@ void place_weapon(Room **rooms, int rooms_number)
     }
 }
 
+void place_trap(Room **rooms, int rooms_number, int level)
+{
+    for (int i = 0; i < rooms_number; i++)
+    {
+        if (rooms[i]->type != ROOM_TREASURE)
+        {
+            rooms[i]->traps_number = level + rand() % 2 - 1;
+            rooms[i]->traps_position = (Position *)malloc(sizeof(Position) * rooms[i]->traps_number);
+
+            for (int j = 0; j < rooms[i]->traps_number; j++)
+            {
+                rooms[i]->traps_position[j].y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                rooms[i]->traps_position[j].x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+
+                // check if the chosen position is reserved before
+                for (int k = 0; k < rooms[i]->reserved_number; k++)
+                {
+                    while (rooms[i]->traps_position[j].y == rooms[i]->reserved_poitions[k].y &&
+                           rooms[i]->traps_position[j].x == rooms[i]->reserved_poitions[k].x)
+                    {
+                        rooms[i]->traps_position[j].y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                        rooms[i]->traps_position[j].x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                    }
+                }
+
+                // adding the chosen position to reserved ones
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].y = rooms[i]->traps_position[j].y;
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].x = rooms[i]->traps_position[j].x;
+                rooms[i]->reserved_number++;
+            }
+        }
+    }
+}
+
 void set_rooms_type(Floor **floors, int floors_number, int level)
 {
     for (int i = 0; i < floors_number; i++)
@@ -1365,6 +1400,7 @@ void complete_map(Floor **floors, int floors_number, int level)
         place_food(floors[i]->rooms, floors[i]->rooms_number, level);
         place_spell(floors[i]->rooms, floors[i]->rooms_number);
         place_weapon(floors[i]->rooms, floors[i]->rooms_number);
+        place_trap(floors[i]->rooms, floors[i]->rooms_number, level);
     }
 }
 
