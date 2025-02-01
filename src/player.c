@@ -58,9 +58,9 @@ bool can_move(Player *player, Room **rooms, int rooms_number, bool ***map, int n
     return false;
 }
 
-void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player *player)
+void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player *player)
 {
-    if (ch == KEY_UP || ch == 'w' || ch == 'W' || ch == '8')
+    if (inp == KEY_UP || inp == 'w' || inp == 'W' || inp == '8')
     {
         if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
@@ -73,7 +73,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         }
     }
 
-    if (ch == KEY_DOWN || ch == 'x' || ch == 'X' || ch == '2')
+    if (inp == KEY_DOWN || inp == 'x' || inp == 'X' || inp == '2')
     {
         if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
@@ -86,7 +86,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         }
     }
 
-    if (ch == KEY_LEFT || ch == 'a' || ch == 'A' || ch == '4')
+    if (inp == KEY_LEFT || inp == 'a' || inp == 'A' || inp == '4')
     {
         if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
@@ -99,7 +99,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         }
     }
 
-    if (ch == KEY_RIGHT || ch == 'd' || ch == 'D' || ch == '6')
+    if (inp == KEY_RIGHT || inp == 'd' || inp == 'D' || inp == '6')
     {
         if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
@@ -112,7 +112,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         }
     }
 
-    if (ch == 'q' || ch == 'Q' || ch == '7')
+    if (inp == 'q' || inp == 'Q' || inp == '7')
     {
         if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
@@ -125,7 +125,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
             return;
         }
     }
-    if (ch == 'e' || ch == 'E' || ch == '9')
+    if (inp == 'e' || inp == 'E' || inp == '9')
     {
         if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
@@ -139,7 +139,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         }
     }
 
-    if (ch == 'z' || ch == 'Z' || ch == '1')
+    if (inp == 'z' || inp == 'Z' || inp == '1')
     {
         if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
@@ -153,7 +153,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         }
     }
 
-    if (ch == 'c' || ch == 'C' || ch == '3')
+    if (inp == 'c' || inp == 'C' || inp == '3')
     {
         if (can_move(player, rooms, rooms_number,
                      floors[player->current_floor]->map,
@@ -430,6 +430,23 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
             int ch = getch();
             if (ch == 'y' || ch == 'Y')
             {
+                if (current_room->foods[i].type == FOOD_ORDINARY)
+                {
+                    player->stuff.food_ordinary++;
+                }
+                else if (current_room->foods[i].type == FOOD_EXCELLENT)
+                {
+                    player->stuff.food_excellent++;
+                }
+                else if (current_room->foods[i].type == FOOD_MAGIC)
+                {
+                    player->stuff.food_magic++;
+                }
+                else if (current_room->foods[i].type == FOOD_CORRUPT)
+                {
+                    player->stuff.food_corrupt++;
+                }
+                
                 current_room->foods[i].position.y = -1;
                 current_room->foods[i].position.x = -1;
                 strcpy(player->message, "You picked up the food!");
@@ -444,17 +461,201 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
     }
 }
 
-void show_stuff(Stuff *player)
+void show_foods(Player *player)
 {
-    clear();
-    mvprintw(0, 0, "Press Q to go back.");
+    int choice = 0;
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    curs_set(0); // Hide cursor
+
+    const char *food_options[] = {
+        "Ordinary food",
+        "Excellent food",
+        "Magic food",
+        "Corrupt food",
+        "Go Back"};
+
+    while (1)
+    {
+        clear();
+
+        int start_y = (max_y / 2) - (NUM_FOOD_MENU / 2);
+        int start_x = (max_x / 2) - 15;
+
+        // Draw border and title
+        draw_border(start_y - 1, start_x, NUM_FOOD_MENU + 2, 30);
+        show_title(start_y - 3, start_x + 8, "=== FOOD ===");
+
+        for (int i = 0; i < NUM_FOOD_MENU; i++)
+        {
+            int y = start_y + i;
+            if (i == choice)
+            {
+                attron(A_REVERSE);
+            }
+
+            if (i < 4)
+            {
+                mvprintw(y, start_x + 2, "%-16s", food_options[i]);
+                int count;
+                switch (i)
+                {
+                case 0:
+                    count = player->stuff.food_ordinary;
+                    break;
+                case 1:
+                    count = player->stuff.food_excellent;
+                    break;
+                case 2:
+                    count = player->stuff.food_magic;
+                    break;
+                case 3:
+                    count = player->stuff.food_corrupt;
+                    break;
+                }
+                mvprintw(y, start_x + 20, "%d", count);
+            }
+            else
+            {
+                mvprintw(y, start_x + 2, "%s", food_options[i]);
+            }
+
+            if (i == choice)
+            {
+                attroff(A_REVERSE);
+            }
+        }
+
+        int ch = getch();
+        switch (ch)
+        {
+        case KEY_UP:
+            choice = (choice - 1 + NUM_FOOD_MENU) % NUM_FOOD_MENU;
+            break;
+
+        case KEY_DOWN:
+            choice = (choice + 1) % NUM_FOOD_MENU;
+            break;
+
+        case ENTER:
+            if (choice == 0)
+            {
+                if (player->stuff.food_ordinary > 0)
+                {
+                    player->stuff.food_ordinary--;
+                    player->health += 5;
+                    if (player->health > 100)
+                    {
+                        player->health = 100;
+                    }
+
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was increased by 5!");
+                    mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100)", player->health);
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "You don't have enough balance!");
+                    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+            }
+            else if (choice == 1)
+            {
+                if (player->stuff.food_excellent > 0)
+                {
+                    player->stuff.food_excellent--;
+                    player->health += 20;
+                    if (player->health > 100)
+                    {
+                        player->health = 100;
+                    }
+
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was increased by 20!");
+                    mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100).", player->health);
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);;
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "You don't have enough food!");
+                    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+            }
+            else if (choice == 2)
+            {
+
+                if (player->stuff.food_magic > 0)
+                {
+                    player->stuff.food_magic--;
+                    player->health = 100;
+
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was restored completely!");
+                    mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100).", player->health);
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "You don't have enough food!");
+                    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+            }
+            else if (choice == 3)
+            {
+                if (player->stuff.food_corrupt > 0)
+                {
+                    player->stuff.food_corrupt--;
+                    player->health -= 10;
+                    if (player->health < 0)
+                    {
+                        player->health = 0;
+                    }
+
+                    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was decreased by 10!");
+                    mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100).", player->health);
+                    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+            }
+
+            else if (choice == 4)
+            {
+                return;
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
 }
+
+// void show_spells(Stuff player);
+// void show_weapons(Stuff player);
 
 void show_status(Player *player)
 {
     mvprintw(30, 0, "Current floor: %d", player->current_floor + 1);
     mvprintw(30, 25, "Health: %d", player->health);
-    mvprintw(30, 50, "Gold: %d", player->gold);
+    mvprintw(30, 45, "Gold: %d", player->gold);
 }
 
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color)
@@ -484,27 +685,22 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
     handle_player_actions(floors, rooms, player);
     use_windows(player, rooms, rooms_number);
 
-    int ch = getch();
+    int inp = getch();
     player->message[0] = '\0'; // update the message
 
     // check for map overview
-    if (ch == 'm' || ch == 'M')
+    if (inp == 'm' || inp == 'M')
     {
         strcpy(player->message, "Showing the whole map. (press M key again to cancel)");
         show_message(player->message);
 
         draw_all_map(rooms, rooms_number, floors[player->current_floor]->map);
-
-        int ans = getch();
-        while (!(ans == 'm' || ans == 'M'))
-        {
-            ans = getch();
-        }
+        getch();
         player->message[0] = '\0';
     }
 
     // check for fast mode
-    else if (ch == 'f' || ch == 'F')
+    else if (inp == 'f' || inp == 'F')
     {
         strcpy(player->message, "Fast mode activated. Choose a direction. (press F key again to cancel)");
         show_message(player->message);
@@ -514,19 +710,36 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
     }
 
     // check for showing stuff
-    else if (ch == 's' || ch == 'S')
+    else if (inp == 's' || inp == 'S')
     {
-        strcpy(player->message, "Do you want to view your stuff? (y / n)");
+        strcpy(player->message, "Which item do you want to view? (Food: F | Spell: S | Weapon: W | Cancel: c)");
         show_message(player->message);
 
-        show_stuff(player->stuff);
+        int ch = getch();
+        if (ch == 'f' || ch == 'F')
+        {
+            show_foods(player);
+        }
+        else if (ch == 's' || ch == 'S')
+        {
+            /* code */
+        }
+        else if (ch == 'w' || ch == 'W')
+        {
+            /* code */
+        }
+        else if (ch == 'c' || ch == 'C')
+        {
+            /* code */
+        }
+
         player->message[0] = '\0';
     }
 
-    // handle the character moving
+    // handle the inparacter moving
     else
     {
-        move_player(ch, floors, rooms, rooms_number, player);
+        move_player(inp, floors, rooms, rooms_number, player);
 
         // reduce health by 1 after moving 10 blocks
         while (player->passed_blockes > 10)

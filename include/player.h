@@ -9,6 +9,9 @@
 typedef struct Room Room;
 typedef struct Floor Floor;
 
+// consts
+#define NUM_FOOD_MENU 5
+
 // objects
 typedef struct Stuff
 {
@@ -41,11 +44,13 @@ typedef struct Player
 void show_message(char *message);
 
 bool can_move(Player *player, Room **rooms, int rooms_number, bool ***map, int next_y, int next_x);
-void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player *player);
+void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player *player);
 void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player);
 Player *player_setup(Room **rooms, int rooms_number);
 void handle_player_actions(Floor **floors, Room **rooms, Player *player);
-void show_stuff(Stuff *player);
+void show_foods(Player *player);
+void show_spells(Player *player);
+void show_weapons(Player *player);
 
 void show_status(Player *player);
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color);
