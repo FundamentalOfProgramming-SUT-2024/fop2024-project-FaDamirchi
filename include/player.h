@@ -10,7 +10,9 @@ typedef struct Room Room;
 typedef struct Floor Floor;
 
 // consts
-#define NUM_FOOD_MENU 5
+#define NUM_FOOD_MENU   5
+#define NUM_SPELL_MENU  4
+#define NUM_WEAPON_MENU 6
 
 // objects
 typedef struct Stuff
@@ -20,6 +22,16 @@ typedef struct Stuff
     int food_excellent;
     int food_magic;
     int food_corrupt;
+
+    int spell_health;
+    int spell_speed;
+    int spell_damage;
+
+    bool weapon_mace;
+    bool weapon_dagger;
+    bool weapon_wand;
+    bool weapon_arrow;
+    bool weapon_sword;
 
     // other options...
 } Stuff;

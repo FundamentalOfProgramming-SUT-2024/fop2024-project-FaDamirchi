@@ -330,6 +330,16 @@ Player *player_setup(Room **rooms, int rooms_number)
     newPlayer->stuff.food_magic = 0;
     newPlayer->stuff.food_corrupt = 0;
 
+    newPlayer->stuff.spell_health = 0;
+    newPlayer->stuff.spell_speed = 0;
+    newPlayer->stuff.spell_damage = 0;
+
+    newPlayer->stuff.weapon_mace = true;
+    newPlayer->stuff.weapon_dagger = false;
+    newPlayer->stuff.weapon_wand = false;
+    newPlayer->stuff.weapon_arrow = false;
+    newPlayer->stuff.weapon_sword = false;
+
     // other properties
     rooms[initial_room]->isSeen = true;
     newPlayer->current_floor = 0;
@@ -446,7 +456,7 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
                 {
                     player->stuff.food_corrupt++;
                 }
-                
+
                 current_room->foods[i].position.y = -1;
                 current_room->foods[i].position.x = -1;
                 strcpy(player->message, "You picked up the food!");
@@ -559,7 +569,7 @@ void show_foods(Player *player)
                 else
                 {
                     attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
-                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "You don't have enough balance!");
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "You don't have enough food!");
                     attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
                     refresh();
                     sleep(2);
@@ -581,7 +591,7 @@ void show_foods(Player *player)
                     mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100).", player->health);
                     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
                     refresh();
-                    sleep(2);;
+                    sleep(2);
                 }
                 else
                 {
@@ -598,10 +608,14 @@ void show_foods(Player *player)
                 if (player->stuff.food_magic > 0)
                 {
                     player->stuff.food_magic--;
-                    player->health = 100;
+                    player->health += 50;
+                    if (player->health > 100)
+                    {
+                        player->health = 100;
+                    }
 
                     attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was restored completely!");
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was increased by 50!");
                     mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100).", player->health);
                     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
                     refresh();
@@ -634,6 +648,14 @@ void show_foods(Player *player)
                     refresh();
                     sleep(2);
                 }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "You don't have enough food!");
+                    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
             }
 
             else if (choice == 4)
@@ -648,8 +670,236 @@ void show_foods(Player *player)
     }
 }
 
-// void show_spells(Stuff player);
-// void show_weapons(Stuff player);
+void show_spells(Player *player)
+{
+    int choice = 0;
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    curs_set(0); // Hide cursor
+
+    const char *spell_options[] = {
+        "Health spell",
+        "Speed spell",
+        "Damage spell",
+        "Go Back"};
+
+    while (1)
+    {
+        clear();
+
+        int start_y = (max_y / 2) - (NUM_SPELL_MENU / 2);
+        int start_x = (max_x / 2) - 15;
+
+        // Draw border and title
+        draw_border(start_y - 1, start_x, NUM_SPELL_MENU + 2, 30);
+        show_title(start_y - 3, start_x + 8, "=== SPELL ===");
+
+        for (int i = 0; i < NUM_SPELL_MENU; i++)
+        {
+            int y = start_y + i;
+            if (i == choice)
+            {
+                attron(A_REVERSE);
+            }
+
+            if (i < 3)
+            {
+                mvprintw(y, start_x + 2, "%-16s", spell_options[i]);
+                int count;
+                switch (i)
+                {
+                case 0:
+                    count = player->stuff.spell_health;
+                    break;
+                case 1:
+                    count = player->stuff.spell_speed;
+                    break;
+                case 2:
+                    count = player->stuff.spell_damage;
+                    break;
+                }
+                mvprintw(y, start_x + 20, "%d", count);
+            }
+            else
+            {
+                mvprintw(y, start_x + 2, "%s", spell_options[i]);
+            }
+
+            if (i == choice)
+            {
+                attroff(A_REVERSE);
+            }
+        }
+
+        int ch = getch();
+        switch (ch)
+        {
+        case KEY_UP:
+            choice = (choice - 1 + NUM_SPELL_MENU) % NUM_SPELL_MENU;
+            break;
+
+        case KEY_DOWN:
+            choice = (choice + 1) % NUM_SPELL_MENU;
+            break;
+
+        case ENTER:
+            if (choice == 0)
+            {
+                if (player->stuff.spell_health > 0)
+                {
+                    player->stuff.spell_health--;
+                    player->health = 100;
+
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_SPELL_MENU + 2, start_x - 1, "Health was recovered completely!");
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    mvprintw(start_y + NUM_SPELL_MENU + 2, start_x - 1, "You don't have enough spell!");
+                    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+            }
+            else if (choice == 1)
+            {
+                if (player->stuff.spell_speed > 0)
+                {
+                    player->stuff.spell_speed--;
+
+                    // attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    // mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was increased by 20!");
+                    // mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100).", player->health);
+                    // attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    // refresh();
+                    // sleep(2);
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    mvprintw(start_y + NUM_SPELL_MENU + 2, start_x - 1, "You don't have enough spell!");
+                    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+            }
+            else if (choice == 2)
+            {
+
+                if (player->stuff.spell_damage > 0)
+                {
+                    player->stuff.spell_damage--;
+
+                    // attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    // mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was restored completely!");
+                    // mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100).", player->health);
+                    // attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    // refresh();
+                    // sleep(2);
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    mvprintw(start_y + NUM_SPELL_MENU + 2, start_x - 1, "You don't have enough food!");
+                    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+            }
+
+            else if (choice == 3)
+            {
+                return;
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+}
+
+void show_weapons(Player *player)
+{
+    int choice = 0;
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    curs_set(0);
+
+    int start_y = (max_y / 2) - 3;
+    int start_x = (max_x / 2) - 15;
+
+    char *weapon_options[10];
+    int option_count = 0;
+
+    if (player->stuff.weapon_mace)
+        weapon_options[option_count++] = "Mace";
+    if (player->stuff.weapon_dagger)
+        weapon_options[option_count++] = "Dagger";
+    if (player->stuff.weapon_wand)
+        weapon_options[option_count++] = "Wand";
+    if (player->stuff.weapon_arrow)
+        weapon_options[option_count++] = "Arrow";
+    if (player->stuff.weapon_sword)
+        weapon_options[option_count++] = "Sword";
+
+    weapon_options[option_count++] = "Go back";
+
+    while (1)
+    {
+        clear();
+
+        draw_border(start_y - 1, start_x, option_count + 2, 30);
+        show_title(start_y - 3, start_x + 8, "=== WEAPON ===");
+
+        for (int i = 0; i < option_count; i++)
+        {
+            int y = start_y + i;
+            if (i == choice)
+                attron(A_REVERSE);
+
+            mvprintw(y, start_x + 2, "%s", weapon_options[i]);
+
+            if (i == choice)
+                attroff(A_REVERSE);
+        }
+        refresh();
+
+        int ch = getch();
+        switch (ch)
+        {
+        case KEY_UP:
+            choice = (choice - 1 + option_count) % option_count;
+            break;
+
+        case KEY_DOWN:
+            choice = (choice + 1) % option_count;
+            break;
+
+        case ENTER:
+            if (strcmp(weapon_options[choice], "Go back") == 0)
+            {
+                return;
+            }
+            else
+            {
+                attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                mvprintw(start_y + option_count + 2, start_x - 1, "You picked up %s.", weapon_options[choice]);
+                attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                refresh();
+                sleep(2);
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+}
 
 void show_status(Player *player)
 {
@@ -722,15 +972,11 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         }
         else if (ch == 's' || ch == 'S')
         {
-            /* code */
+            show_spells(player);
         }
         else if (ch == 'w' || ch == 'W')
         {
-            /* code */
-        }
-        else if (ch == 'c' || ch == 'C')
-        {
-            /* code */
+            show_weapons(player);
         }
 
         player->message[0] = '\0';
