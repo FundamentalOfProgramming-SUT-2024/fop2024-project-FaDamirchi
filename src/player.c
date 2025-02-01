@@ -440,7 +440,7 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
     use_windows(player, rooms, rooms_number);
 
     int ch = getch();
-    player->message[0] = '\0';
+    player->message[0] = '\0'; // update the message
 
     // check for map overview
     if (ch == 'm' || ch == 'M')
@@ -473,7 +473,7 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
     {
         move_player(ch, floors, rooms, rooms_number, player);
 
-        // reduce health by moving -1 after moving 10 blocks
+        // reduce health by 1 after moving 10 blocks
         while (player->passed_blockes > 10)
         {
             player->passed_blockes -= 10;

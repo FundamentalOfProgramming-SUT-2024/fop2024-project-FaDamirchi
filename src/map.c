@@ -244,6 +244,7 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
             continue;
         }
 
+        // draw treasure room
         if (rooms[idx]->type == ROOM_TREASURE)
         {
             // draw top and bottom
@@ -292,6 +293,8 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
             }
             attroff(COLOR_PAIR(COLOR_STUFF_TREASURE));
         }
+        
+        // draw ordinary rooms
         else
         {
             // draw top and bottom
@@ -369,6 +372,35 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                 }
             }
             attroff(COLOR_PAIR(COLOR_GOLD) | A_BOLD);
+
+            // draw foods
+            for (int i = 0; i < rooms[idx]->foods_number; i++)
+            {
+                if (rooms[idx]->foods[i].type == FOOD_ORDINARY)
+                {
+                    attron(COLOR_PAIR(COLOR_FOOD_ORDINARY) | A_BOLD);
+                    mvprintw(rooms[idx]->foods[i].position.y, rooms[idx]->foods[i].position.x, "*");
+                    attroff(COLOR_PAIR(COLOR_FOOD_ORDINARY) | A_BOLD);
+                }
+                else if (rooms[idx]->foods[i].type == FOOD_EXCELLENT)
+                {
+                    attron(COLOR_PAIR(COLOR_FOOD_EXCELLENT) | A_BOLD);
+                    mvprintw(rooms[idx]->foods[i].position.y, rooms[idx]->foods[i].position.x, "*");
+                    attroff(COLOR_PAIR(COLOR_FOOD_EXCELLENT) | A_BOLD);
+                }
+                else if (rooms[idx]->foods[i].type == FOOD_MAGIC)
+                {
+                    attron(COLOR_PAIR(COLOR_FOOD_MAGIC) | A_BOLD);
+                    mvprintw(rooms[idx]->foods[i].position.y, rooms[idx]->foods[i].position.x, "*");
+                    attroff(COLOR_PAIR(COLOR_FOOD_MAGIC) | A_BOLD);
+                }
+                else if (rooms[idx]->foods[i].type == FOOD_CORRUPT)
+                {
+                    attron(COLOR_PAIR(COLOR_FOOD_CORRUPT) | A_BOLD);
+                    mvprintw(rooms[idx]->foods[i].position.y, rooms[idx]->foods[i].position.x, "*");
+                    attroff(COLOR_PAIR(COLOR_FOOD_CORRUPT) | A_BOLD);
+                }
+            }
         }
     }
 
