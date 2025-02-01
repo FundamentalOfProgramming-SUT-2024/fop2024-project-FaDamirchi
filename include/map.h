@@ -42,6 +42,9 @@ typedef struct Floor Floor;
 #define WEAPON_ARROW  20
 #define WEAPON_SWORD  21
 
+#define GOLD_ORDINARY 22
+#define GOLD_BLACK    23
+
 // variables
 extern Position come_from[40][130];
 
@@ -67,6 +70,12 @@ typedef struct Stair
     int previous_floor;
     int next_floor;
 } Stair;
+
+typedef struct Gold
+{
+    Position position;
+    int type;
+} Gold;
 
 typedef struct Food
 {
@@ -108,8 +117,8 @@ typedef struct Room
     Position *reserved_poitions;
     int reserved_number;
 
-    Position *gold_position;
-    int gold_number;
+    Gold *golds;
+    int golds_number;
 
     Food *foods;
     int foods_number;

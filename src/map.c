@@ -232,7 +232,7 @@ Room *generate_room(int grid)
     newRoom->reserved_number = 0;
     newRoom->reserved_poitions = (Position *)malloc(sizeof(Position) * 170);
 
-    newRoom->gold_number = 0;
+    newRoom->golds_number = 0;
     newRoom->foods_number = 0;
     newRoom->spells_number = 0;
     newRoom->traps_number = 0;
@@ -459,15 +459,24 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
             }
 
             // draw golds
-            attron(COLOR_PAIR(COLOR_GOLD) | A_BOLD);
-            for (int i = 0; i < rooms[idx]->gold_number; i++)
+            for (int i = 0; i < rooms[idx]->golds_number; i++)
             {
-                if (rooms[idx]->gold_position[i].y != -1 && rooms[idx]->gold_position[i].x != -1)
+                if (rooms[idx]->golds[i].position.y != -1 && rooms[idx]->golds[i].position.x != -1)
                 {
-                    mvprintw(rooms[idx]->gold_position[i].y, rooms[idx]->gold_position[i].x, "$");
+                    if (rooms[idx]->golds[i].type == GOLD_ORDINARY)
+                    {
+                        attron(COLOR_PAIR(COLOR_GOLD_ORDINARY) | A_BOLD);
+                        mvprintw(rooms[idx]->golds[i].position.y, rooms[idx]->golds[i].position.x, "$");
+                        attroff(COLOR_PAIR(COLOR_GOLD_ORDINARY) | A_BOLD);
+                    }
+                    else if (rooms[idx]->golds[i].type == GOLD_BLACK)
+                    {
+                        attron(COLOR_PAIR(COLOR_GOLD_BLACK) | A_BOLD | A_ITALIC);
+                        mvprintw(rooms[idx]->golds[i].position.y, rooms[idx]->golds[i].position.x, "$");
+                        attroff(COLOR_PAIR(COLOR_GOLD_BLACK) | A_BOLD | A_ITALIC);
+                    }
                 }
             }
-            attroff(COLOR_PAIR(COLOR_GOLD) | A_BOLD);
 
             // draw foods
             for (int i = 0; i < rooms[idx]->foods_number; i++)
@@ -547,7 +556,7 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                 }
             }
         }
-        
+
         // draw ordinary rooms
         else
         {
@@ -617,15 +626,24 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
             }
 
             // draw golds
-            attron(COLOR_PAIR(COLOR_GOLD) | A_BOLD);
-            for (int i = 0; i < rooms[idx]->gold_number; i++)
+            for (int i = 0; i < rooms[idx]->golds_number; i++)
             {
-                if (rooms[idx]->gold_position[i].y != -1 && rooms[idx]->gold_position[i].x != -1)
+                if (rooms[idx]->golds[i].position.y != -1 && rooms[idx]->golds[i].position.x != -1)
                 {
-                    mvprintw(rooms[idx]->gold_position[i].y, rooms[idx]->gold_position[i].x, "$");
+                    if (rooms[idx]->golds[i].type == GOLD_ORDINARY)
+                    {
+                        attron(COLOR_PAIR(COLOR_GOLD_ORDINARY) | A_BOLD);
+                        mvprintw(rooms[idx]->golds[i].position.y, rooms[idx]->golds[i].position.x, "$");
+                        attroff(COLOR_PAIR(COLOR_GOLD_ORDINARY) | A_BOLD);
+                    }
+                    else if (rooms[idx]->golds[i].type == GOLD_BLACK)
+                    {
+                        attron(COLOR_PAIR(COLOR_GOLD_BLACK) | A_BOLD | A_ITALIC);
+                        mvprintw(rooms[idx]->golds[i].position.y, rooms[idx]->golds[i].position.x, "$");
+                        attroff(COLOR_PAIR(COLOR_GOLD_BLACK) | A_BOLD | A_ITALIC);
+                    }
                 }
             }
-            attroff(COLOR_PAIR(COLOR_GOLD) | A_BOLD);
 
             // draw foods
             for (int i = 0; i < rooms[idx]->foods_number; i++)
@@ -1155,28 +1173,29 @@ void place_gold(Room **rooms, int rooms_number)
     {
         if (rand() % 2 && rooms[i]->type != ROOM_TREASURE && rooms[i]->type != ROOM_ENCHANT) // the room has gold with the chance of 50%
         {
-            rooms[i]->gold_number = 1 + rand() % 2;
-            rooms[i]->gold_position = (Position *)malloc(sizeof(Position) * rooms[i]->gold_number);
+            rooms[i]->golds_number = 1 + rand() % 2;
+            rooms[i]->golds = (Gold *)malloc(sizeof(Gold) * rooms[i]->golds_number);
 
-            for (int j = 0; j < rooms[i]->gold_number; j++)
+            for (int j = 0; j < rooms[i]->golds_number; j++)
             {
-                rooms[i]->gold_position[j].y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
-                rooms[i]->gold_position[j].x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                rooms[i]->golds[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                rooms[i]->golds[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                rooms[i]->golds[j].type = 22 + rand() % 2;
 
                 // check if the chosen position is reserved before
                 for (int k = 0; k < rooms[i]->reserved_number; k++)
                 {
-                    while (rooms[i]->gold_position[j].y == rooms[i]->reserved_poitions[k].y &&
-                           rooms[i]->gold_position[j].x == rooms[i]->reserved_poitions[k].x)
+                    while (rooms[i]->golds[j].position.y == rooms[i]->reserved_poitions[k].y &&
+                           rooms[i]->golds[j].position.x == rooms[i]->reserved_poitions[k].x)
                     {
-                        rooms[i]->gold_position[j].y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
-                        rooms[i]->gold_position[j].x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                        rooms[i]->golds[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                        rooms[i]->golds[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
                     }
                 }
 
                 // adding the chosen position to reserved ones
-                rooms[i]->reserved_poitions[rooms[i]->reserved_number].y = rooms[i]->gold_position[j].y;
-                rooms[i]->reserved_poitions[rooms[i]->reserved_number].x = rooms[i]->gold_position[j].x;
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].y = rooms[i]->golds[j].position.y;
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].x = rooms[i]->golds[j].position.x;
                 rooms[i]->reserved_number++;
             }
         }

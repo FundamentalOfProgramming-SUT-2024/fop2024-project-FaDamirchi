@@ -371,19 +371,39 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
     }
 
     // check for gold
-    if (current_room->gold_number != 0)
+    if (current_room->golds_number != 0)
     {
-        for (int i = 0; i < current_room->gold_number; i++)
+        for (int i = 0; i < current_room->golds_number; i++)
         {
-            if (current_room->gold_position[i].y == player->position.y && current_room->gold_position[i].x == player->position.x)
+            if (current_room->golds[i].position.y == player->position.y && current_room->golds[i].position.x == player->position.x)
             {
-                strcpy(player->message, "You collected a gold!");
-                show_message(player->message);
+                if (current_room->type == ROOM_NIGHTMARE)
+                {
+                    strcpy(player->message, "This gold is not real!");
+                    show_message(player->message);
+                    return;
+                }
 
-                player->gold++;
-                current_room->gold_position[i].y = -1;
-                current_room->gold_position[i].x = -1;
-                return;
+                if (current_room->golds->type == GOLD_ORDINARY)
+                {
+                    strcpy(player->message, "You collected a gold!");
+                    show_message(player->message);
+
+                    player->gold++;
+                    current_room->golds[i].position.y = -1;
+                    current_room->golds[i].position.x = -1;
+                    return;
+                }
+                else if (current_room->golds->type == GOLD_BLACK)
+                {
+                    strcpy(player->message, "You collected 5 golds!");
+                    show_message(player->message);
+
+                    player->gold += 5;
+                    current_room->golds[i].position.y = -1;
+                    current_room->golds[i].position.x = -1;
+                    return;
+                }
             }
         }
     }
@@ -441,6 +461,13 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
             int ch = getch();
             if (ch == 'y' || ch == 'Y')
             {
+                if (current_room->type == ROOM_NIGHTMARE)
+                {
+                    strcpy(player->message, "This food is not real!");
+                    show_message(player->message);
+                    return;
+                }
+
                 if (current_room->foods[i].type == FOOD_ORDINARY)
                 {
                     player->stuff.food_ordinary++;
@@ -485,6 +512,13 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
                 int ch = getch();
                 if (ch == 'y' || ch == 'Y')
                 {
+                    if (current_room->type == ROOM_NIGHTMARE)
+                    {
+                        strcpy(player->message, "This spell is not real!");
+                        show_message(player->message);
+                        return;
+                    }
+
                     if (current_room->spells[i].type == SPELL_HEALTH)
                     {
                         player->stuff.spell_health++;
@@ -525,6 +559,13 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
             int ch = getch();
             if (ch == 'y' || ch == 'Y')
             {
+                if (current_room->type == ROOM_NIGHTMARE)
+                {
+                    strcpy(player->message, "This weapon is not real!");
+                    show_message(player->message);
+                    return;
+                }
+
                 if (current_room->weapons[i].type == WEAPON_DAGGER)
                 {
                     player->stuff.weapon_dagger = true;
