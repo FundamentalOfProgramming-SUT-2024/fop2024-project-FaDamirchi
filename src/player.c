@@ -375,15 +375,19 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
         current_room->stairs.previous_floor == player->current_floor &&
         player->position.y == current_room->stairs.position.y && player->position.x == current_room->stairs.position.x)
     {
-        strcpy(player->message, "Do you want to go to the next floor?");
+        strcpy(player->message, "Do you want to go to the next floor? (y / n)");
         show_message(player->message);
 
         int ch = getch();
-        if (ch == ENTER)
+        if (ch == 'y' || ch == 'Y')
         {
             player->current_floor++;
             strcpy(player->message, "You moved to the next floor!");
             show_message(player->message);
+            return;
+        }
+        else
+        {
             return;
         }
     }
@@ -391,16 +395,44 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
              current_room->stairs.previous_floor != player->current_floor &&
              player->position.y == current_room->stairs.position.y && player->position.x == current_room->stairs.position.x)
     {
-        strcpy(player->message, "Do you want to go to the previous floor?");
+        strcpy(player->message, "Do you want to go to the previous floor? (y / n)");
         show_message(player->message);
 
         int ch = getch();
-        if (ch == ENTER)
+        if (ch == 'y' || ch == 'Y')
         {
             player->current_floor--;
             strcpy(player->message, "You moved to the previous floor!");
             show_message(player->message);
             return;
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    // check for foods
+    for (int i = 0; i < current_room->foods_number; i++)
+    {
+        if (current_room->foods[i].position.y == player->position.y && current_room->foods[i].position.x == player->position.x)
+        {
+            strcpy(player->message, "Do you want to pick up this food? (y / n)");
+            show_message(player->message);
+
+            int ch = getch();
+            if (ch == 'y' || ch == 'Y')
+            {
+                current_room->foods[i].position.y = -1;
+                current_room->foods[i].position.x = -1;
+                strcpy(player->message, "You picked up the food!");
+                show_message(player->message);
+                return;
+            }
+            else
+            {
+                return;
+            }
         }
     }
 }
@@ -479,6 +511,5 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
             player->passed_blockes -= 10;
             player->health--;
         }
-        
     }
 }
