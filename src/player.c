@@ -316,7 +316,8 @@ Player *player_setup(Room **rooms, int rooms_number)
     int initial_room = rand() % rooms_number;
 
     // the first room shouldn't have stairs
-    while (rooms[initial_room]->stairs.has_stairs)
+    while (rooms[initial_room]->stairs.has_stairs ||
+           rooms[initial_room]->type != ROOM_ORDINARY)
     {
         initial_room = rand() % rooms_number;
     }

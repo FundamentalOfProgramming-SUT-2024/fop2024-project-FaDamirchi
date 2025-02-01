@@ -99,6 +99,8 @@ void new_game(int level, int color)
         }
     }
 
+    complete_map(newGame->floors, newGame->floors_number, level);
+
     newGame->player = player_setup(newGame->floors[0]->rooms,
                                    newGame->floors[0]->rooms_number);
 
@@ -122,7 +124,7 @@ void new_game(int level, int color)
                       newGame->floors[newGame->player->current_floor]->rooms,
                       newGame->floors[newGame->player->current_floor]->rooms_number,
                       newGame->player,
-                      color); 
+                      color);
 
         refresh();
     }

@@ -4,9 +4,11 @@
 // includes
 #include "global_defines.h"
 #include "player.h"
+#include "new_game.h"
 
 // forward declaration
 typedef struct Player Player;
+typedef struct Floor Floor;
 
 // consts
 #define MAP_WIDTH 120
@@ -30,6 +32,15 @@ typedef struct Player Player;
 #define FOOD_EXCELLENT 12
 #define FOOD_MAGIC     13
 #define FOOD_CORRUPT   14
+
+#define SPELL_HEALTH 15
+#define SPELL_SPEED  16
+#define SPELL_DAMAGE 17
+
+#define WEAPON_DAGGER 18
+#define WEAPON_WAND   19
+#define WEAPON_ARROW  20
+#define WEAPON_SWORD  21
 
 // variables
 extern Position come_from[40][130];
@@ -126,9 +137,12 @@ void connect_rooms(Room **rooms, int rooms_number, bool ***map);
 
 void place_stairs(Room **rooms, int rooms_number, int curruent_floor);
 void place_gold(Room **rooms, int rooms_number);
-void place_food(Room **rooms, int rooms_number);
+void place_food(Room **rooms, int rooms_number, int level);
 void place_spell(Room **rooms, int rooms_number);
 void place_weapon(Room **rooms, int rooms_number);
+
+void set_rooms_type(Floor **floors, int floors_number, int level);
+void complete_map(Floor **floors, int floors_number, int level);
 
 Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast, int current_floor);
 void show_next_step(Room **rooms, Player *player, int rooms_number, bool ***map);

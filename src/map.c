@@ -239,10 +239,10 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
 {
     for (int idx = 0; idx < rooms_number; idx++)
     {
-        if (!rooms[idx]->isSeen)
-        {
-            continue;
-        }
+        // if (!rooms[idx]->isSeen)
+        // {
+        //     continue;
+        // }
 
         // draw treasure room
         if (rooms[idx]->type == ROOM_TREASURE)
@@ -292,6 +292,254 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                 mvprintw(rooms[idx]->windows[i].position.y, rooms[idx]->windows[i].position.x, "=");
             }
             attroff(COLOR_PAIR(COLOR_STUFF_TREASURE));
+        }
+
+        // draw enchant room
+        else if (rooms[idx]->type == ROOM_ENCHANT)
+        {
+            // draw top and bottom
+            attron(COLOR_PAIR(COLOR_WALLS_ENCHANT) | A_BOLD);
+            for (int i = rooms[idx]->start.x; i < rooms[idx]->start.x + rooms[idx]->width; i++)
+            {
+                mvprintw(rooms[idx]->start.y, i, "-");                          // top border
+                mvprintw(rooms[idx]->start.y + rooms[idx]->height - 1, i, "-"); // bottom border
+            }
+            attroff(COLOR_PAIR(COLOR_WALLS_ENCHANT) | A_BOLD);
+
+            // draw floor and side walls
+            for (int i = rooms[idx]->start.y + 1; i < rooms[idx]->start.y + rooms[idx]->height - 1; i++)
+            {
+                attron(COLOR_PAIR(COLOR_WALLS_ENCHANT) | A_BOLD);
+                mvprintw(i, rooms[idx]->start.x, "|");                         // left border
+                mvprintw(i, rooms[idx]->start.x + rooms[idx]->width - 1, "|"); // right border
+                attroff(COLOR_PAIR(COLOR_WALLS_ENCHANT) | A_BOLD);
+
+                attron(COLOR_PAIR(COLOR_FLOOR_ENCHANT));
+                for (int j = rooms[idx]->start.x + 1; j < rooms[idx]->start.x + rooms[idx]->width - 1; j++)
+                {
+                    mvprintw(i, j, ".");
+                }
+                attroff(COLOR_PAIR(COLOR_FLOOR_ENCHANT));
+            }
+
+            // draw doors
+            attron(COLOR_PAIR(COLOR_STUFF_ENCHANT) | A_BOLD);
+            for (int i = 0; i < rooms[idx]->doors_number; i++)
+            {
+                if (rooms[idx]->doors[i].type == DOOR_ORDINARY)
+                {
+                    mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+                }
+                else if (rooms[idx]->doors[i].type == DOOR_LOCKED)
+                {
+                    mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "?");
+                }
+            }
+
+            // draw windows
+            for (int i = 0; i < rooms[idx]->windows_number; i++)
+            {
+                mvprintw(rooms[idx]->windows[i].position.y, rooms[idx]->windows[i].position.x, "=");
+            }
+
+            // draw stairs
+            if (rooms[idx]->stairs.has_stairs)
+            {
+                if (rooms[idx]->stairs.previous_floor == current_floor)
+                {
+                    attron(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+                    mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
+                    attroff(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+                    mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
+                    attroff(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+                }
+            }
+
+            // draw spells
+            for (int i = 0; i < rooms[idx]->spells_number; i++)
+            {
+                if (rooms[idx]->spells[i].position.y != -1 && rooms[idx]->spells[i].position.x != -1)
+                {
+                    if (rooms[idx]->spells[i].type == SPELL_HEALTH)
+                    {
+                        attron(COLOR_PAIR(COLOR_SPELL_HEALTH) | A_BOLD);
+                        mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
+                        attroff(COLOR_PAIR(COLOR_SPELL_HEALTH) | A_BOLD);
+                    }
+                    else if (rooms[idx]->spells[i].type == SPELL_SPEED)
+                    {
+                        attron(COLOR_PAIR(COLOR_SPELL_SPEED) | A_BOLD);
+                        mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
+                        attroff(COLOR_PAIR(COLOR_SPELL_SPEED) | A_BOLD);
+                    }
+                    else if (rooms[idx]->spells[i].type == SPELL_DAMAGE)
+                    {
+                        attron(COLOR_PAIR(COLOR_SPELL_DAMAGE) | A_BOLD);
+                        mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
+                        attroff(COLOR_PAIR(COLOR_SPELL_DAMAGE) | A_BOLD);
+                    }
+                }
+            }
+        }
+
+        // draw nightmare room
+        else if (rooms[idx]->type == ROOM_NIGHTMARE)
+        {
+            // draw top and bottom
+            attron(COLOR_PAIR(COLOR_WALLS_NIGHMARE) | A_BOLD);
+            for (int i = rooms[idx]->start.x; i < rooms[idx]->start.x + rooms[idx]->width; i++)
+            {
+                mvprintw(rooms[idx]->start.y, i, "-");                          // top border
+                mvprintw(rooms[idx]->start.y + rooms[idx]->height - 1, i, "-"); // bottom border
+            }
+            attroff(COLOR_PAIR(COLOR_WALLS_NIGHMARE) | A_BOLD);
+
+            // draw floor and side walls
+            for (int i = rooms[idx]->start.y + 1; i < rooms[idx]->start.y + rooms[idx]->height - 1; i++)
+            {
+                attron(COLOR_PAIR(COLOR_WALLS_NIGHMARE) | A_BOLD);
+                mvprintw(i, rooms[idx]->start.x, "|");                         // left border
+                mvprintw(i, rooms[idx]->start.x + rooms[idx]->width - 1, "|"); // right border
+                attroff(COLOR_PAIR(COLOR_WALLS_NIGHMARE) | A_BOLD);
+
+                attron(COLOR_PAIR(COLOR_FLOOR_NIGHMARE));
+                for (int j = rooms[idx]->start.x + 1; j < rooms[idx]->start.x + rooms[idx]->width - 1; j++)
+                {
+                    mvprintw(i, j, ".");
+                }
+                attroff(COLOR_PAIR(COLOR_FLOOR_NIGHMARE));
+            }
+
+            // draw doors
+            attron(COLOR_PAIR(COLOR_STUFF_NUGHTMARE) | A_BOLD);
+            for (int i = 0; i < rooms[idx]->doors_number; i++)
+            {
+                if (rooms[idx]->doors[i].type == DOOR_ORDINARY)
+                {
+                    mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "+");
+                }
+                else if (rooms[idx]->doors[i].type == DOOR_LOCKED)
+                {
+                    mvprintw(rooms[idx]->doors[i].position.y, rooms[idx]->doors[i].position.x, "?");
+                }
+            }
+
+            // draw windows
+            for (int i = 0; i < rooms[idx]->windows_number; i++)
+            {
+                mvprintw(rooms[idx]->windows[i].position.y, rooms[idx]->windows[i].position.x, "=");
+            }
+            attroff(COLOR_PAIR(COLOR_STUFF_NUGHTMARE) | A_BOLD);
+
+            // draw stairs
+            if (rooms[idx]->stairs.has_stairs)
+            {
+                if (rooms[idx]->stairs.previous_floor == current_floor)
+                {
+                    attron(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+                    mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
+                    attroff(COLOR_PAIR(COLOR_STAIRS_GOING) | A_BOLD | A_BLINK);
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+                    mvprintw(rooms[idx]->stairs.position.y, rooms[idx]->stairs.position.x, "<");
+                    attroff(COLOR_PAIR(COLOR_STAIRS_COMING) | A_BOLD | A_BLINK);
+                }
+            }
+
+            // draw golds
+            attron(COLOR_PAIR(COLOR_GOLD) | A_BOLD);
+            for (int i = 0; i < rooms[idx]->gold_number; i++)
+            {
+                if (rooms[idx]->gold_position[i].y != -1 && rooms[idx]->gold_position[i].x != -1)
+                {
+                    mvprintw(rooms[idx]->gold_position[i].y, rooms[idx]->gold_position[i].x, "$");
+                }
+            }
+            attroff(COLOR_PAIR(COLOR_GOLD) | A_BOLD);
+
+            // draw foods
+            for (int i = 0; i < rooms[idx]->foods_number; i++)
+            {
+                if (rooms[idx]->foods[i].type == FOOD_ORDINARY)
+                {
+                    if (rooms[idx]->foods[i].position.y != -1 && rooms[idx]->foods[i].position.x != -1)
+                    {
+                        attron(COLOR_PAIR(COLOR_FOOD_ORDINARY) | A_BOLD);
+                        mvprintw(rooms[idx]->foods[i].position.y, rooms[idx]->foods[i].position.x, "*");
+                        attroff(COLOR_PAIR(COLOR_FOOD_ORDINARY) | A_BOLD);
+                    }
+                }
+                else if (rooms[idx]->foods[i].type == FOOD_EXCELLENT)
+                {
+                    if (rooms[idx]->foods[i].position.y != -1 && rooms[idx]->foods[i].position.x != -1)
+                    {
+                        attron(COLOR_PAIR(COLOR_FOOD_EXCELLENT) | A_BOLD);
+                        mvprintw(rooms[idx]->foods[i].position.y, rooms[idx]->foods[i].position.x, "*");
+                        attroff(COLOR_PAIR(COLOR_FOOD_EXCELLENT) | A_BOLD);
+                    }
+                }
+                else if (rooms[idx]->foods[i].type == FOOD_MAGIC)
+                {
+                    if (rooms[idx]->foods[i].position.y != -1 && rooms[idx]->foods[i].position.x != -1)
+                    {
+                        attron(COLOR_PAIR(COLOR_FOOD_MAGIC) | A_BOLD);
+                        mvprintw(rooms[idx]->foods[i].position.y, rooms[idx]->foods[i].position.x, "*");
+                        attroff(COLOR_PAIR(COLOR_FOOD_MAGIC) | A_BOLD);
+                    }
+                }
+                else if (rooms[idx]->foods[i].type == FOOD_CORRUPT)
+                {
+                    if (rooms[idx]->foods[i].position.y != -1 && rooms[idx]->foods[i].position.x != -1)
+                    {
+                        attron(COLOR_PAIR(COLOR_FOOD_CORRUPT) | A_BOLD);
+                        mvprintw(rooms[idx]->foods[i].position.y, rooms[idx]->foods[i].position.x, "*");
+                        attroff(COLOR_PAIR(COLOR_FOOD_CORRUPT) | A_BOLD);
+                    }
+                }
+            }
+
+            // draw spells
+            for (int i = 0; i < rooms[idx]->spells_number; i++)
+            {
+                if (rooms[idx]->spells[i].position.y != -1 && rooms[idx]->spells[i].position.x != -1)
+                {
+                    if (rooms[idx]->spells[i].type == SPELL_HEALTH)
+                    {
+                        attron(COLOR_PAIR(COLOR_SPELL_HEALTH) | A_BOLD);
+                        mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
+                        attroff(COLOR_PAIR(COLOR_SPELL_HEALTH) | A_BOLD);
+                    }
+                    else if (rooms[idx]->spells[i].type == SPELL_SPEED)
+                    {
+                        attron(COLOR_PAIR(COLOR_SPELL_SPEED) | A_BOLD);
+                        mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
+                        attroff(COLOR_PAIR(COLOR_SPELL_SPEED) | A_BOLD);
+                    }
+                    else if (rooms[idx]->spells[i].type == SPELL_DAMAGE)
+                    {
+                        attron(COLOR_PAIR(COLOR_SPELL_DAMAGE) | A_BOLD);
+                        mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
+                        attroff(COLOR_PAIR(COLOR_SPELL_DAMAGE) | A_BOLD);
+                    }
+                }
+            }
+
+            // draw weapons
+            for (int i = 0; i < rooms[idx]->weapons_number; i++)
+            {
+                if (rooms[idx]->weapons[i].position.y != -1 && rooms[idx]->weapons[i].position.x != -1)
+                {
+                    attron(COLOR_PAIR(COLOR_WEAPONS) | A_BOLD | A_BLINK);
+                    mvprintw(rooms[idx]->weapons[i].position.y, rooms[idx]->weapons[i].position.x, "^");
+                    attroff(COLOR_PAIR(COLOR_WEAPONS) | A_BOLD | A_BLINK);
+                }
+            }
         }
 
         // draw ordinary rooms
@@ -411,6 +659,43 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                         mvprintw(rooms[idx]->foods[i].position.y, rooms[idx]->foods[i].position.x, "*");
                         attroff(COLOR_PAIR(COLOR_FOOD_CORRUPT) | A_BOLD);
                     }
+                }
+            }
+
+            // draw spells
+            for (int i = 0; i < rooms[idx]->spells_number; i++)
+            {
+                if (rooms[idx]->spells[i].position.y != -1 && rooms[idx]->spells[i].position.x != -1)
+                {
+                    if (rooms[idx]->spells[i].type == SPELL_HEALTH)
+                    {
+                        attron(COLOR_PAIR(COLOR_SPELL_HEALTH) | A_BOLD);
+                        mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
+                        attroff(COLOR_PAIR(COLOR_SPELL_HEALTH) | A_BOLD);
+                    }
+                    else if (rooms[idx]->spells[i].type == SPELL_SPEED)
+                    {
+                        attron(COLOR_PAIR(COLOR_SPELL_SPEED) | A_BOLD);
+                        mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
+                        attroff(COLOR_PAIR(COLOR_SPELL_SPEED) | A_BOLD);
+                    }
+                    else if (rooms[idx]->spells[i].type == SPELL_DAMAGE)
+                    {
+                        attron(COLOR_PAIR(COLOR_SPELL_DAMAGE) | A_BOLD);
+                        mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
+                        attroff(COLOR_PAIR(COLOR_SPELL_DAMAGE) | A_BOLD);
+                    }
+                }
+            }
+
+            // draw weapons
+            for (int i = 0; i < rooms[idx]->weapons_number; i++)
+            {
+                if (rooms[idx]->weapons[i].position.y != -1 && rooms[idx]->weapons[i].position.x != -1)
+                {
+                    attron(COLOR_PAIR(COLOR_WEAPONS) | A_BOLD | A_BLINK);
+                    mvprintw(rooms[idx]->weapons[i].position.y, rooms[idx]->weapons[i].position.x, "^");
+                    attroff(COLOR_PAIR(COLOR_WEAPONS) | A_BOLD | A_BLINK);
                 }
             }
         }
@@ -862,9 +1147,9 @@ void place_gold(Room **rooms, int rooms_number)
 {
     for (int i = 0; i < rooms_number; i++)
     {
-        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE) // the room has gold with the chance of 50%
+        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE && rooms[i]->type != ROOM_ENCHANT) // the room has gold with the chance of 50%
         {
-            rooms[i]->gold_number = 1 + rand() % 3;
+            rooms[i]->gold_number = 1 + rand() % 2;
             rooms[i]->gold_position = (Position *)malloc(sizeof(Position) * rooms[i]->gold_number);
 
             for (int j = 0; j < rooms[i]->gold_number; j++)
@@ -892,13 +1177,13 @@ void place_gold(Room **rooms, int rooms_number)
     }
 }
 
-void place_food(Room **rooms, int rooms_number)
+void place_food(Room **rooms, int rooms_number, int level)
 {
     for (int i = 0; i < rooms_number; i++)
     {
-        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE) // the room has gold with the chance of 50%
+        if (rooms[i]->type != ROOM_TREASURE && rooms[i]->type != ROOM_ENCHANT)
         {
-            rooms[i]->foods_number = 1 + rand() % 2;
+            rooms[i]->foods_number = (3 - level) + rand() % 2;
             rooms[i]->foods = (Food *)malloc(sizeof(Food) * rooms[i]->foods_number);
 
             for (int j = 0; j < rooms[i]->foods_number; j++)
@@ -931,16 +1216,16 @@ void place_spell(Room **rooms, int rooms_number)
 {
     for (int i = 0; i < rooms_number; i++)
     {
-        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE) // the room has spell with the chance of 50%
+        if (rooms[i]->type == ROOM_ENCHANT)
         {
-            rooms[i]->spells_number = 1 + rand() % 2;
+            rooms[i]->spells_number = 4 + rand() % 2;
             rooms[i]->spells = (Spell *)malloc(sizeof(Spell) * rooms[i]->spells_number);
 
-            for (int j = 0; j < rooms[i]->foods_number; j++)
+            for (int j = 0; j < rooms[i]->spells_number; j++)
             {
                 rooms[i]->spells[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
                 rooms[i]->spells[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
-                // rooms[i]->spells[j].type = 11 + rand() % 4;
+                rooms[i]->spells[j].type = 15 + rand() % 3;
 
                 // check if the chosen position is reserved before
                 for (int k = 0; k < rooms[i]->reserved_number; k++)
@@ -964,18 +1249,32 @@ void place_spell(Room **rooms, int rooms_number)
 
 void place_weapon(Room **rooms, int rooms_number)
 {
+    bool isPlaced[4] = {0};
+
     for (int i = 0; i < rooms_number; i++)
     {
-        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE) // the room has weapon with the chance of 50%
+        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE && rooms[i]->type != ROOM_ENCHANT) // the room has weapon with the chance of 50%
         {
-            rooms[i]->weapons_number = 1 + rand() % 2;
+            rooms[i]->weapons_number = rand() % 2;
             rooms[i]->weapons = (Weapon *)malloc(sizeof(Weapon) * rooms[i]->spells_number);
 
-            for (int j = 0; j < rooms[i]->foods_number; j++)
+            for (int j = 0; j < rooms[i]->weapons_number; j++)
             {
                 rooms[i]->weapons[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
                 rooms[i]->weapons[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
-                // rooms[i]->weapons[j].type = 11 + rand() % 4;
+
+                if (rooms[i]->type != ROOM_NIGHTMARE)
+                {
+                    // check if the weapon is placed before
+                    int chosen_weapon = rand() % 4;
+                    while (isPlaced[chosen_weapon])
+                    {
+                        chosen_weapon = rand() % 4;
+                    }
+
+                    rooms[i]->weapons[j].type = 18 + chosen_weapon;
+                    isPlaced[chosen_weapon] = 1;
+                }
 
                 // check if the chosen position is reserved before
                 for (int k = 0; k < rooms[i]->reserved_number; k++)
@@ -994,6 +1293,78 @@ void place_weapon(Room **rooms, int rooms_number)
                 rooms[i]->reserved_number++;
             }
         }
+    }
+}
+
+void set_rooms_type(Floor **floors, int floors_number, int level)
+{
+    for (int i = 0; i < floors_number; i++)
+    {
+        int enchantRooms_number;
+        int nightmareRooms_number;
+
+        // generating random rooms based on the level
+        switch (level)
+        {
+        case 1: // 0 to 1
+            enchantRooms_number = rand() % 2;
+            nightmareRooms_number = 0;
+            break;
+
+        case 2: // 1 to 3
+            enchantRooms_number = 1 + rand() % 2;
+            nightmareRooms_number = rand() % 2;
+            break;
+
+        case 3: // 3 to 5
+            enchantRooms_number = 1 + rand() % 2;
+            nightmareRooms_number = 1 + rand() % 2;
+            break;
+        }
+
+        while (enchantRooms_number != 0 || nightmareRooms_number != 0)
+        {
+            // choose the treasure room first
+            if (i == floors_number - 1)
+            {
+                int treasure_room = rand() % floors[i]->rooms_number;
+                while (treasure_room == 0)
+                {
+                    treasure_room = rand() % floors[i]->rooms_number;
+                }
+                floors[i]->rooms[treasure_room]->type = ROOM_TREASURE;
+            }
+
+            int chosen_room = rand() % floors[i]->rooms_number;
+            while (floors[i]->rooms[chosen_room]->type != ROOM_ORDINARY)
+            {
+                chosen_room = rand() % floors[i]->rooms_number;
+            }
+
+            if (enchantRooms_number > 0)
+            {
+                floors[i]->rooms[chosen_room]->type = ROOM_ENCHANT;
+                enchantRooms_number--;
+            }
+            else if (nightmareRooms_number > 0)
+            {
+                floors[i]->rooms[chosen_room]->type = ROOM_NIGHTMARE;
+                nightmareRooms_number--;
+            }
+        }
+    }
+}
+
+void complete_map(Floor **floors, int floors_number, int level)
+{
+    set_rooms_type(floors, floors_number, level);
+
+    for (int i = 0; i < floors_number; i++)
+    {
+        place_gold(floors[i]->rooms, floors[i]->rooms_number);
+        place_food(floors[i]->rooms, floors[i]->rooms_number, level);
+        place_spell(floors[i]->rooms, floors[i]->rooms_number);
+        place_weapon(floors[i]->rooms, floors[i]->rooms_number);
     }
 }
 
@@ -1028,10 +1399,6 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
 
             connect_rooms(rooms, rooms_number, map);
             place_stairs(rooms, rooms_number, current_floor);
-            place_gold(rooms, rooms_number);
-            place_food(rooms, rooms_number);
-            place_spell(rooms, rooms_number);
-            place_weapon(rooms, rooms_number);
         }
         else
         {
@@ -1054,10 +1421,6 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
 
             connect_rooms(rooms, rooms_number, map);
             place_stairs(rooms, rooms_number, current_floor);
-            place_gold(rooms, rooms_number);
-            place_food(rooms, rooms_number);
-            place_spell(rooms, rooms_number);
-            place_weapon(rooms, rooms_number);
         }
     }
     else
@@ -1083,18 +1446,7 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
             rooms[i] = generate_room(grid);
         }
 
-        int treasure_room = rand() % rooms_number;
-        while (treasure_room == 0)
-        {
-            treasure_room = rand() % rooms_number;
-        }
-        rooms[treasure_room]->type = ROOM_TREASURE;
-
         connect_rooms(rooms, rooms_number, map);
-        place_gold(rooms, rooms_number);
-        place_food(rooms, rooms_number);
-        place_spell(rooms, rooms_number);
-        place_weapon(rooms, rooms_number);
     }
 
     return rooms;
