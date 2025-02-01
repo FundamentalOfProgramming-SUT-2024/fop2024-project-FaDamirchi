@@ -18,6 +18,8 @@ typedef struct Player
     int gold;
     int health;
 
+    int passed_blockes;
+
     char message[100];
 
     // other options...

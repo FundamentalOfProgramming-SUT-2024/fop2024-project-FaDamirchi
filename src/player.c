@@ -68,6 +68,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
                      player->position.x))
         {
             player->position.y--;
+            player->passed_blockes++;
             return;
         }
     }
@@ -80,6 +81,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
                      player->position.x))
         {
             player->position.y++;
+            player->passed_blockes++;
             return;
         }
     }
@@ -92,6 +94,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
                      player->position.x - 1))
         {
             player->position.x--;
+            player->passed_blockes++;
             return;
         }
     }
@@ -104,6 +107,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
                      player->position.x + 1))
         {
             player->position.x++;
+            player->passed_blockes++;
             return;
         }
     }
@@ -117,6 +121,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         {
             player->position.y--;
             player->position.x--;
+            player->passed_blockes++;
             return;
         }
     }
@@ -129,6 +134,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         {
             player->position.y--;
             player->position.x++;
+            player->passed_blockes++;
             return;
         }
     }
@@ -142,6 +148,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         {
             player->position.y++;
             player->position.x--;
+            player->passed_blockes++;
             return;
         }
     }
@@ -155,6 +162,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
         {
             player->position.y++;
             player->position.x++;
+            player->passed_blockes++;
             return;
         }
     }
@@ -181,6 +189,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
         }
 
         player->position.y -= (counter - 1);
+        player->passed_blockes += (counter - 1);
         return;
     }
 
@@ -196,6 +205,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
         }
 
         player->position.y += (counter - 1);
+        player->passed_blockes += (counter - 1);
         return;
     }
 
@@ -211,6 +221,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
         }
 
         player->position.x -= (counter - 1);
+        player->passed_blockes += (counter - 1);
         return;
     }
 
@@ -226,6 +237,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
         }
 
         player->position.x += (counter - 1);
+        player->passed_blockes += (counter - 1);
         return;
     }
 
@@ -242,6 +254,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
 
         player->position.y -= (counter - 1);
         player->position.x -= (counter - 1);
+        player->passed_blockes += (counter - 1);
         return;
     }
     if (ch == 'e' || ch == 'E' || ch == '9')
@@ -257,6 +270,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
 
         player->position.y -= (counter - 1);
         player->position.x += (counter - 1);
+        player->passed_blockes += (counter - 1);
         return;
     }
 
@@ -273,6 +287,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
 
         player->position.y += (counter - 1);
         player->position.x -= (counter - 1);
+        player->passed_blockes += (counter - 1);
         return;
     }
 
@@ -289,6 +304,7 @@ void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player)
 
         player->position.y += (counter - 1);
         player->position.x += (counter - 1);
+        player->passed_blockes += (counter - 1);
         return;
     }
 }
@@ -313,6 +329,7 @@ Player *player_setup(Room **rooms, int rooms_number)
     newPlayer->current_floor = 0;
     newPlayer->gold = 0;
     newPlayer->health = 100;
+    newPlayer->passed_blockes = 0;
 
     return newPlayer;
 }
@@ -421,9 +438,11 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
 
     handle_player_actions(floors, rooms, player);
     use_windows(player, rooms, rooms_number);
+
     int ch = getch();
     player->message[0] = '\0';
 
+    // check for map overview
     if (ch == 'm' || ch == 'M')
     {
         strcpy(player->message, "Showing the whole map. (press M key again to cancel)");
@@ -438,6 +457,8 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         }
         player->message[0] = '\0';
     }
+
+    // check for fast mode
     else if (ch == 'f' || ch == 'F')
     {
         strcpy(player->message, "Fast mode activated. Choose a direction. (press F key again to cancel)");
@@ -446,8 +467,18 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         fast_move(floors, rooms, rooms_number, player);
         player->message[0] = '\0';
     }
+
+    // handle the character moving
     else
     {
         move_player(ch, floors, rooms, rooms_number, player);
+
+        // reduce health by moving -1 after moving 10 blocks
+        while (player->passed_blockes > 10)
+        {
+            player->passed_blockes -= 10;
+            player->health--;
+        }
+        
     }
 }
