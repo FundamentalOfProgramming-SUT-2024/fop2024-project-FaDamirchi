@@ -10,21 +10,6 @@ typedef struct Room Room;
 typedef struct Floor Floor;
 
 // objects
-typedef struct Weapon
-{
-    int type;
-    int damage;
-
-    // other options...
-} Weapon;
-
-typedef struct Spell
-{
-    int type;
-
-    // other options...
-} Spell;
-
 typedef struct Player
 {
     Position position;

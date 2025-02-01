@@ -229,6 +229,8 @@ Room *generate_room(int grid)
     newRoom->isSeen = false;
     newRoom->stairs.has_stairs = false;
     newRoom->type = ROOM_ORDINARY;
+    newRoom->reserved_number = 0;
+    newRoom->reserved_poitions = (Position *)malloc(sizeof(Position) * 170);
 
     return newRoom;
 }
@@ -797,11 +799,19 @@ void place_stairs(Room **rooms, int rooms_number, int curruent_floor)
         chosen_room = rand() % rooms_number;
     }
 
+    // updating the room properties
     rooms[chosen_room]->stairs.has_stairs = true;
     rooms[chosen_room]->stairs.position.y = rooms[chosen_room]->start.y + 1 + rand() % (rooms[chosen_room]->height - 2);
     rooms[chosen_room]->stairs.position.x = rooms[chosen_room]->start.x + 1 + rand() % (rooms[chosen_room]->width - 2);
+
+    // adding the stairs properties
     rooms[chosen_room]->stairs.previous_floor = curruent_floor;
     rooms[chosen_room]->stairs.next_floor = curruent_floor + 1;
+
+    // adding the chosen position to reserved ones
+    rooms[chosen_room]->reserved_poitions[rooms[chosen_room]->reserved_number].y = rooms[chosen_room]->stairs.position.y;
+    rooms[chosen_room]->reserved_poitions[rooms[chosen_room]->reserved_number].x = rooms[chosen_room]->stairs.position.x;
+    rooms[chosen_room]->reserved_number++;
 }
 
 void place_gold(Room **rooms, int rooms_number)
@@ -817,6 +827,127 @@ void place_gold(Room **rooms, int rooms_number)
             {
                 rooms[i]->gold_position[j].y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
                 rooms[i]->gold_position[j].x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+
+                // check if the chosen position is reserved before
+                for (int k = 0; k < rooms[i]->reserved_number; k++)
+                {
+                    while (rooms[i]->gold_position[j].y == rooms[i]->reserved_poitions[k].y &&
+                           rooms[i]->gold_position[j].x == rooms[i]->reserved_poitions[k].x)
+                    {
+                        rooms[i]->gold_position[j].y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                        rooms[i]->gold_position[j].x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                    }
+                }
+
+                // adding the chosen position to reserved ones
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].y = rooms[i]->gold_position[j].y;
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].x = rooms[i]->gold_position[j].x;
+                rooms[i]->reserved_number++;
+            }
+        }
+    }
+}
+
+void place_food(Room **rooms, int rooms_number)
+{
+    for (int i = 0; i < rooms_number; i++)
+    {
+        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE) // the room has gold with the chance of 50%
+        {
+            rooms[i]->foods_number = 1 + rand() % 2;
+            rooms[i]->foods = (Food *)malloc(sizeof(Food) * rooms[i]->foods_number);
+
+            for (int j = 0; j < rooms[i]->foods_number; j++)
+            {
+                rooms[i]->foods[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                rooms[i]->foods[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                rooms[i]->foods[j].type = 11 + rand() % 4;
+
+                // check if the chosen position is reserved before
+                for (int k = 0; k < rooms[i]->reserved_number; k++)
+                {
+                    while (rooms[i]->foods[j].position.y == rooms[i]->reserved_poitions[k].y &&
+                           rooms[i]->foods[j].position.x == rooms[i]->reserved_poitions[k].x)
+                    {
+                        rooms[i]->foods[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                        rooms[i]->foods[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                    }
+                }
+
+                // adding the chosen position to reserved ones
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].y = rooms[i]->foods[j].position.y;
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].x = rooms[i]->foods[j].position.x;
+                rooms[i]->reserved_number++;
+            }
+        }
+    }
+}
+
+void place_spell(Room **rooms, int rooms_number)
+{
+    for (int i = 0; i < rooms_number; i++)
+    {
+        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE) // the room has spell with the chance of 50%
+        {
+            rooms[i]->spells_number = 1 + rand() % 2;
+            rooms[i]->spells = (Spell *)malloc(sizeof(Spell) * rooms[i]->spells_number);
+
+            for (int j = 0; j < rooms[i]->foods_number; j++)
+            {
+                rooms[i]->spells[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                rooms[i]->spells[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                // rooms[i]->spells[j].type = 11 + rand() % 4;
+
+                // check if the chosen position is reserved before
+                for (int k = 0; k < rooms[i]->reserved_number; k++)
+                {
+                    while (rooms[i]->spells[j].position.y == rooms[i]->reserved_poitions[k].y &&
+                           rooms[i]->spells[j].position.x == rooms[i]->reserved_poitions[k].x)
+                    {
+                        rooms[i]->spells[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                        rooms[i]->spells[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                    }
+                }
+
+                // adding the chosen position to reserved ones
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].y = rooms[i]->spells[j].position.y;
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].x = rooms[i]->spells[j].position.x;
+                rooms[i]->reserved_number++;
+            }
+        }
+    }
+}
+
+void place_weapon(Room **rooms, int rooms_number)
+{
+    for (int i = 0; i < rooms_number; i++)
+    {
+        if (rand() % 2 && rooms[i]->type != ROOM_TREASURE) // the room has weapon with the chance of 50%
+        {
+            rooms[i]->weapons_number = 1 + rand() % 2;
+            rooms[i]->weapons = (Weapon *)malloc(sizeof(Weapon) * rooms[i]->spells_number);
+
+            for (int j = 0; j < rooms[i]->foods_number; j++)
+            {
+                rooms[i]->weapons[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                rooms[i]->weapons[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                // rooms[i]->weapons[j].type = 11 + rand() % 4;
+
+                // check if the chosen position is reserved before
+                for (int k = 0; k < rooms[i]->reserved_number; k++)
+                {
+                    while (rooms[i]->weapons[j].position.y == rooms[i]->reserved_poitions[k].y &&
+                           rooms[i]->weapons[j].position.x == rooms[i]->reserved_poitions[k].x)
+                    {
+                        rooms[i]->weapons[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
+                        rooms[i]->weapons[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
+                    }
+                }
+
+                // adding the chosen position to reserved ones
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].y = rooms[i]->weapons[j].position.y;
+                rooms[i]->reserved_poitions[rooms[i]->reserved_number].x = rooms[i]->weapons[j].position.x;
+                rooms[i]->reserved_number++;
             }
         }
     }
@@ -854,6 +985,9 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
             connect_rooms(rooms, rooms_number, map);
             place_stairs(rooms, rooms_number, current_floor);
             place_gold(rooms, rooms_number);
+            place_food(rooms, rooms_number);
+            place_spell(rooms, rooms_number);
+            place_weapon(rooms, rooms_number);
         }
         else
         {
@@ -877,6 +1011,9 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
             connect_rooms(rooms, rooms_number, map);
             place_stairs(rooms, rooms_number, current_floor);
             place_gold(rooms, rooms_number);
+            place_food(rooms, rooms_number);
+            place_spell(rooms, rooms_number);
+            place_weapon(rooms, rooms_number);
         }
     }
     else
@@ -911,6 +1048,9 @@ Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast
 
         connect_rooms(rooms, rooms_number, map);
         place_gold(rooms, rooms_number);
+        place_food(rooms, rooms_number);
+        place_spell(rooms, rooms_number);
+        place_weapon(rooms, rooms_number);
     }
 
     return rooms;

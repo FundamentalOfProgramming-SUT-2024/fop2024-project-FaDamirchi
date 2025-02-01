@@ -432,7 +432,7 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         draw_all_map(rooms, rooms_number, floors[player->current_floor]->map);
 
         int ans = getch();
-        while (!(ans == 'm' || ans == "M"))
+        while (!(ans == 'm' || ans == 'M'))
         {
             ans = getch();
         }

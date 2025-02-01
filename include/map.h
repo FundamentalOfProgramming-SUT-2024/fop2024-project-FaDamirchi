@@ -26,6 +26,11 @@ typedef struct Player Player;
 #define DOOR_HIDDEN   9
 #define DOOR_LOCKED   10
 
+#define FOOD_ORDINARY  11
+#define FOOD_EXCELLENT 12
+#define FOOD_MAGIC     13
+#define FOOD_CORRUPT   14
+
 // variables
 extern Position come_from[40][130];
 
@@ -52,6 +57,24 @@ typedef struct Stair
     int next_floor;
 } Stair;
 
+typedef struct Food
+{
+    Position position;
+    int type;
+} Food;
+
+typedef struct Spell
+{
+    Position position;
+    int type;
+} Spell;
+
+typedef struct Weapon
+{
+    Position position;
+    int type;
+} Weapon;
+
 typedef struct Room
 {
     Position start; // starting point - upper left
@@ -59,6 +82,7 @@ typedef struct Room
     int height;
 
     int grid;
+    int type;
 
     Door doors[4];
     int doors_number;
@@ -70,10 +94,20 @@ typedef struct Room
 
     Stair stairs;
 
+    Position *reserved_poitions;
+    int reserved_number;
+
     Position *gold_position;
     int gold_number;
 
-    int type;
+    Food *foods;
+    int foods_number;
+
+    Spell *spells;
+    int spells_number;
+
+    Weapon *weapons;
+    int weapons_number;
     // other options...
 } Room;
 
@@ -92,6 +126,9 @@ void connect_rooms(Room **rooms, int rooms_number, bool ***map);
 
 void place_stairs(Room **rooms, int rooms_number, int curruent_floor);
 void place_gold(Room **rooms, int rooms_number);
+void place_food(Room **rooms, int rooms_number);
+void place_spell(Room **rooms, int rooms_number);
+void place_weapon(Room **rooms, int rooms_number);
 
 Room **map_setup(int rooms_number, bool ***map, Room *previous_room, bool isLast, int current_floor);
 void show_next_step(Room **rooms, Player *player, int rooms_number, bool ***map);
