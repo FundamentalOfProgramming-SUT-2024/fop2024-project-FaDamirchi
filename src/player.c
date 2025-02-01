@@ -470,6 +470,91 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
             }
         }
     }
+
+    // check for spells
+    if (current_room->type == ROOM_ENCHANT)
+    {
+        for (int i = 0; i < current_room->spells_number; i++)
+        {
+            if (player->position.y == current_room->spells[i].position.y &&
+                player->position.x == current_room->spells[i].position.x)
+            {
+                strcpy(player->message, "Do you want to pick up this spell? (y / n)");
+                show_message(player->message);
+
+                int ch = getch();
+                if (ch == 'y' || ch == 'Y')
+                {
+                    if (current_room->spells[i].type == SPELL_HEALTH)
+                    {
+                        player->stuff.spell_health++;
+                    }
+                    else if (current_room->spells[i].type == SPELL_SPEED)
+                    {
+                        player->stuff.spell_speed++;
+                    }
+                    if (current_room->spells[i].type == SPELL_DAMAGE)
+                    {
+                        player->stuff.spell_damage++;
+                    }
+
+                    current_room->spells[i].position.y = -1;
+                    current_room->spells[i].position.x = -1;
+
+                    strcpy(player->message, "You picked up the spell!");
+                    show_message(player->message);
+                    return;
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    // check for weapons
+    for (int i = 0; i < current_room->weapons_number; i++)
+    {
+        if (player->position.y == current_room->weapons[i].position.y &&
+            player->position.x == current_room->weapons[i].position.x)
+        {
+            strcpy(player->message, "Do you want to pick up this weapon? (y / n)");
+            show_message(player->message);
+
+            int ch = getch();
+            if (ch == 'y' || ch == 'Y')
+            {
+                if (current_room->weapons[i].type == WEAPON_DAGGER)
+                {
+                    player->stuff.weapon_dagger = true;
+                }
+                else if (current_room->weapons[i].type == WEAPON_WAND)
+                {
+                    player->stuff.weapon_wand = true;
+                }
+                else if (current_room->weapons[i].type == WEAPON_ARROW)
+                {
+                    player->stuff.weapon_arrow = true;
+                }
+                else if (current_room->weapons[i].type == WEAPON_SWORD)
+                {
+                    player->stuff.weapon_sword = true;
+                }
+
+                current_room->weapons[i].position.y = -1;
+                current_room->weapons[i].position.x = -1;
+
+                strcpy(player->message, "You picked up the weapon!");
+                show_message(player->message);
+                return;
+            }
+            else
+            {
+                return;
+            }
+        }
+    }
 }
 
 void show_foods(Player *player)
