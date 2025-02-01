@@ -324,6 +324,12 @@ Player *player_setup(Room **rooms, int rooms_number)
     newPlayer->position.y = rooms[initial_room]->start.y + 1 + rand() % (rooms[initial_room]->height - 2);
     newPlayer->position.x = rooms[initial_room]->start.x + 1 + rand() % (rooms[initial_room]->width - 2);
 
+    // setting up player stuff
+    newPlayer->stuff.food_ordinary = 0;
+    newPlayer->stuff.food_excellent = 0;
+    newPlayer->stuff.food_magic = 0;
+    newPlayer->stuff.food_corrupt = 0;
+
     // other properties
     rooms[initial_room]->isSeen = true;
     newPlayer->current_floor = 0;
@@ -336,6 +342,7 @@ Player *player_setup(Room **rooms, int rooms_number)
 
 void handle_player_actions(Floor **floors, Room **rooms, Player *player)
 {
+    // check if the user is in a room
     Room *current_room = NULL;
 
     for (int i = 0; i < floors[player->current_floor]->rooms_number; i++)
@@ -437,6 +444,12 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
     }
 }
 
+void show_stuff(Stuff *player)
+{
+    clear();
+    mvprintw(0, 0, "Press Q to go back.");
+}
+
 void show_status(Player *player)
 {
     mvprintw(30, 0, "Current floor: %d", player->current_floor + 1);
@@ -497,6 +510,16 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         show_message(player->message);
 
         fast_move(floors, rooms, rooms_number, player);
+        player->message[0] = '\0';
+    }
+
+    // check for showing stuff
+    else if (ch == 's' || ch == 'S')
+    {
+        strcpy(player->message, "Do you want to view your stuff? (y / n)");
+        show_message(player->message);
+
+        show_stuff(player->stuff);
         player->message[0] = '\0';
     }
 

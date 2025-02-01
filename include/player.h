@@ -10,15 +10,27 @@ typedef struct Room Room;
 typedef struct Floor Floor;
 
 // objects
+typedef struct Stuff
+{
+    // foods
+    int food_ordinary;
+    int food_excellent;
+    int food_magic;
+    int food_corrupt;
+
+    // other options...
+} Stuff;
+
 typedef struct Player
 {
     Position position;
     int current_floor;
+    int passed_blockes;
 
     int gold;
     int health;
 
-    int passed_blockes;
+    Stuff stuff;
 
     char message[100];
 
@@ -33,6 +45,7 @@ void move_player(int ch, Floor **floors, Room **rooms, int rooms_number, Player 
 void fast_move(Floor **floors, Room **rooms, int rooms_number, Player *player);
 Player *player_setup(Room **rooms, int rooms_number);
 void handle_player_actions(Floor **floors, Room **rooms, Player *player);
+void show_stuff(Stuff *player);
 
 void show_status(Player *player);
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color);
