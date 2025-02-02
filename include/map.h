@@ -5,6 +5,7 @@
 #include "global_defines.h"
 #include "player.h"
 #include "new_game.h"
+#include "monsters.h"
 
 // forward declaration
 typedef struct Player Player;
@@ -14,36 +15,36 @@ typedef struct Floor Floor;
 #define MAP_WIDTH 120
 #define MAP_HEIGHT 30
 
-#define UP    0
+#define UP 0
 #define RIGHT 1
-#define DOWN  2
-#define LEFT  3
+#define DOWN 2
+#define LEFT 3
 
-#define ROOM_ORDINARY  4
-#define ROOM_TREASURE  5
-#define ROOM_ENCHANT   6
+#define ROOM_ORDINARY 4
+#define ROOM_TREASURE 5
+#define ROOM_ENCHANT 6
 #define ROOM_NIGHTMARE 7
 
 #define DOOR_ORDINARY 8
-#define DOOR_HIDDEN   9
-#define DOOR_LOCKED   10
+#define DOOR_HIDDEN 9
+#define DOOR_LOCKED 10
 
-#define FOOD_ORDINARY  11
+#define FOOD_ORDINARY 11
 #define FOOD_EXCELLENT 12
-#define FOOD_MAGIC     13
-#define FOOD_CORRUPT   14
+#define FOOD_MAGIC 13
+#define FOOD_CORRUPT 14
 
 #define SPELL_HEALTH 15
-#define SPELL_SPEED  16
+#define SPELL_SPEED 16
 #define SPELL_DAMAGE 17
 
 #define WEAPON_DAGGER 18
-#define WEAPON_WAND   19
-#define WEAPON_ARROW  20
-#define WEAPON_SWORD  21
+#define WEAPON_WAND 19
+#define WEAPON_ARROW 20
+#define WEAPON_SWORD 21
 
 #define GOLD_ORDINARY 22
-#define GOLD_BLACK    23
+#define GOLD_BLACK 23
 
 // variables
 extern Position come_from[40][130];
@@ -128,9 +129,12 @@ typedef struct Room
 
     Weapon *weapons;
     int weapons_number;
-    
+
     Position *traps_position;
     int traps_number;
+
+    Monster **monsters;
+    int monsters_number;
 } Room;
 
 // functions

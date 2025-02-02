@@ -37,7 +37,6 @@ typedef struct Stuff
     bool weapon_arrow;
     bool weapon_sword;
 
-    // other options...
 } Stuff;
 
 typedef struct Player
@@ -53,7 +52,6 @@ typedef struct Player
 
     char message[100];
 
-    // other options...
 } Player;
 
 // functions
@@ -69,7 +67,7 @@ void show_spells(Player *player);
 void show_weapons(Player *player);
 
 void status_bar(Player *player);
-void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color);
+bool player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color);
 int check_status(Player *player, Floor **floors);
 
 #endif

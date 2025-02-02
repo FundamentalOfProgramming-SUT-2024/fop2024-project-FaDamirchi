@@ -1061,7 +1061,7 @@ void status_bar(Player *player)
     mvprintw(30, 45, "Gold: %d", player->gold);
 }
 
-void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color)
+bool player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color)
 {
     // displaying the player with the chosen color
     switch (color)
@@ -1135,7 +1135,21 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         player->message[0] = '\0';
     }
 
-    // handle the inparacter moving
+    // check for quitting
+    else if (inp == 'o' || inp == 'O')
+    {
+        strcpy(player->message, "Do you want to quit? (y / n)");
+        show_message(player->message);
+
+        int ch = getch();
+        if (ch =='y' || ch == 'Y')
+        {
+            return false;
+        }
+        
+    }
+
+    // handle the characer moving
     else
     {
         move_player(inp, floors, rooms, rooms_number, player);
@@ -1147,6 +1161,8 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
             player->health--;
         }
     }
+
+    return true;
 }
 
 int check_status(Player *player, Floor **floors)

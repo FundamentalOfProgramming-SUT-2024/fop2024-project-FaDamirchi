@@ -4,6 +4,7 @@
 #include "new_game.h"
 #include "manage_users.h"
 #include "music.h"
+#include "resume_game.h"
 
 void show_pregame_menu(char *username, int isNew)
 {
@@ -114,7 +115,7 @@ void show_pregame_menu(char *username, int isNew)
                     fclose(file);
 
                     // start the game with saved settings
-                    new_game(level, color);
+                    new_game(username, level, color);
                 }
                 else if (choice == 1)
                 {
@@ -238,7 +239,7 @@ void show_pregame_menu(char *username, int isNew)
                     fclose(file);
 
                     // start the game with saved settings
-                    new_game(level, color);
+                    new_game(username, level, color);
                 }
                 else if (choice == 1)
                 {
@@ -262,7 +263,7 @@ void show_pregame_menu(char *username, int isNew)
                     fclose(file);
 
                     // start the game with saved settings
-                    new_game(level, color);
+                    resume_game(username, color);
                 }
                 else if (choice == 2)
                 {

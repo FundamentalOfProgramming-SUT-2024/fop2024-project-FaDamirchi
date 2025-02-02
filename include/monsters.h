@@ -7,11 +7,12 @@
 // objects
 typedef struct Monster
 {
-    char symbol;
-    Position position;
-    
-    // other options...
-} Monster;
+    int monster_type;
+    int moving_type;
+    int damage;
+    int health;
 
+    Position position;
+} Monster;
 
 #endif
