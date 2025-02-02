@@ -115,7 +115,7 @@ void show_pregame_menu(char *username, int isNew)
                     fclose(file);
 
                     // start the game with saved settings
-                    new_game(username, level, color);
+                    new_game(username, level, color, 1);
                 }
                 else if (choice == 1)
                 {
@@ -239,7 +239,7 @@ void show_pregame_menu(char *username, int isNew)
                     fclose(file);
 
                     // start the game with saved settings
-                    new_game(username, level, color);
+                    new_game(username, level, color, 0);
                 }
                 else if (choice == 1)
                 {

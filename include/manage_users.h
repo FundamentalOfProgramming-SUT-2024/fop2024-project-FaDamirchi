@@ -11,6 +11,7 @@
 // files
 #define USERS_FILE       "data/users.txt"
 #define SETTINGS_FILE    "data/settings.txt"
+#define SCORES_FILE      "data/scores.txt"
 #define SAVED_GAMES_FILE "data/saved_games.txt"
 
 // functions
@@ -22,5 +23,7 @@ void generate_password(char *user_password);
 void create_new_user(char *email, char *username, char *password);
 int authenticate_user(char *username, char *password);
 void password_recovery(char *username, char *email, int start_y, int start_x);
+
+void update_score(char *username, int score, int gold, int experience);
 
 #endif

@@ -174,7 +174,7 @@ void save_game(Game *game, char *username)
     fclose(fp);
 }
 
-void new_game(char * username, int level, int color)
+void new_game(char *username, int level, int color, bool isGuest)
 {
     srand(time(NULL));
 
@@ -291,18 +291,25 @@ void new_game(char * username, int level, int color)
                        newGame->floors[newGame->player->current_floor]->rooms_number,
                        newGame->floors[newGame->player->current_floor]->map);
 
-        if(!player_update(newGame->floors,
-                      newGame->floors[newGame->player->current_floor]->rooms,
-                      newGame->floors[newGame->player->current_floor]->rooms_number,
-                      newGame->player,
-                      color))
+        if (!player_update(newGame->floors,
+                           newGame->floors[newGame->player->current_floor]->rooms,
+                           newGame->floors[newGame->player->current_floor]->rooms_number,
+                           newGame->player,
+                           color))
         {
-            save_game(newGame, username);
+            if (!isGuest)
+            {
+                save_game(newGame, username);
+            }
             break;
         }
 
         if (check_status(newGame->player, newGame->floors) != NOTHING)
         {
+            if (!isGuest)
+            {
+                update_score(username, newGame->player->gold * 175, newGame->player->gold, 1);
+            }
             break;
         }
 

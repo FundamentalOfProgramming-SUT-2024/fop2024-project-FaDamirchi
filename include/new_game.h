@@ -29,6 +29,6 @@ typedef struct Game
 
 // functions
 void save_game(Game *game, char *username);
-void new_game(char *username, int level, int color);
+void new_game(char *username, int level, int color, bool isGuest);
 
 #endif

@@ -225,6 +225,10 @@ void create_new_user(char *email, char *username, char *password)
     file = fopen(SETTINGS_FILE, "a");
     fprintf(file, "%s:%d-%d-%d\n", username, 1, 1, 1);
     fclose(file);
+
+    file = fopen(USERS_FILE, "a");
+    fprintf(file, "%s:%d-%d-%d", username, 0, 0, 0);
+    fclose(file);
 }
 
 int authenticate_user(char *username, char *password)
@@ -305,4 +309,66 @@ void password_recovery(char *username, char *email, int start_y, int start_x)
             }
         }
     }
+}
+
+void update_score(char *username, int score, int gold, int experience)
+{
+    FILE *file = fopen(SCORES_FILE, "r");
+
+    char line[1024];
+    int stored_score;
+    int stored_gold;
+    int stored_experience;
+
+    while (fgets(line, sizeof(line), file))
+    {
+        char stored_username[320];
+        sscanf(line, "%[^:]:", stored_username);
+
+        if (strcmp(stored_username, username) == 0)
+        {
+            sscanf(line, "%*[^:]:%d-%d-%d", &stored_score, &stored_gold, &stored_experience);
+            break;
+        }
+    }
+
+    fclose(file);
+
+
+    file = fopen(SCORES_FILE, "r+");
+    if (!file)
+    {
+        perror("Error opening settings file");
+        return;
+    }
+
+    // create a temp file to store changes in it
+    char temp_file_name[] = "temp_scores.txt";
+    FILE *temp_file = fopen(temp_file_name, "w");
+
+    while (fgets(line, sizeof(line), file))
+    {
+        char stored_username[320];
+        sscanf(line, "%[^:]:", stored_username);
+
+        if (strcmp(stored_username, username) == 0)
+        {
+            // update the settings for the user
+            fprintf(temp_file, "%s:%d-%d-%d\n", username, stored_score + score,
+                                                          stored_gold + gold,
+                                                          stored_experience + experience);
+        }
+        else
+        {
+            // copy the line in the main file
+            fputs(line, temp_file);
+        }
+    }
+
+    fclose(file);
+    fclose(temp_file);
+
+    // replace the old file with the updated file
+    remove(SCORES_FILE);
+    rename(temp_file_name, SCORES_FILE);
 }
