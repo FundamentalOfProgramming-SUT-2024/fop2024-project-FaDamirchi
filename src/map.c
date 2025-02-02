@@ -1050,19 +1050,19 @@ void draw_room(Room *room)
 
 void use_windows(Player *player, Room **rooms, int rooms_number)
 {
-    int currunt_room = -1;
+    int current_room = -1;
 
     for (int i = 0; i < rooms_number; i++)
     {
         if (player->position.y > rooms[i]->start.y && player->position.y < rooms[i]->start.y + rooms[i]->height - 1 &&
             player->position.x > rooms[i]->start.x && player->position.x < rooms[i]->start.x + rooms[i]->width - 1)
         {
-            currunt_room = i;
+            current_room = i;
             break;
         }
     }
 
-    if (currunt_room == -1)
+    if (current_room == -1)
     {
         return;
     }
@@ -1071,20 +1071,20 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
     int delta_x[4] = {0, 1, 0, -1};
 
     // check four directions for windows
-    for (int win = 0; win < rooms[currunt_room]->windows_number; win++)
+    for (int win = 0; win < rooms[current_room]->windows_number; win++)
     {
         for (int idx = 0; idx < 4; idx++)
         {
             bool isDoor = false;
 
-            if (player->position.y + delta_y[idx] == rooms[currunt_room]->windows[win].position.y &&
-                player->position.x + delta_x[idx] == rooms[currunt_room]->windows[win].position.x)
+            if (player->position.y + delta_y[idx] == rooms[current_room]->windows[win].position.y &&
+                player->position.x + delta_x[idx] == rooms[current_room]->windows[win].position.x)
             {
                 // don't show the next room if player is on a door next to the window
-                for (int i = 0; i < rooms[currunt_room]->doors_number; i++)
+                for (int i = 0; i < rooms[current_room]->doors_number; i++)
                 {
-                    if (player->position.y == rooms[currunt_room]->doors[i].position.y &&
-                        player->position.x == rooms[currunt_room]->doors[i].position.x)
+                    if (player->position.y == rooms[current_room]->doors[i].position.y &&
+                        player->position.x == rooms[current_room]->doors[i].position.x)
                     {
                         isDoor = true;
                         break;
@@ -1097,11 +1097,11 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
                 }
 
                 // start showing the next room in dark gray
-                if (rooms[currunt_room]->windows[win].side == UP)
+                if (rooms[current_room]->windows[win].side == UP)
                 {
                     for (int i = 0; i < rooms_number; i++)
                     {
-                        if (rooms[i]->grid == rooms[currunt_room]->grid - 5 && !rooms[i]->isSeen)
+                        if (rooms[i]->grid == rooms[current_room]->grid - 5 && !rooms[i]->isSeen)
                         {
                             draw_room(rooms[i]);
                             return;
@@ -1109,11 +1109,11 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
                     }
                 }
 
-                else if (rooms[currunt_room]->windows[win].side == RIGHT)
+                else if (rooms[current_room]->windows[win].side == RIGHT)
                 {
                     for (int i = 0; i < rooms_number; i++)
                     {
-                        if (rooms[i]->grid == rooms[currunt_room]->grid + 1 && !rooms[i]->isSeen)
+                        if (rooms[i]->grid == rooms[current_room]->grid + 1 && !rooms[i]->isSeen)
                         {
                             draw_room(rooms[i]);
                             return;
@@ -1121,11 +1121,11 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
                     }
                 }
 
-                else if (rooms[currunt_room]->windows[win].side == DOWN)
+                else if (rooms[current_room]->windows[win].side == DOWN)
                 {
                     for (int i = 0; i < rooms_number; i++)
                     {
-                        if (rooms[i]->grid == rooms[currunt_room]->grid + 5 && !rooms[i]->isSeen)
+                        if (rooms[i]->grid == rooms[current_room]->grid + 5 && !rooms[i]->isSeen)
                         {
                             draw_room(rooms[i]);
                             return;
@@ -1133,11 +1133,11 @@ void use_windows(Player *player, Room **rooms, int rooms_number)
                     }
                 }
 
-                else if (rooms[currunt_room]->windows[win].side == LEFT)
+                else if (rooms[current_room]->windows[win].side == LEFT)
                 {
                     for (int i = 0; i < rooms_number; i++)
                     {
-                        if (rooms[i]->grid == rooms[currunt_room]->grid - 1 && !rooms[i]->isSeen)
+                        if (rooms[i]->grid == rooms[current_room]->grid - 1 && !rooms[i]->isSeen)
                         {
                             draw_room(rooms[i]);
                             return;
@@ -1218,64 +1218,64 @@ void find_path(Room **rooms, int rooms_number, Position start, Position end, boo
     frontier[frontier_count] = start;
     frontier_count++;
 
-    Position currunt_position;
+    Position current_position;
 
     while (frontier_index < frontier_count)
     {
-        currunt_position = frontier[frontier_index];
+        current_position = frontier[frontier_index];
         frontier_index++;
 
-        if (currunt_position.y == end.y && currunt_position.x == end.x)
+        if (current_position.y == end.y && current_position.x == end.x)
         {
             break;
         }
 
         // adding the upper neighbor
-        if (currunt_position.y > 1 &&
-            come_from[currunt_position.y - 1][currunt_position.x].y == -1 &&
-            !is_room(rooms, rooms_number, currunt_position.y - 1, currunt_position.x))
+        if (current_position.y > 1 &&
+            come_from[current_position.y - 1][current_position.x].y == -1 &&
+            !is_room(rooms, rooms_number, current_position.y - 1, current_position.x))
         {
-            frontier[frontier_count].y = currunt_position.y - 1;
-            frontier[frontier_count].x = currunt_position.x;
+            frontier[frontier_count].y = current_position.y - 1;
+            frontier[frontier_count].x = current_position.x;
             frontier_count++;
 
-            come_from[currunt_position.y - 1][currunt_position.x] = currunt_position;
+            come_from[current_position.y - 1][current_position.x] = current_position;
         }
 
         // adding the right neighbor
-        if (currunt_position.x < MAP_WIDTH - 1 &&
-            come_from[currunt_position.y][currunt_position.x + 1].y == -1 &&
-            !is_room(rooms, rooms_number, currunt_position.y, currunt_position.x + 1))
+        if (current_position.x < MAP_WIDTH - 1 &&
+            come_from[current_position.y][current_position.x + 1].y == -1 &&
+            !is_room(rooms, rooms_number, current_position.y, current_position.x + 1))
         {
-            frontier[frontier_count].y = currunt_position.y;
-            frontier[frontier_count].x = currunt_position.x + 1;
+            frontier[frontier_count].y = current_position.y;
+            frontier[frontier_count].x = current_position.x + 1;
             frontier_count++;
 
-            come_from[currunt_position.y][currunt_position.x + 1] = currunt_position;
+            come_from[current_position.y][current_position.x + 1] = current_position;
         }
 
         // adding the lower neighbor
-        if (currunt_position.y < MAP_HEIGHT - 1 &&
-            come_from[currunt_position.y + 1][currunt_position.x].y == -1 &&
-            !is_room(rooms, rooms_number, currunt_position.y + 1, currunt_position.x))
+        if (current_position.y < MAP_HEIGHT - 1 &&
+            come_from[current_position.y + 1][current_position.x].y == -1 &&
+            !is_room(rooms, rooms_number, current_position.y + 1, current_position.x))
         {
-            frontier[frontier_count].y = currunt_position.y + 1;
-            frontier[frontier_count].x = currunt_position.x;
+            frontier[frontier_count].y = current_position.y + 1;
+            frontier[frontier_count].x = current_position.x;
             frontier_count++;
 
-            come_from[currunt_position.y + 1][currunt_position.x] = currunt_position;
+            come_from[current_position.y + 1][current_position.x] = current_position;
         }
 
         // adding the left neighbor
-        if (currunt_position.x > 0 &&
-            come_from[currunt_position.y][currunt_position.x - 1].y == -1 &&
-            !is_room(rooms, rooms_number, currunt_position.y, currunt_position.x - 1))
+        if (current_position.x > 0 &&
+            come_from[current_position.y][current_position.x - 1].y == -1 &&
+            !is_room(rooms, rooms_number, current_position.y, current_position.x - 1))
         {
-            frontier[frontier_count].y = currunt_position.y;
-            frontier[frontier_count].x = currunt_position.x - 1;
+            frontier[frontier_count].y = current_position.y;
+            frontier[frontier_count].x = current_position.x - 1;
             frontier_count++;
 
-            come_from[currunt_position.y][currunt_position.x - 1] = currunt_position;
+            come_from[current_position.y][current_position.x - 1] = current_position;
         }
     }
 
