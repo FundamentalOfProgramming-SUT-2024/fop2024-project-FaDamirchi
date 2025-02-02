@@ -281,47 +281,93 @@ bool monster_update(Room **rooms, int rooms_number, Player *player)
                 {
                     if (player->current_weapon == WEAPON_MACE)
                     {
-                        monster->health -= 5;
                         if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
                         {
                             monster->health -= 10;
                             player->spell_usage--;
+                        }
+                        else
+                        {
+                            monster->health -= 5;
                         }
                     }
                     else if (player->current_weapon == WEAPON_DAGGER)
                     {
-                        monster->health -= 12;
-                        if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                        if (player->stuff.weapon_dagger > 0)
                         {
-                            monster->health -= 24;
-                            player->spell_usage--;
+
+                            if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                            {
+                                monster->health -= 24;
+                                player->spell_usage--;
+                                player->stuff.weapon_dagger--;
+                            }
+                            else
+                            {
+                                monster->health -= 12;
+                                player->stuff.weapon_dagger--;
+                            }
+                        }
+                        else
+                        {
+                            strcpy(player->message, "You Don't have enough Dagger!");
                         }
                     }
                     else if (player->current_weapon == WEAPON_WAND)
                     {
-                        monster->health -= 15;
-                        if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+
+                        if (player->stuff.weapon_wand > 0)
                         {
-                            monster->health -= 30;
-                            player->spell_usage--;
+
+                            if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                            {
+                                monster->health -= 30;
+                                player->spell_usage--;
+                                player->stuff.weapon_wand--;
+                            }
+                            else
+                            {
+                                monster->health -= 15;
+                                player->stuff.weapon_wand--;
+                            }
+                        }
+                        else
+                        {
+                            strcpy(player->message, "You Don't have enough Magic Wand!");
                         }
                     }
                     else if (player->current_weapon == WEAPON_ARROW)
                     {
-                        monster->health -= 5;
-                        if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                        if (player->stuff.weapon_arrow > 0)
                         {
-                            monster->health -= 10;
-                            player->spell_usage--;
+
+                            if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                            {
+                                monster->health -= 5;
+                                player->spell_usage--;
+                                player->stuff.weapon_arrow--;
+                            }
+                            else
+                            {
+                                monster->health -= 10;
+                                player->stuff.weapon_arrow--;
+                            }
+                        }
+                        else
+                        {
+                            strcpy(player->message, "You Don't have enough Normal Arrow!");
                         }
                     }
                     else if (player->current_weapon == WEAPON_SWORD)
                     {
-                        monster->health -= 10;
                         if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
                         {
                             monster->health -= 20;
                             player->spell_usage--;
+                        }
+                        else
+                        {
+                            monster->health -= 10;
                         }
                     }
 

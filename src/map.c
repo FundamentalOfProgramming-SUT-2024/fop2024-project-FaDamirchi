@@ -1417,13 +1417,13 @@ void place_spell(Room **rooms, int rooms_number)
 
 void place_weapon(Room **rooms, int rooms_number)
 {
-    bool isPlaced[4] = {0};
+    bool isPlaced = 0;
 
     for (int i = 0; i < rooms_number; i++)
     {
         if (rand() % 2 && rooms[i]->type != ROOM_TREASURE && rooms[i]->type != ROOM_ENCHANT) // the room has weapon with the chance of 50%
         {
-            rooms[i]->weapons_number = rand() % 2;
+            rooms[i]->weapons_number = rand() % 3 + 1; // Random number of weapons
             rooms[i]->weapons = (Weapon *)malloc(sizeof(Weapon) * rooms[i]->weapons_number);
 
             for (int j = 0; j < rooms[i]->weapons_number; j++)
@@ -1433,15 +1433,15 @@ void place_weapon(Room **rooms, int rooms_number)
 
                 if (rooms[i]->type != ROOM_NIGHTMARE)
                 {
-                    // check if the weapon is placed before
-                    int chosen_weapon = rand() % 4;
-                    while (isPlaced[chosen_weapon])
+                    int chosen_weapon;
+                    do
                     {
                         chosen_weapon = rand() % 4;
-                    }
+                    } while (chosen_weapon == 3 && isPlaced); // only one sword
 
                     rooms[i]->weapons[j].type = 18 + chosen_weapon;
-                    isPlaced[chosen_weapon] = 1;
+                    if (chosen_weapon == 3)
+                        isPlaced = 1; // mark sword as placed
                 }
 
                 // check if the chosen position is reserved before
