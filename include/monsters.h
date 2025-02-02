@@ -40,7 +40,7 @@ void snake_setup(Room *room, Monster *monster);
 void undeed_setup(Room *room, Monster *monster);
 void monster_setup(Room *room, int level);
 
-bool monster_can_move(Room **rooms, int rooms_number, int next_y, int next_x);
+bool monster_can_move(Room **rooms, int rooms_number, int next_y, int next_x, Player *player);
 void move_monster(Room **rooms, int rooms_number, Player *player, Monster *monster);
 bool monster_update(Room **rooms, int rooms_number, Player *player);
 

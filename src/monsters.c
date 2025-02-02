@@ -172,7 +172,7 @@ void monster_setup(Room *room, int level)
     }
 }
 
-bool monster_can_move(Room **rooms, int rooms_number, int next_y, int next_x)
+bool monster_can_move(Room **rooms, int rooms_number, int next_y, int next_x, Player *player)
 {
     for (int i = 0; i < rooms_number; i++)
     {
@@ -189,6 +189,12 @@ bool monster_can_move(Room **rooms, int rooms_number, int next_y, int next_x)
         {
             return false;
         }
+
+        if (next_y == player->position.y && next_x == player->position.x)
+        {
+            return false;
+        }
+        
     }
 
     return false;
@@ -229,7 +235,7 @@ void move_monster(Room **rooms, int rooms_number, Player *player, Monster *monst
         return; // Already at player's position
     }
 
-    if (monster_can_move(rooms, rooms_number, next_y, next_x))
+    if (monster_can_move(rooms, rooms_number, next_y, next_x, player))
     {
         monster->position.y = next_y;
         monster->position.x = next_x;

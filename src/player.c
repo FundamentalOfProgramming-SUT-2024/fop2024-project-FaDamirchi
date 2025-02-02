@@ -47,6 +47,15 @@ bool can_move(Player *player, Room **rooms, int rooms_number, bool ***map, int n
         {
             return false;
         }
+
+        // check for monsters
+        for (int j = 0; j < rooms[i]->monsters_number; j++)
+        {
+            if (next_y == rooms[i]->monsters[j]->position.y && next_x == rooms[i]->monsters[j]->position.x)
+            {
+                return false;
+            }
+        }
     }
 
     if (map[next_y][next_x][0])
@@ -984,42 +993,66 @@ void show_weapons(Player *player)
     getmaxyx(stdscr, max_y, max_x);
     curs_set(0);
 
-    int start_y = (max_y / 2) - 3;
-    int start_x = (max_x / 2) - 15;
-
-    char *weapon_options[10];
-    int option_count = 0;
-
-    if (player->stuff.weapon_mace)
-        weapon_options[option_count++] = "Mace";
-    if (player->stuff.weapon_dagger)
-        weapon_options[option_count++] = "Dagger";
-    if (player->stuff.weapon_wand)
-        weapon_options[option_count++] = "Wand";
-    if (player->stuff.weapon_arrow)
-        weapon_options[option_count++] = "Arrow";
-    if (player->stuff.weapon_sword)
-        weapon_options[option_count++] = "Sword";
-
-    weapon_options[option_count++] = "Go back";
+    const char *weapon_options[] = {
+        "Mace",
+        "Dagger",
+        "Wand",
+        "Arrow",
+        "Sword",
+        "Go Back"};
 
     while (1)
     {
         clear();
 
-        draw_border(start_y - 1, start_x, option_count + 2, 30);
+        int start_y = (max_y / 2) - (NUM_WEAPON_MENU / 2);
+        int start_x = (max_x / 2) - 15;
+
+        // Draw border and title
+        draw_border(start_y - 1, start_x, NUM_WEAPON_MENU + 2, 30);
         show_title(start_y - 3, start_x + 8, "=== WEAPON ===");
 
-        for (int i = 0; i < option_count; i++)
+        for (int i = 0; i < NUM_WEAPON_MENU; i++)
         {
             int y = start_y + i;
             if (i == choice)
+            {
                 attron(A_REVERSE);
+            }
 
-            mvprintw(y, start_x + 2, "%s", weapon_options[i]);
+            if (i < 5)
+            {
+                mvprintw(y, start_x + 2, "%-16s", weapon_options[i]);
+                int count;
+                switch (i)
+                {
+                case 0:
+                    count = player->stuff.weapon_mace;
+                    break;
+                case 1:
+                    count = player->stuff.weapon_dagger;
+                    break;
+                case 2:
+                    count = player->stuff.weapon_wand;
+                    break;
+                case 3:
+                    count = player->stuff.weapon_arrow;
+                    break;
+                case 4:
+                    count = player->stuff.weapon_sword;
+                    break;
+                }
+                mvprintw(y, start_x + 20, "%d", count);
+            }
+            else
+            {
+                mvprintw(y, start_x + 2, "%s", weapon_options[i]);
+            }
 
             if (i == choice)
+            {
                 attroff(A_REVERSE);
+            }
         }
         refresh();
 
@@ -1027,25 +1060,81 @@ void show_weapons(Player *player)
         switch (ch)
         {
         case KEY_UP:
-            choice = (choice - 1 + option_count) % option_count;
+            choice = (choice - 1 + NUM_WEAPON_MENU) % NUM_WEAPON_MENU;
             break;
 
         case KEY_DOWN:
-            choice = (choice + 1) % option_count;
+            choice = (choice + 1) % NUM_WEAPON_MENU;
             break;
 
         case ENTER:
-            if (strcmp(weapon_options[choice], "Go back") == 0)
+            if (choice == 5)
             {
                 return;
             }
-            else
+            else if (choice < 5)
             {
-                attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                mvprintw(start_y + option_count + 2, start_x - 1, "You picked up %s.", weapon_options[choice]);
-                attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                refresh();
-                sleep(2);
+                if (choice == 0 && player->stuff.weapon_mace > 0)
+                {
+                    player->current_weapon = WEAPON_MACE;
+
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Mace!");
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+                else if (choice == 1 && player->stuff.weapon_dagger > 0)
+                {
+                    player->current_weapon = WEAPON_DAGGER;
+                    player->stuff.weapon_dagger--;
+
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Dagger!");
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+                else if (choice == 1 && player->stuff.weapon_wand > 0)
+                {
+                    player->current_weapon = WEAPON_WAND;
+                    player->stuff.weapon_wand--;
+
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Magic Wand!");
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+                else if (choice == 1 && player->stuff.weapon_arrow > 0)
+                {
+                    player->current_weapon = WEAPON_ARROW;
+                    player->stuff.weapon_arrow--;
+
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Normal Arrow!");
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+                else if (choice == 1 && player->stuff.weapon_sword > 0)
+                {
+                    player->current_weapon = WEAPON_SWORD;
+
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Sword!");
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
+                else
+                {
+                    attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You don't have enough of this weapon!");
+                    attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
+                    refresh();
+                    sleep(2);
+                }
             }
             break;
 

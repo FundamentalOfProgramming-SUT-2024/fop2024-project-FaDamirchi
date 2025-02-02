@@ -31,11 +31,11 @@ typedef struct Stuff
     int spell_speed;
     int spell_damage;
 
-    bool weapon_mace;
-    bool weapon_dagger;
-    bool weapon_wand;
-    bool weapon_arrow;
-    bool weapon_sword;
+    int weapon_mace;
+    int weapon_dagger;
+    int weapon_wand;
+    int weapon_arrow;
+    int weapon_sword;
 
 } Stuff;
 
