@@ -474,7 +474,7 @@ void resume_game(char *username, int color)
 
         if (check_status(game->player, game->floors) != NOTHING)
         {
-            update_score(username, game->player->gold * 175, game->player->gold, 1);
+            update_score(username, game->player->gold * 175, game->player->gold, 1, 0);
             break;
         }
 

@@ -311,7 +311,7 @@ void password_recovery(char *username, char *email, int start_y, int start_x)
     }
 }
 
-void update_score(char *username, int score, int gold, int experience)
+void update_score(char *username, int score, int gold, int experience, int games_number)
 {
     FILE *file = fopen(SCORES_FILE, "r");
 
@@ -319,6 +319,7 @@ void update_score(char *username, int score, int gold, int experience)
     int stored_score;
     int stored_gold;
     int stored_experience;
+    int stored_games_number;
 
     while (fgets(line, sizeof(line), file))
     {
@@ -327,7 +328,7 @@ void update_score(char *username, int score, int gold, int experience)
 
         if (strcmp(stored_username, username) == 0)
         {
-            sscanf(line, "%*[^:]:%d-%d-%d", &stored_score, &stored_gold, &stored_experience);
+            sscanf(line, "%*[^:]:%d-%d-%d-%d", &stored_score, &stored_gold, &stored_experience, &stored_games_number);
             break;
         }
     }
@@ -354,9 +355,10 @@ void update_score(char *username, int score, int gold, int experience)
         if (strcmp(stored_username, username) == 0)
         {
             // update the settings for the user
-            fprintf(temp_file, "%s:%d-%d-%d\n", username, stored_score + score,
+            fprintf(temp_file, "%s:%d-%d-%d-%d\n", username, stored_score + score,
                                                           stored_gold + gold,
-                                                          stored_experience + experience);
+                                                          stored_experience + experience,
+                                                          stored_games_number + games_number);
         }
         else
         {

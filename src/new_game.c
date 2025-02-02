@@ -176,6 +176,8 @@ void save_game(Game *game, char *username)
 
 void new_game(char *username, int level, int color, bool isGuest)
 {
+    update_score(username, 0, 0, 0, 1);
+
     srand(time(NULL));
 
     Game *newGame = (Game *)malloc(sizeof(Game));
@@ -308,7 +310,7 @@ void new_game(char *username, int level, int color, bool isGuest)
         {
             if (!isGuest)
             {
-                update_score(username, newGame->player->gold * 175, newGame->player->gold, 1);
+                update_score(username, newGame->player->gold * 175, newGame->player->gold, 1, 1);
             }
             break;
         }

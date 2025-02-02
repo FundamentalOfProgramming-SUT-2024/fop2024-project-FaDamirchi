@@ -24,6 +24,6 @@ void create_new_user(char *email, char *username, char *password);
 int authenticate_user(char *username, char *password);
 void password_recovery(char *username, char *email, int start_y, int start_x);
 
-void update_score(char *username, int score, int gold, int experience);
+void update_score(char *username, int score, int gold, int experience, int games_number);
 
 #endif

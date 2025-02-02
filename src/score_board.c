@@ -43,11 +43,11 @@ void show_score_board(char *username)
     for (int i = 0; i < count; i++)
     {
         int y = 5 + i * 4;
-        int x = 25; // Center alignment
+        int x = 15; // Center alignment
 
         char player_username[320];
-        int score, gold, experience;
-        sscanf(players[i], "%319[^:]:%d-%d-%d", player_username, &score, &gold, &experience);
+        int score, gold, experience, games_number;
+        sscanf(players[i], "%319[^:]:%d-%d-%d-%d", player_username, &score, &gold, &experience, &games_number);
 
         // Check if this is the current user
         bool is_current_user = false;;
@@ -68,7 +68,9 @@ void show_score_board(char *username)
         {
             attron(COLOR_PAIR(COLOR_FIRST_SCORE) | A_BOLD | A_ITALIC);
             mvprintw(y - 1, x, "        -----");
-            mvprintw(y, x, "        | 1 |  %-15s Score:%5d  Gold: %-4d  Experience: %-4d", player_username, score, gold, experience);
+            mvprintw(y, x, "        | 1 |  %-15s Score:%5d  Gold: %-4d  Experience: %-4d Total Games: %-4d", player_username, 
+                                                                                                             score, gold, 
+                                                                                                             experience, games_number);
             mvprintw(y + 1, x, "        -----");
             attroff(COLOR_PAIR(COLOR_FIRST_SCORE) | A_BOLD | A_ITALIC);
         }
@@ -76,7 +78,9 @@ void show_score_board(char *username)
         {
             attron(COLOR_PAIR(COLOR_SECOND_SCORE) | A_BOLD | A_ITALIC);
             mvprintw(y - 1, x, "        -----");
-            mvprintw(y, x, "        | 2 |  %-15s Score:%5d  Gold: %-4d  Experience: %-4d", player_username, score, gold, experience);
+            mvprintw(y, x, "        | 2 |  %-15s Score:%5d  Gold: %-4d  Experience: %-4d Total Games: %-4d", player_username,
+                                                                                                             score, gold,
+                                                                                                             experience, games_number);
             mvprintw(y + 1, x, "        -----");
             attroff(COLOR_PAIR(COLOR_SECOND_SCORE) | A_BOLD | A_ITALIC);
         }
@@ -84,14 +88,18 @@ void show_score_board(char *username)
         {
             attron(COLOR_PAIR(COLOR_THIRD_SCORE) | A_BOLD | A_ITALIC);
             mvprintw(y - 1, x, "        -----");
-            mvprintw(y, x, "        | 3 |  %-15s Score:%5d  Gold: %-4d  Experience: %-4d", player_username, score, gold, experience);
+            mvprintw(y, x, "        | 3 |  %-15s Score:%5d  Gold: %-4d  Experience: %-4d Total Games: %-4d", player_username, 
+                                                                                                             score, gold, 
+                                                                                                             experience, games_number);
             mvprintw(y + 1, x, "        -----");
             attroff(COLOR_PAIR(COLOR_THIRD_SCORE) | A_BOLD | A_ITALIC);
         }
         else
         {
             attron(A_BOLD);
-            mvprintw(y, x + 13, "%2d. %-13s Score:%5d  Gold: %-4d  Experience: %-4d", i + 1, player_username, score, gold, experience);
+            mvprintw(y, x + 13, "%2d. %-13s Score:%5d  Gold: %-4d  Experience: %-4d Total Games: %-4d", i + 1, player_username, 
+                                                                                                               score, gold, 
+                                                                                                               experience, games_number);
             attroff(A_BOLD);
         }
     }
