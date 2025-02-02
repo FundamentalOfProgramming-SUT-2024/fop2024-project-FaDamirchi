@@ -11,7 +11,6 @@ void update_settings(const char *username, int level, int color, int music)
         return;
     }
 
-    // create a temp file to store changes in it
     char temp_file_name[] = "temp_settings.txt";
     FILE *temp_file = fopen(temp_file_name, "w");
 
@@ -23,12 +22,10 @@ void update_settings(const char *username, int level, int color, int music)
 
         if (strcmp(stored_username, username) == 0)
         {
-            // update the settings for the user
             fprintf(temp_file, "%s:%d-%d-%d\n", username, level, color, music);
         }
         else
         {
-            // copy the line in the main file
             fputs(line, temp_file);
         }
     }
@@ -36,20 +33,18 @@ void update_settings(const char *username, int level, int color, int music)
     fclose(file);
     fclose(temp_file);
 
-    // replace the old file with the updated file
     remove(SETTINGS_FILE);
     rename(temp_file_name, SETTINGS_FILE);
 }
 
 void show_settings_menu(char *username)
 {
-    // load user settings
     FILE *file = fopen(SETTINGS_FILE, "r");
 
     char line[1024];
-    int level = 1; // default:       Medium (1-based index)
-    int color = 1; // default color: PURPLE (1-based index)
-    int music = 1; // default:       ON
+    int level = 1;
+    int color = 1;
+    int music = 1;
 
     while (fgets(line, sizeof(line), file))
     {
@@ -62,14 +57,13 @@ void show_settings_menu(char *username)
             break;
         }
     }
-
     fclose(file);
 
     int choice = 0;
     int unsaved_changes = 0;
-    const char *level_options[] = {" Easy ", "Medium", " Hard "};  // These remain 0-based
+    const char *level_options[] = {" Easy ", "Medium", " Hard "};
     const char *color_options[] = {" White ", "Purpule", " Blue  "};
-    const char *music_options[] = {"OFF", "ON "};
+    const char *music_options[] = {"OFF", "Music 1", "Music 2"};
 
     const char *options[NUM_FIELDS_SETTINGS + 1] = {
         "Level",
@@ -80,11 +74,9 @@ void show_settings_menu(char *username)
 
     init_colors();
 
-    // Getting console size
     int max_y, max_x;
     getmaxyx(stdscr, max_y, max_x);
-
-    curs_set(0); // Hiding cursor
+    curs_set(0);
 
     while (1)
     {
@@ -92,11 +84,9 @@ void show_settings_menu(char *username)
 
         int start_y = (max_y / 2) - ((NUM_FIELDS_SETTINGS) / 2);
         int start_x = (max_x / 2) - 10;
-
         int height = NUM_FIELDS_SETTINGS + 1;
         int width = strlen("=== Settings ===") + 5;
         draw_border(start_y, start_x, height, width);
-
         show_title(start_y - 2, start_x + 2, "=== Settings ===");
 
         for (int i = 0; i < NUM_FIELDS_SETTINGS; i++)
@@ -107,9 +97,9 @@ void show_settings_menu(char *username)
             mvprintw(start_y + i, start_x, "%s", options[i]);
 
             if (i == 0)
-                mvprintw(start_y + i, start_x + 10, "< %s >", level_options[level - 1]);  // Adjust for 1-based indexing
+                mvprintw(start_y + i, start_x + 10, "< %s >", level_options[level - 1]);
             else if (i == 1)
-                mvprintw(start_y + i, start_x + 10, "< %s >", color_options[color - 1]);  // Adjust for 1-based indexing
+                mvprintw(start_y + i, start_x + 10, "< %s >", color_options[color - 1]);
             else if (i == 2)
                 mvprintw(start_y + i, start_x + 10, "< %s >", music_options[music]);
 
@@ -117,74 +107,47 @@ void show_settings_menu(char *username)
                 attroff(A_REVERSE);
         }
 
-        // move in the list
         int ch = getch();
         switch (ch)
         {
         case KEY_UP:
-            choice--;
-            if (choice < 0)
-                choice = NUM_FIELDS_SETTINGS - 1; // loop to the last option
+            choice = (choice - 1 + NUM_FIELDS_SETTINGS) % NUM_FIELDS_SETTINGS;
             break;
-
         case KEY_DOWN:
-            choice++;
-            if (choice > NUM_FIELDS_SETTINGS - 1)
-                choice = 0; // loop to the first option
+            choice = (choice + 1) % NUM_FIELDS_SETTINGS;
             break;
-
         case KEY_LEFT:
             if (choice == 0)
-            {
-                level = ((level - 2 + 3) % 3) + 1; // Cycle through level options (1-based)
-                unsaved_changes = 1;
-            }
+                level = ((level - 2 + 3) % 3) + 1;
             else if (choice == 1)
-            {
-                color = ((color - 2 + 3) % 3) + 1; // Cycle through color options (1-based)
-                unsaved_changes = 1;
-            }
+                color = ((color - 2 + 3) % 3) + 1;
             else if (choice == 2)
-            {
-                music = (music - 1 + 2) % 2; // Cycle through music options (still 0-based)
-                unsaved_changes = 1;
-            }
+                music = (music - 1 + 3) % 3;
+            unsaved_changes = 1;
             break;
-
         case KEY_RIGHT:
             if (choice == 0)
-            {
-                level = (level % 3) + 1; // Cycle through level options (1-based)
-                unsaved_changes = 1;
-            }
+                level = (level % 3) + 1;
             else if (choice == 1)
-            {
-                color = (color % 3) + 1; // Cycle through color options (1-based)
-                unsaved_changes = 1;
-            }
+                color = (color % 3) + 1;
             else if (choice == 2)
-            {
-                music = (music + 1) % 2; // Cycle through music options (still 0-based)
-                unsaved_changes = 1;
-            }
+                music = (music + 1) % 3;
+            unsaved_changes = 1;
             break;
-
         case ENTER:
-            if (choice == 3) // save
+            if (choice == 3)
             {
                 update_settings(username, level, color, music);
                 show_success_message(start_y + 7, start_x - 2, "Changes successfully saved!", 1.5);
                 return;
-                unsaved_changes = 0;
             }
-            else if (choice == 4) // return
+            else if (choice == 4)
             {
                 if (unsaved_changes)
                 {
                     show_alert_message(start_y + 7, start_x - 2, "You have unsaved changes.", 0);
                     show_alert_message(start_y + 8, start_x - 2, "Save before exiting? (y/n)", 0);
                     char ch = getch();
-
                     if (ch == 'y' || ch == 'Y')
                     {
                         update_settings(username, level, color, music);
@@ -192,9 +155,6 @@ void show_settings_menu(char *username)
                 }
                 return;
             }
-            break;
-
-        default:
             break;
         }
     }

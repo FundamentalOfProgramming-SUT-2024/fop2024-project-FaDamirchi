@@ -30,14 +30,14 @@ void show_pregame_menu(char *username, int isNew)
         }
     }
 
-    // if (music)
-    // {
-    //     play_music(1);
-    // }
-    // else
-    // {
-    //     stop_music();
-    // }
+    if (music)
+    {
+        play_music(music);
+    }
+    else
+    {
+        stop_music();
+    }
 
     fclose(file);
 
@@ -143,14 +143,14 @@ void show_pregame_menu(char *username, int isNew)
                         }
                     }
 
-                    // if (music)
-                    // {
-                    //     play_music(1);
-                    // }
-                    // else
-                    // {
-                    //     stop_music();
-                    // }
+                    if (music)
+                    {
+                        play_music(music);
+                    }
+                    else
+                    {
+                        stop_music();
+                    }
 
                     fclose(file);
                 }
@@ -292,14 +292,14 @@ void show_pregame_menu(char *username, int isNew)
                         }
                     }
 
-                    // if (music)
-                    // {
-                    //     play_music(1);
-                    // }
-                    // else
-                    // {
-                    //     stop_music();
-                    // }
+                    if (music)
+                    {
+                        play_music(music);
+                    }
+                    else
+                    {
+                        stop_music();
+                    }
 
                     fclose(file);
                 }
