@@ -325,6 +325,17 @@ Player *player_setup(Room **rooms, int rooms_number)
     newPlayer->position.y = rooms[initial_room]->start.y + 1 + rand() % (rooms[initial_room]->height - 2);
     newPlayer->position.x = rooms[initial_room]->start.x + 1 + rand() % (rooms[initial_room]->width - 2);
 
+    // make sure player starts in a safe position
+    for (int i = 0; i < rooms[initial_room]->reserved_number; i++)
+    {
+        while (newPlayer->position.y == rooms[initial_room]->reserved_poitions[i].y &&
+               newPlayer->position.x == rooms[initial_room]->reserved_poitions[i].x)
+        {
+            newPlayer->position.y = rooms[initial_room]->start.y + 1 + rand() % (rooms[initial_room]->height - 2);
+            newPlayer->position.x = rooms[initial_room]->start.x + 1 + rand() % (rooms[initial_room]->width - 2);
+        }
+    }
+
     // setting up player stuff
     newPlayer->stuff.food_ordinary = 0;
     newPlayer->stuff.food_excellent = 0;
@@ -368,6 +379,21 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
     if (current_room == NULL)
     {
         return;
+    }
+
+    // check for traps
+    for (int i = 0; i < current_room->traps_number; i++)
+    {
+        if (current_room->traps_position[i].y == player->position.y && current_room->traps_position[i].x)
+        {
+            player->health -= 10;
+            current_room->traps_position[i].y = -1;
+            current_room->traps_position[i].x = -1;
+
+            strcpy(player->message, "You stepped on a trap! Health was decreased by 10.");
+            show_message(player->message);
+            return;
+        }
     }
 
     // check for gold
