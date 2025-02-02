@@ -358,6 +358,7 @@ Player *player_setup(Room **rooms, int rooms_number)
     newPlayer->gold = 0;
     newPlayer->health = 100;
     newPlayer->passed_blockes = 0;
+    newPlayer->current_weapon = WEAPON_MACE;
 
     return newPlayer;
 }
@@ -1142,11 +1143,10 @@ bool player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         show_message(player->message);
 
         int ch = getch();
-        if (ch =='y' || ch == 'Y')
+        if (ch == 'y' || ch == 'Y')
         {
             return false;
         }
-        
     }
 
     // handle the characer moving

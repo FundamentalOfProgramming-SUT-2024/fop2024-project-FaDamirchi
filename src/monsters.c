@@ -137,7 +137,7 @@ void monster_setup(Room *room, int level)
     {
         return;
     }
-    
+
     room->monsters_number = level + rand() % 2 - 1;
     room->monsters = (Monster **)malloc(sizeof(Monster *) * room->monsters_number);
 
@@ -167,5 +167,231 @@ void monster_setup(Room *room, int level)
         {
             undeed_setup(room, room->monsters[i]);
         }
+
+        room->monsters[i]->passed_blocks = 0;
     }
+}
+
+bool monster_can_move(Room **rooms, int rooms_number, int next_y, int next_x)
+{
+    for (int i = 0; i < rooms_number; i++)
+    {
+        if (next_y > rooms[i]->start.y && next_y < rooms[i]->start.y + rooms[i]->height - 1 &&
+            next_x > rooms[i]->start.x && next_x < rooms[i]->start.x + rooms[i]->width - 1)
+        {
+            return true;
+        }
+
+        if ((next_y >= rooms[i]->start.y && next_y <= rooms[i]->start.y + rooms[i]->height - 1 && next_x == rooms[i]->start.x) ||
+            (next_y >= rooms[i]->start.y && next_y <= rooms[i]->start.y + rooms[i]->height - 1 && next_x == rooms[i]->start.x + rooms[i]->width - 1) ||
+            (next_x >= rooms[i]->start.x && next_x <= rooms[i]->start.x + rooms[i]->width - 1 && next_y == rooms[i]->start.y) ||
+            (next_x >= rooms[i]->start.x && next_x <= rooms[i]->start.x + rooms[i]->width - 1 && next_y == rooms[i]->start.y + rooms[i]->height - 1))
+        {
+            return false;
+        }
+    }
+
+    return false;
+}
+
+void move_monster(Room **rooms, int rooms_number, Player *player, Monster *monster)
+{
+    if (monster->monster_type != SNAKE && monster->passed_blocks > 5)
+    {
+        return;
+    }
+
+    int next_y, next_x;
+
+    // choose direction towards the player
+    if (monster->position.y < player->position.y)
+    {
+        next_y = monster->position.y + 1;
+        next_x = monster->position.x;
+    }
+    else if (monster->position.y > player->position.y)
+    {
+        next_y = monster->position.y - 1;
+        next_x = monster->position.x;
+    }
+    else if (monster->position.x < player->position.x)
+    {
+        next_x = monster->position.x + 1;
+        next_y = monster->position.y;
+    }
+    else if (monster->position.x > player->position.x)
+    {
+        next_x = monster->position.x - 1;
+        next_y = monster->position.y;
+    }
+    else
+    {
+        return; // Already at player's position
+    }
+
+    if (monster_can_move(rooms, rooms_number, next_y, next_x))
+    {
+        monster->position.y = next_y;
+        monster->position.x = next_x;
+        monster->passed_blocks++;
+    }
+}
+
+bool monster_update(Room **rooms, int rooms_number, Player *player)
+{
+    Room *current_room = NULL;
+    // Find the current room based on player's position
+    for (int i = 0; i < rooms_number; i++)
+    {
+        if (player->position.y > rooms[i]->start.y && player->position.y < rooms[i]->start.y + rooms[i]->height - 1 &&
+            player->position.x > rooms[i]->start.x && player->position.x < rooms[i]->start.x + rooms[i]->width - 1)
+        {
+            current_room = rooms[i];
+            break;
+        }
+    }
+
+    if (!current_room)
+        return true;
+
+    for (int i = 0; i < current_room->monsters_number; i++)
+    {
+        Monster *monster = current_room->monsters[i];
+        int delta_y[] = {-1, 0, 1, 0};
+        int delta_x[] = {0, 1, 0, -1};
+
+        for (int j = 0; j < 4; j++)
+        {
+            int adj_y = monster->position.y + delta_y[j];
+            int adj_x = monster->position.x + delta_x[j];
+            if (adj_y == player->position.y && adj_x == player->position.x)
+            {
+                // Combat initiated
+                strcpy(player->message, "Press ENTER to attack the monster!");
+                show_message(player->message);
+                refresh();
+
+                int ch = getch();
+                if (ch == '\n')
+                {
+                    if (player->current_weapon == WEAPON_MACE)
+                    {
+                        monster->health -= 5;
+                    }
+                    else if (player->current_weapon == WEAPON_DAGGER)
+                    {
+                        monster->health -= 12;
+                    }
+                    else if (player->current_weapon == WEAPON_WAND)
+                    {
+                        monster->health -= 15;
+                    }
+                    else if (player->current_weapon == WEAPON_ARROW)
+                    {
+                        monster->health -= 5;
+                    }
+                    else if (player->current_weapon == WEAPON_SWORD)
+                    {
+                        monster->health -= 10;
+                    }
+
+                    if (monster->monster_type == DEAMON)
+                    {
+                        strcpy(player->message, "You hit the Deamon!");
+                    }
+                    else if (monster->monster_type == FIRE)
+                    {
+                        strcpy(player->message, "You hit the Fire Breathing Monster!");
+                    }
+                    else if (monster->monster_type == GIANT)
+                    {
+                        strcpy(player->message, "You hit the Giant!");
+                    }
+                    else if (monster->monster_type == SNAKE)
+                    {
+                        strcpy(player->message, "You hit the Snake!");
+                    }
+                    else if (monster->monster_type == UNDEED)
+                    {
+                        strcpy(player->message, "You hit the Undeed!");
+                    }
+
+                    if (monster->health <= 0)
+                    {
+                        // Remove monster
+                        monster->position.y = -1;
+                        monster->position.x = -1;
+
+                        i--;
+                        if (monster->monster_type == DEAMON)
+                        {
+                            strcpy(player->message, "You defeated the Deamon!");
+                        }
+                        else if (monster->monster_type == FIRE)
+                        {
+                            strcpy(player->message, "You defeated the Fire Breathing Monster!");
+                        }
+                        else if (monster->monster_type == GIANT)
+                        {
+                            strcpy(player->message, "You defeated the Giant!");
+                        }
+                        else if (monster->monster_type == SNAKE)
+                        {
+                            strcpy(player->message, "You defeated the Snake!");
+                        }
+                        else if (monster->monster_type == UNDEED)
+                        {
+                            strcpy(player->message, "You defeated the Undeed!");
+                        }
+                        free(monster);
+                    }
+                    else
+                    {
+                        // monster attacks
+                        player->health -= monster->damage;
+                        if (monster->monster_type == DEAMON)
+                        {
+                            strcpy(player->message, "The Deamon hit you!");
+                        }
+                        else if (monster->monster_type == FIRE)
+                        {
+                            strcpy(player->message, "The Fire Breathing Monster hit you!");
+                        }
+                        else if (monster->monster_type == GIANT)
+                        {
+                            strcpy(player->message, "The Giant hit you!");
+                        }
+                        else if (monster->monster_type == SNAKE)
+                        {
+                            strcpy(player->message, "The Snake hit you!");
+                        }
+                        else if (monster->monster_type == UNDEED)
+                        {
+                            strcpy(player->message, "The Undeed hit you!");
+                        }
+                    }
+                }
+                else
+                {
+                    // monster attacks
+                    player->health -= monster->damage;
+                    strcpy(player->message, "The monster attacks you!");
+                }
+                show_message(player->message);
+                refresh();
+
+                if (player->health <= 0)
+                    return false;
+                break;
+            }
+        }
+    }
+
+    // move remaining monsters
+    for (int i = 0; i < current_room->monsters_number; i++)
+    {
+        move_monster(rooms, rooms_number, player, current_room->monsters[i]);
+    }
+
+    return true;
 }

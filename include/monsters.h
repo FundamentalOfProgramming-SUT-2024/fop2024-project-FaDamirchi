@@ -4,9 +4,11 @@
 // includes
 #include "global_defines.h"
 #include "map.h"
+#include "player.h"
 
 // forward declaration
 typedef struct Room Room;
+typedef struct Player Player;
 
 // consts
 #define DEAMON 1
@@ -27,6 +29,7 @@ typedef struct Monster
     int health;
 
     Position position;
+    int passed_blocks;
 } Monster;
 
 // function
@@ -36,5 +39,9 @@ void giant_setup(Room *room, Monster *monster);
 void snake_setup(Room *room, Monster *monster);
 void undeed_setup(Room *room, Monster *monster);
 void monster_setup(Room *room, int level);
+
+bool monster_can_move(Room **rooms, int rooms_number, int next_y, int next_x);
+void move_monster(Room **rooms, int rooms_number, Player *player, Monster *monster);
+bool monster_update(Room **rooms, int rooms_number, Player *player);
 
 #endif

@@ -1302,7 +1302,7 @@ void place_gold(Room **rooms, int rooms_number)
             {
                 rooms[i]->golds[j].position.y = rooms[i]->start.y + 1 + rand() % (rooms[i]->height - 2);
                 rooms[i]->golds[j].position.x = rooms[i]->start.x + 1 + rand() % (rooms[i]->width - 2);
-                rooms[i]->golds[j].type = 22 + rand() % 2;
+                rooms[i]->golds[j].type = 23 + rand() % 2;
 
                 // check if the chosen position is reserved before
                 for (int k = 0; k < rooms[i]->reserved_number; k++)
