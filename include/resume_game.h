@@ -11,7 +11,7 @@
 typedef struct Game Game;
 
 // functions
-void recover_information(Game *game, char *username);
+bool recover_information(Game *game, char *username);
 void resume_game(char *username, int color);
 
 #endif

@@ -6,7 +6,7 @@
 #include "player.h"
 #include "monsters.h"
 
-void recover_information(Game *game, char *username)
+bool recover_information(Game *game, char *username)
 {
     FILE *fp = fopen(SAVED_GAMES_FILE, "r");
 
@@ -40,7 +40,7 @@ void recover_information(Game *game, char *username)
 
     if (!found)
     {
-        return;
+        return false;
     }
 
     
@@ -438,13 +438,19 @@ void recover_information(Game *game, char *username)
     }
 
     fclose(fp);
+    return true;
 }
 
 void resume_game(char *username, int color)
 {
     Game *game = (Game *)malloc(sizeof(Game));
 
-    recover_information(game, username);
+    if (!recover_information(game, username))
+    {
+        clear();
+        show_alert_message(15, 48, "YOU DON'T HAVE ANY UNFINISHED GAMES!", 2);
+        return;
+    }
 
     while (1)
     {
