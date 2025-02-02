@@ -1,1 +1,6 @@
-hello:0-0-0
+hello:10-3-4
+goodBye:12-12-2
+IDK:18-3-1
+IDC:7-3-2
+ASD:5-4-3
+AZB:2-4-3

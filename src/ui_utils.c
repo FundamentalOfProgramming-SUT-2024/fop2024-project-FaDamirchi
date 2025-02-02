@@ -52,6 +52,12 @@ void init_colors()
     init_pair(COLOR_WALLS_NIGHMARE, COLOR_BLUE, COLOR_BLACK);
     init_pair(COLOR_FLOOR_NIGHMARE, COLOR_DARK_GRAY, COLOR_BLACK);
     init_pair(COLOR_STUFF_NUGHTMARE, COLOR_RED, COLOR_BLACK);
+
+    init_pair(COLOR_FIRST_SCORE, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(COLOR_SECOND_SCORE, COLOR_CYAN, COLOR_BLACK);
+    init_pair(COLOR_THIRD_SCORE, COLOR_RED, COLOR_BLACK);
+
+    init_pair(COLOR_CURRENT_USER, COLOR_MAGENTA, COLOR_BLACK);
 }
 
 void draw_border(int start_y, int start_x, int height, int width)

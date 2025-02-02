@@ -5,6 +5,7 @@
 #include "manage_users.h"
 #include "music.h"
 #include "resume_game.h"
+#include "score_board.h"
 
 void show_pregame_menu(char *username, int isNew)
 {
@@ -119,7 +120,7 @@ void show_pregame_menu(char *username, int isNew)
                 }
                 else if (choice == 1)
                 {
-                    // show score board
+                    show_score_board(NULL);
                 }
                 else if (choice == 2)
                 {
@@ -267,7 +268,7 @@ void show_pregame_menu(char *username, int isNew)
                 }
                 else if (choice == 2)
                 {
-                    // show score board
+                    show_score_board(username);
                 }
 
                 else if (choice == 3)
