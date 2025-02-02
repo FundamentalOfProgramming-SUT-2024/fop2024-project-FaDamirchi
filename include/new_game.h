@@ -15,13 +15,8 @@ typedef struct Floor
 {
     int rooms_number;
     Room **rooms;
-    
-    int mosters_number;
-    Monster **monsters;
 
     bool ***map;
-
-    // other options...
 } Floor;
 
 typedef struct Game
@@ -30,11 +25,10 @@ typedef struct Game
 
     int floors_number;
     Floor **floors;
-
-    // other options...
 } Game;
 
 // functions
-void new_game(int level, int color);
+void save_game(Game *game, char *username);
+void new_game(char *username, int level, int color);
 
 #endif
