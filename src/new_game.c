@@ -6,7 +6,13 @@
 
 void save_game(Game *game, char *username)
 {
-    FILE *fp = fopen(SAVED_GAMES_FILE, "a");
+    char filename[150];
+    sprintf(filename, "data/saved_games/%s.txt", username);
+
+    // Delete the existing file if it exists
+    remove(filename);
+
+    FILE *fp = fopen(filename, "w");
 
     // saving username
     fprintf(fp, "USERNAME: %s\n", username);
@@ -19,6 +25,10 @@ void save_game(Game *game, char *username)
         fprintf(fp, "Player_Passed_Blockes: %d\n", game->player->passed_blockes);
         fprintf(fp, "Player_Gold: %d\n", game->player->gold);
         fprintf(fp, "Player_Health: %d\n", game->player->health);
+        fprintf(fp, "Player_Lives: %.2f\n", game->player->lives);
+        fprintf(fp, "Player_Weapon: %d\n", game->player->current_weapon);
+        fprintf(fp, "Player_Spell: %d\n", game->player->current_spell);
+        fprintf(fp, "Player_Spell_Usage: %d\n", game->player->spell_usage);
 
         // saving collected stuff
         fprintf(fp, "Stuff_Food_Ordinary: %d\n", game->player->stuff.food_ordinary);

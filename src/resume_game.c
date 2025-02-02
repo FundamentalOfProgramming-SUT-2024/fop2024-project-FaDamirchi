@@ -8,13 +8,20 @@
 
 bool recover_information(Game *game, char *username)
 {
-    FILE *fp = fopen(SAVED_GAMES_FILE, "r");
+    char filename[150];
+    sprintf(filename, "data/saved_games/%s.txt", username);
+    FILE *fp = fopen(filename, "r");
+
+    if (!fp)
+    {
+        return false;
+    }
 
     char line[256];
     int value;
     bool found = false;
 
-    // searching for the username
+    // Searching for the username
     while (fgets(line, sizeof(line), fp))
     {
         if (strncmp(line, "USERNAME:", 9) == 0)
@@ -26,26 +33,18 @@ bool recover_information(Game *game, char *username)
                 found = true;
                 break;
             }
-            else
-            {
-                // if the user was not found, skip the file to the END_GAME
-                while (fgets(line, sizeof(line), fp))
-                {
-                    if (strstr(line, "END_GAME"))
-                        break;
-                }
-            }
         }
     }
 
     if (!found)
     {
+        fclose(fp);
         return false;
     }
 
     game->player = (Player *)malloc(sizeof(Player));
 
-    // recovering player information
+    // Recovering player information
     while (fgets(line, sizeof(line), fp))
     {
         if (strncmp(line, "Player_Position:", 16) == 0)
@@ -74,6 +73,27 @@ bool recover_information(Game *game, char *username)
         {
             sscanf(line, "Player_Health: %d", &value);
             game->player->health = value;
+        }
+        else if (strncmp(line, "Player_Lives:", 13) == 0)
+        {
+            float lives;
+            sscanf(line, "Player_Lives: %f", &lives);
+            game->player->lives = lives;
+        }
+        else if (strncmp(line, "Player_Weapon:", 14) == 0)
+        {
+            sscanf(line, "Player_Weapon: %d", &value);
+            game->player->current_weapon = value;
+        }
+        else if (strncmp(line, "Player_Spell:", 13) == 0)
+        {
+            sscanf(line, "Player_Spell: %d", &value);
+            game->player->current_spell = value;
+        }
+        else if (strncmp(line, "Player_Spell_Usage:", 19) == 0)
+        {
+            sscanf(line, "Player_Spell_Usage: %d", &value);
+            game->player->spell_usage = value;
         }
         // Stuff information
         else if (strncmp(line, "Stuff_Food_Ordinary:", 20) == 0)
@@ -138,7 +158,6 @@ bool recover_information(Game *game, char *username)
         }
         else if (strncmp(line, "Floors_Number:", 14) == 0)
         {
-            // recovering Floors_number
             int floors;
             sscanf(line, "Floors_Number: %d", &floors);
             game->floors_number = floors;
@@ -473,13 +492,13 @@ void resume_game(char *username, int color)
                            game->player,
                            color))
         {
-            
+
             save_game(game, username);
             break;
         }
         if (check_status(game->player, game->floors) != NOTHING)
         {
-            
+
             update_score(username, game->player->gold * 175, game->player->gold, 1, 1);
             break;
         }
@@ -490,7 +509,7 @@ void resume_game(char *username, int color)
         {
             if (check_status(game->player, game->floors) != NOTHING)
             {
-                
+
                 update_score(username, game->player->gold * 175, game->player->gold, 1, 1);
                 break;
             }
