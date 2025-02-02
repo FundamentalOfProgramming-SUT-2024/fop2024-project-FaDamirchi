@@ -604,19 +604,19 @@ void handle_player_actions(Floor **floors, Room **rooms, Player *player)
 
                 if (current_room->weapons[i].type == WEAPON_DAGGER)
                 {
-                    player->stuff.weapon_dagger = true;
+                    player->stuff.weapon_dagger += 10;
                 }
                 else if (current_room->weapons[i].type == WEAPON_WAND)
                 {
-                    player->stuff.weapon_wand = true;
+                    player->stuff.weapon_wand += 8;
                 }
                 else if (current_room->weapons[i].type == WEAPON_ARROW)
                 {
-                    player->stuff.weapon_arrow = true;
+                    player->stuff.weapon_arrow += 20;
                 }
                 else if (current_room->weapons[i].type == WEAPON_SWORD)
                 {
-                    player->stuff.weapon_sword = true;
+                    player->stuff.weapon_sword += 1;
                 }
 
                 current_room->weapons[i].position.y = -1;
@@ -1012,6 +1012,28 @@ void show_weapons(Player *player)
         draw_border(start_y - 1, start_x, NUM_WEAPON_MENU + 2, 30);
         show_title(start_y - 3, start_x + 8, "=== WEAPON ===");
 
+        if (player->current_weapon == WEAPON_MACE)
+        {
+            mvprintw(start_y + NUM_WEAPON_MENU + 1, start_x - 1, "Current weapon is Mace.");
+        }
+        else if (player->current_weapon == WEAPON_DAGGER)
+        {
+            mvprintw(start_y + NUM_WEAPON_MENU + 1, start_x - 1, "Current weapon is Dagger.");
+        }
+        else if (player->current_weapon == WEAPON_WAND)
+        {
+            mvprintw(start_y + NUM_WEAPON_MENU + 1, start_x - 1, "Current weapon is Magic Wand.");
+        }
+        else if (player->current_weapon == WEAPON_ARROW)
+        {
+            mvprintw(start_y + NUM_WEAPON_MENU + 1, start_x - 1, "Current weapon is Noramal Arrow.");
+        }
+        else if (player->current_weapon == WEAPON_SWORD)
+        {
+            mvprintw(start_y + NUM_WEAPON_MENU + 1, start_x - 1, "Current weapon is Sword.");
+        }
+        
+
         for (int i = 0; i < NUM_WEAPON_MENU; i++)
         {
             int y = start_y + i;
@@ -1079,7 +1101,7 @@ void show_weapons(Player *player)
                     player->current_weapon = WEAPON_MACE;
 
                     attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Mace!");
+                    mvprintw(start_y + NUM_WEAPON_MENU + 3, start_x - 1, "You picked up Mace!");
                     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
                     refresh();
                     sleep(2);
@@ -1090,7 +1112,7 @@ void show_weapons(Player *player)
                     player->stuff.weapon_dagger--;
 
                     attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Dagger!");
+                    mvprintw(start_y + NUM_WEAPON_MENU + 3, start_x - 1, "You picked up Dagger!");
                     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
                     refresh();
                     sleep(2);
@@ -1101,7 +1123,7 @@ void show_weapons(Player *player)
                     player->stuff.weapon_wand--;
 
                     attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Magic Wand!");
+                    mvprintw(start_y + NUM_WEAPON_MENU + 3, start_x - 1, "You picked up Magic Wand!");
                     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
                     refresh();
                     sleep(2);
@@ -1112,7 +1134,7 @@ void show_weapons(Player *player)
                     player->stuff.weapon_arrow--;
 
                     attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Normal Arrow!");
+                    mvprintw(start_y + NUM_WEAPON_MENU + 3, start_x - 1, "You picked up Normal Arrow!");
                     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
                     refresh();
                     sleep(2);
@@ -1122,7 +1144,7 @@ void show_weapons(Player *player)
                     player->current_weapon = WEAPON_SWORD;
 
                     attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You picked up Sword!");
+                    mvprintw(start_y + NUM_WEAPON_MENU + 3, start_x - 1, "You picked up Sword!");
                     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
                     refresh();
                     sleep(2);
@@ -1130,7 +1152,7 @@ void show_weapons(Player *player)
                 else
                 {
                     attron(COLOR_PAIR(COLOR_ALERT_MESSAGE));
-                    mvprintw(start_y + NUM_WEAPON_MENU + 2, start_x - 1, "You don't have enough of this weapon!");
+                    mvprintw(start_y + NUM_WEAPON_MENU + 3, start_x - 1, "You don't have enough of this weapon!");
                     attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE));
                     refresh();
                     sleep(2);

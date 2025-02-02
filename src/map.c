@@ -799,9 +799,30 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
             {
                 if (rooms[idx]->weapons[i].position.y != -1 && rooms[idx]->weapons[i].position.x != -1)
                 {
-                    attron(COLOR_PAIR(COLOR_WEAPONS) | A_BOLD | A_BLINK);
-                    mvprintw(rooms[idx]->weapons[i].position.y, rooms[idx]->weapons[i].position.x, "^");
-                    attroff(COLOR_PAIR(COLOR_WEAPONS) | A_BOLD | A_BLINK);
+                    if (rooms[idx]->weapons->type == WEAPON_DAGGER)
+                    {
+                        attron(COLOR_PAIR(COLOR_WEAPON_DAGGER) | A_BOLD | A_BLINK);
+                        mvprintw(rooms[idx]->weapons[i].position.y, rooms[idx]->weapons[i].position.x, "^");
+                        attroff(COLOR_PAIR(COLOR_WEAPON_DAGGER) | A_BOLD | A_BLINK);
+                    }
+                    else if (rooms[idx]->weapons->type == WEAPON_WAND)
+                    {
+                        attron(COLOR_PAIR(COLOR_WEAPON_WAND) | A_BOLD | A_BLINK);
+                        mvprintw(rooms[idx]->weapons[i].position.y, rooms[idx]->weapons[i].position.x, "^");
+                        attroff(COLOR_PAIR(COLOR_WEAPON_WAND) | A_BOLD | A_BLINK);
+                    }
+                    else if (rooms[idx]->weapons->type == WEAPON_ARROW)
+                    {
+                        attron(COLOR_PAIR(COLOR_WEAPON_ARROW) | A_BOLD | A_BLINK);
+                        mvprintw(rooms[idx]->weapons[i].position.y, rooms[idx]->weapons[i].position.x, "^");
+                        attroff(COLOR_PAIR(COLOR_WEAPON_ARROW) | A_BOLD | A_BLINK);
+                    }
+                    else if (rooms[idx]->weapons->type == WEAPON_SWORD)
+                    {
+                        attron(COLOR_PAIR(COLOR_WEAPON_SWORD) | A_BOLD | A_BLINK);
+                        mvprintw(rooms[idx]->weapons[i].position.y, rooms[idx]->weapons[i].position.x, "^");
+                        attroff(COLOR_PAIR(COLOR_WEAPON_SWORD) | A_BOLD | A_BLINK);
+                    }
                 }
             }
 
@@ -812,7 +833,7 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                 {
                     continue;
                 }
-                
+
                 if (rooms[idx]->monsters[i]->monster_type == DEAMON)
                 {
                     attron(COLOR_PAIR(COLOR_MONSTER_DEAMON) | A_BOLD);

@@ -64,6 +64,11 @@ void init_colors()
     init_pair(COLOR_MONSTER_GIANT, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLOR_MONSTER_SNAKE, COLOR_GREEN, COLOR_BLACK);
     init_pair(COLOR_MONSTER_UNDEED, COLOR_MAGENTA, COLOR_BLACK);
+
+    init_pair(COLOR_WEAPON_DAGGER, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(COLOR_WEAPON_WAND, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(COLOR_WEAPON_ARROW, COLOR_RED, COLOR_BLACK);
+    init_pair(COLOR_WEAPON_SWORD, COLOR_BLUE, COLOR_BLACK);
 }
 
 void draw_border(int start_y, int start_x, int height, int width)
