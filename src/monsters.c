@@ -194,7 +194,6 @@ bool monster_can_move(Room **rooms, int rooms_number, int next_y, int next_x, Pl
         {
             return false;
         }
-        
     }
 
     return false;
@@ -283,22 +282,47 @@ bool monster_update(Room **rooms, int rooms_number, Player *player)
                     if (player->current_weapon == WEAPON_MACE)
                     {
                         monster->health -= 5;
+                        if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                        {
+                            monster->health -= 10;
+                            player->spell_usage--;
+                        }
                     }
                     else if (player->current_weapon == WEAPON_DAGGER)
                     {
                         monster->health -= 12;
+                        if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                        {
+                            monster->health -= 24;
+                            player->spell_usage--;
+                        }
                     }
                     else if (player->current_weapon == WEAPON_WAND)
                     {
                         monster->health -= 15;
+                        if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                        {
+                            monster->health -= 30;
+                            player->spell_usage--;
+                        }
                     }
                     else if (player->current_weapon == WEAPON_ARROW)
                     {
                         monster->health -= 5;
+                        if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                        {
+                            monster->health -= 10;
+                            player->spell_usage--;
+                        }
                     }
                     else if (player->current_weapon == WEAPON_SWORD)
                     {
                         monster->health -= 10;
+                        if (player->spell_usage > 0 && player->current_spell == SPELL_DAMAGE)
+                        {
+                            monster->health -= 20;
+                            player->spell_usage--;
+                        }
                     }
 
                     if (monster->monster_type == DEAMON)

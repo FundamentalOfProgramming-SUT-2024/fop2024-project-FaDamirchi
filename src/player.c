@@ -69,6 +69,124 @@ bool can_move(Player *player, Room **rooms, int rooms_number, bool ***map, int n
 
 void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player *player)
 {
+    if (player->spell_usage > 0 && player->current_spell == SPELL_SPEED)
+    {
+        if (inp == KEY_UP || inp == 'w' || inp == 'W' || inp == '8')
+        {
+            if (can_move(player, rooms, rooms_number,
+                         floors[player->current_floor]->map,
+                         player->position.y - 2,
+                         player->position.x))
+            {
+                player->position.y -= 2;
+                player->passed_blockes++;
+                player->spell_usage--;
+                return;
+            }
+        }
+
+        if (inp == KEY_DOWN || inp == 'x' || inp == 'X' || inp == '2')
+        {
+            if (can_move(player, rooms, rooms_number,
+                         floors[player->current_floor]->map,
+                         player->position.y + 2,
+                         player->position.x))
+            {
+                player->position.y += 2;
+                player->passed_blockes++;
+                player->spell_usage--;
+                return;
+            }
+        }
+
+        if (inp == KEY_LEFT || inp == 'a' || inp == 'A' || inp == '4')
+        {
+            if (can_move(player, rooms, rooms_number,
+                         floors[player->current_floor]->map,
+                         player->position.y,
+                         player->position.x - 2))
+            {
+                player->position.x -= 2;
+                player->passed_blockes++;
+                player->spell_usage--;
+                return;
+            }
+        }
+
+        if (inp == KEY_RIGHT || inp == 'd' || inp == 'D' || inp == '6')
+        {
+            if (can_move(player, rooms, rooms_number,
+                         floors[player->current_floor]->map,
+                         player->position.y,
+                         player->position.x + 2))
+            {
+                player->position.x += 2;
+                player->passed_blockes++;
+                player->spell_usage--;
+                return;
+            }
+        }
+
+        if (inp == 'q' || inp == 'Q' || inp == '7')
+        {
+            if (can_move(player, rooms, rooms_number,
+                         floors[player->current_floor]->map,
+                         player->position.y - 2,
+                         player->position.x - 2))
+            {
+                player->position.y -= 2;
+                player->position.x -= 2;
+                player->passed_blockes++;
+                player->spell_usage--;
+                return;
+            }
+        }
+        if (inp == 'e' || inp == 'E' || inp == '9')
+        {
+            if (can_move(player, rooms, rooms_number,
+                         floors[player->current_floor]->map,
+                         player->position.y - 2,
+                         player->position.x + 2))
+            {
+                player->position.y -= 2;
+                player->position.x += 2;
+                player->passed_blockes++;
+                player->spell_usage--;
+                return;
+            }
+        }
+
+        if (inp == 'z' || inp == 'Z' || inp == '1')
+        {
+            if (can_move(player, rooms, rooms_number,
+                         floors[player->current_floor]->map,
+                         player->position.y + 2,
+                         player->position.x - 2))
+            {
+                player->position.y += 2;
+                player->position.x -= 2;
+                player->passed_blockes++;
+                player->spell_usage--;
+                return;
+            }
+        }
+
+        if (inp == 'c' || inp == 'C' || inp == '3')
+        {
+            if (can_move(player, rooms, rooms_number,
+                         floors[player->current_floor]->map,
+                         player->position.y + 2,
+                         player->position.x + 2))
+            {
+                player->position.y += 2;
+                player->position.x += 2;
+                player->passed_blockes++;
+                player->spell_usage--;
+                return;
+            }
+        }
+    }
+
     if (inp == KEY_UP || inp == 'w' || inp == 'W' || inp == '8')
     {
         if (can_move(player, rooms, rooms_number,
@@ -78,6 +196,7 @@ void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player
         {
             player->position.y--;
             player->passed_blockes++;
+            player->spell_usage--;
             return;
         }
     }
@@ -91,6 +210,7 @@ void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player
         {
             player->position.y++;
             player->passed_blockes++;
+            player->spell_usage--;
             return;
         }
     }
@@ -104,6 +224,7 @@ void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player
         {
             player->position.x--;
             player->passed_blockes++;
+            player->spell_usage--;
             return;
         }
     }
@@ -117,6 +238,7 @@ void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player
         {
             player->position.x++;
             player->passed_blockes++;
+            player->spell_usage--;
             return;
         }
     }
@@ -131,6 +253,7 @@ void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player
             player->position.y--;
             player->position.x--;
             player->passed_blockes++;
+            player->spell_usage--;
             return;
         }
     }
@@ -144,6 +267,7 @@ void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player
             player->position.y--;
             player->position.x++;
             player->passed_blockes++;
+            player->spell_usage--;
             return;
         }
     }
@@ -158,6 +282,7 @@ void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player
             player->position.y++;
             player->position.x--;
             player->passed_blockes++;
+            player->spell_usage--;
             return;
         }
     }
@@ -172,6 +297,7 @@ void move_player(int inp, Floor **floors, Room **rooms, int rooms_number, Player
             player->position.y++;
             player->position.x++;
             player->passed_blockes++;
+            player->spell_usage--;
             return;
         }
     }
@@ -369,6 +495,8 @@ Player *player_setup(Room **rooms, int rooms_number)
     newPlayer->passed_blockes = 0;
     newPlayer->current_weapon = WEAPON_MACE;
     newPlayer->lives = 5;
+    newPlayer->current_spell = 0;
+    newPlayer->spell_usage = 0;
 
     return newPlayer;
 }
@@ -912,10 +1040,11 @@ void show_spells(Player *player)
                 if (player->stuff.spell_health > 0)
                 {
                     player->stuff.spell_health--;
-                    player->health = 100;
+                    player->current_spell = SPELL_HEALTH;
+                    player->spell_usage = 10;
 
                     attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    mvprintw(start_y + NUM_SPELL_MENU + 2, start_x - 1, "Health was recovered completely!");
+                    mvprintw(start_y + NUM_SPELL_MENU + 2, start_x - 1, "You picked up Health spell!");
                     attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
                     refresh();
                     sleep(2);
@@ -934,13 +1063,14 @@ void show_spells(Player *player)
                 if (player->stuff.spell_speed > 0)
                 {
                     player->stuff.spell_speed--;
+                    player->current_spell = SPELL_SPEED;
+                    player->spell_usage = 10;
 
-                    // attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    // mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was increased by 20!");
-                    // mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100).", player->health);
-                    // attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    // refresh();
-                    // sleep(2);
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "You picked up Speed Spell!");
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
                 }
                 else
                 {
@@ -957,13 +1087,14 @@ void show_spells(Player *player)
                 if (player->stuff.spell_damage > 0)
                 {
                     player->stuff.spell_damage--;
+                    player->current_spell = SPELL_DAMAGE;
+                    player->spell_usage = 10;
 
-                    // attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    // mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "Health was restored completely!");
-                    // mvprintw(start_y + NUM_FOOD_MENU + 3, start_x - 1, "Current health status is (%d / 100).", player->health);
-                    // attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
-                    // refresh();
-                    // sleep(2);
+                    attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    mvprintw(start_y + NUM_FOOD_MENU + 2, start_x - 1, "You picked up Damage Spell!");
+                    attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE));
+                    refresh();
+                    sleep(2);
                 }
                 else
                 {
@@ -1033,7 +1164,6 @@ void show_weapons(Player *player)
         {
             mvprintw(start_y + NUM_WEAPON_MENU + 1, start_x - 1, "Current weapon is Sword.");
         }
-        
 
         for (int i = 0; i < NUM_WEAPON_MENU; i++)
         {
@@ -1277,7 +1407,14 @@ bool player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
 
     if (player->health > 80)
     {
-        player->lives += 0.1;
+        if (player->spell_usage > 0 && player->current_spell == SPELL_HEALTH)
+        {
+            player->lives += 0.2;
+        }
+        else
+        {
+            player->lives += 0.1;
+        }
 
         if (player->lives > 5)
         {
