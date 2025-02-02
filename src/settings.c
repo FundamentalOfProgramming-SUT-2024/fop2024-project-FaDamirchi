@@ -47,8 +47,8 @@ void show_settings_menu(char *username)
     FILE *file = fopen(SETTINGS_FILE, "r");
 
     char line[1024];
-    int level = 1; // default:       Medium
-    int color = 1; // default color: Red
+    int level = 1; // default:       Medium (1-based index)
+    int color = 1; // default color: PURPLE (1-based index)
     int music = 1; // default:       ON
 
     while (fgets(line, sizeof(line), file))
@@ -67,7 +67,7 @@ void show_settings_menu(char *username)
 
     int choice = 0;
     int unsaved_changes = 0;
-    const char *level_options[] = {" Easy ", "Medium", " Hard "};
+    const char *level_options[] = {" Easy ", "Medium", " Hard "};  // These remain 0-based
     const char *color_options[] = {" White ", "Purpule", " Blue  "};
     const char *music_options[] = {"OFF", "ON "};
 
@@ -107,9 +107,9 @@ void show_settings_menu(char *username)
             mvprintw(start_y + i, start_x, "%s", options[i]);
 
             if (i == 0)
-                mvprintw(start_y + i, start_x + 10, "< %s >", level_options[level]);
+                mvprintw(start_y + i, start_x + 10, "< %s >", level_options[level - 1]);  // Adjust for 1-based indexing
             else if (i == 1)
-                mvprintw(start_y + i, start_x + 10, "< %s >", color_options[color]);
+                mvprintw(start_y + i, start_x + 10, "< %s >", color_options[color - 1]);  // Adjust for 1-based indexing
             else if (i == 2)
                 mvprintw(start_y + i, start_x + 10, "< %s >", music_options[music]);
 
@@ -136,17 +136,17 @@ void show_settings_menu(char *username)
         case KEY_LEFT:
             if (choice == 0)
             {
-                level = (level - 1 + 3) % 3; // cycle through level options
+                level = ((level - 2 + 3) % 3) + 1; // Cycle through level options (1-based)
                 unsaved_changes = 1;
             }
             else if (choice == 1)
             {
-                color = (color - 1 + 3) % 3; // cycle through color options
+                color = ((color - 2 + 3) % 3) + 1; // Cycle through color options (1-based)
                 unsaved_changes = 1;
             }
             else if (choice == 2)
             {
-                music = (music - 1 + 2) % 2; // cycle through music options
+                music = (music - 1 + 2) % 2; // Cycle through music options (still 0-based)
                 unsaved_changes = 1;
             }
             break;
@@ -154,17 +154,17 @@ void show_settings_menu(char *username)
         case KEY_RIGHT:
             if (choice == 0)
             {
-                level = (level + 1) % 3; // cycle through level options
+                level = (level % 3) + 1; // Cycle through level options (1-based)
                 unsaved_changes = 1;
             }
             else if (choice == 1)
             {
-                color = (color + 1) % 3; // cycle through color options
+                color = (color % 3) + 1; // Cycle through color options (1-based)
                 unsaved_changes = 1;
             }
             else if (choice == 2)
             {
-                music = (music + 1) % 2; // cycle through music options
+                music = (music + 1) % 2; // Cycle through music options (still 0-based)
                 unsaved_changes = 1;
             }
             break;
