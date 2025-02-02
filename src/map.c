@@ -300,6 +300,45 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                 mvprintw(rooms[idx]->windows[i].position.y, rooms[idx]->windows[i].position.x, "=");
             }
             attroff(COLOR_PAIR(COLOR_STUFF_TREASURE));
+
+            for (int i = 0; i < rooms[idx]->monsters_number; i++)
+            {
+                if (rooms[idx]->monsters[i]->position.y == -1 && rooms[idx]->monsters[i]->position.x == -1)
+                {
+                    continue;
+                }
+
+                if (rooms[idx]->monsters[i]->monster_type == DEAMON)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_DEAMON) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "D");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_DEAMON) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == FIRE)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_FIRE) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "F");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_FIRE) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == GIANT)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_GIANT) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "G");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_GIANT) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == SNAKE)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_SNAKE) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "S");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_SNAKE) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == UNDEED)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_UNDEED) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "U");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_UNDEED) | A_BOLD);
+                }
+            }
         }
 
         // draw enchant room

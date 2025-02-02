@@ -133,11 +133,6 @@ void undeed_setup(Room *room, Monster *monster)
 
 void monster_setup(Room *room, int level)
 {
-    if (room->type == ROOM_TREASURE)
-    {
-        return;
-    }
-
     room->monsters_number = level + rand() % 2 - 1;
     room->monsters = (Monster **)malloc(sizeof(Monster *) * room->monsters_number);
 

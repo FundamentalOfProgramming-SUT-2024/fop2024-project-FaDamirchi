@@ -1472,7 +1472,23 @@ int check_status(Player *player, Floor **floors)
 
     for (int i = 0; i < floors[player->current_floor]->rooms_number; i++)
     {
-        if (floors[player->current_floor]->rooms[i]->type == ROOM_TREASURE &&
+        bool flag = true;
+
+        if (floors[player->current_floor]->rooms[i]->type == ROOM_TREASURE)
+        {
+            for (int j = 0; j < floors[player->current_floor]->rooms[i]->monsters_number; j++)
+            {
+                if (floors[player->current_floor]->rooms[i]->monsters[j]->position.y != -1 &&
+                    floors[player->current_floor]->rooms[i]->monsters[j]->position.x != -1)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+        }
+        
+
+        if (floors[player->current_floor]->rooms[i]->type == ROOM_TREASURE && flag &&
             player->position.y > floors[player->current_floor]->rooms[i]->start.y &&
             player->position.y < floors[player->current_floor]->rooms[i]->start.y + floors[player->current_floor]->rooms[i]->height - 1 &&
             player->position.x > floors[player->current_floor]->rooms[i]->start.x &&
