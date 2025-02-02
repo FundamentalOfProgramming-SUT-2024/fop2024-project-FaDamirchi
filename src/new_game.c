@@ -277,47 +277,6 @@ void new_game(char *username, int level, int color, bool isGuest)
     newGame->player = player_setup(newGame->floors[0]->rooms,
                                    newGame->floors[0]->rooms_number);
 
-    // while (1)
-    // {
-    //     clear();
-    //     status_bar(newGame->player);
-    //     show_message(newGame->player->message);
-
-    //     draw_map(newGame->floors[newGame->player->current_floor]->rooms,
-    //              newGame->floors[newGame->player->current_floor]->rooms_number,
-    //              newGame->floors[newGame->player->current_floor]->map,
-    //              newGame->player->current_floor);
-
-    //     show_next_step(newGame->floors[newGame->player->current_floor]->rooms,
-    //                    newGame->player,
-    //                    newGame->floors[newGame->player->current_floor]->rooms_number,
-    //                    newGame->floors[newGame->player->current_floor]->map);
-
-    //     if (!player_update(newGame->floors,
-    //                        newGame->floors[newGame->player->current_floor]->rooms,
-    //                        newGame->floors[newGame->player->current_floor]->rooms_number,
-    //                        newGame->player,
-    //                        color))
-    //     {
-    //         if (!isGuest)
-    //         {
-    //             save_game(newGame, username);
-    //         }
-    //         break;
-    //     }
-
-    //     if (check_status(newGame->player, newGame->floors) != NOTHING)
-    //     {
-    //         if (!isGuest)
-    //         {
-    //             update_score(username, newGame->player->gold * 175, newGame->player->gold, 1, 1);
-    //         }
-    //         break;
-    //     }
-
-    //     refresh();
-    // }
-
     while (1)
     {
         clear();
@@ -338,8 +297,25 @@ void new_game(char *username, int level, int color, bool isGuest)
                            newGame->floors[newGame->player->current_floor]->rooms,
                            newGame->floors[newGame->player->current_floor]->rooms_number,
                            newGame->player,
-                           color) ||
-            !monster_update(newGame->floors[newGame->player->current_floor]->rooms,
+                           color))
+        {
+            if (!isGuest)
+            {
+                save_game(newGame, username);
+            }
+
+            break;
+        }
+        if (check_status(newGame->player, newGame->floors) != NOTHING)
+        {
+            if (!isGuest)
+            {
+                update_score(username, newGame->player->gold * 175, newGame->player->gold, 1, 1);
+            }
+            break;
+        }
+
+        if (!monster_update(newGame->floors[newGame->player->current_floor]->rooms,
                             newGame->floors[newGame->player->current_floor]->rooms_number,
                             newGame->player))
         {
@@ -349,23 +325,8 @@ void new_game(char *username, int level, int color, bool isGuest)
                 {
                     update_score(username, newGame->player->gold * 175, newGame->player->gold, 1, 1);
                 }
+                break;
             }
-
-            if (!isGuest)
-            {
-                save_game(newGame, username);
-            }
-
-            break;
-        }
-
-        if (check_status(newGame->player, newGame->floors) != NOTHING)
-        {
-            if (!isGuest)
-            {
-                update_score(username, newGame->player->gold * 175, newGame->player->gold, 1, 1);
-            }
-            break;
         }
 
         refresh();

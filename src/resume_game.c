@@ -43,7 +43,6 @@ bool recover_information(Game *game, char *username)
         return false;
     }
 
-    
     game->player = (Player *)malloc(sizeof(Player));
 
     // recovering player information
@@ -408,7 +407,7 @@ bool recover_information(Game *game, char *username)
                 game->floors[i]->rooms[j]->monsters_number = monsters_number;
                 if (monsters_number > 0)
                 {
-                    game->floors[i]->rooms[j]->monsters =(Monster **) malloc(sizeof(Monster *) * monsters_number);
+                    game->floors[i]->rooms[j]->monsters = (Monster **)malloc(sizeof(Monster *) * monsters_number);
                     for (int m = 0; m < monsters_number; m++)
                     {
                         if (fgets(line, sizeof(line), fp))
@@ -474,14 +473,27 @@ void resume_game(char *username, int color)
                            game->player,
                            color))
         {
+            
             save_game(game, username);
             break;
         }
-
         if (check_status(game->player, game->floors) != NOTHING)
         {
-            update_score(username, game->player->gold * 175, game->player->gold, 1, 0);
+            
+            update_score(username, game->player->gold * 175, game->player->gold, 1, 1);
             break;
+        }
+
+        if (!monster_update(game->floors[game->player->current_floor]->rooms,
+                            game->floors[game->player->current_floor]->rooms_number,
+                            game->player))
+        {
+            if (check_status(game->player, game->floors) != NOTHING)
+            {
+                
+                update_score(username, game->player->gold * 175, game->player->gold, 1, 1);
+                break;
+            }
         }
 
         refresh();
