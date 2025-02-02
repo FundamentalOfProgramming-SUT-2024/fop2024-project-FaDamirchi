@@ -58,6 +58,12 @@ void init_colors()
     init_pair(COLOR_THIRD_SCORE, COLOR_RED, COLOR_BLACK);
 
     init_pair(COLOR_CURRENT_USER, COLOR_MAGENTA, COLOR_BLACK);
+
+    init_pair(COLOR_MONSTER_DEAMON, COLOR_WHITE, COLOR_BLACK);
+    init_pair(COLOR_MONSTER_FIRE, COLOR_RED, COLOR_BLACK);
+    init_pair(COLOR_MONSTER_GIANT, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(COLOR_MONSTER_SNAKE, COLOR_GREEN, COLOR_BLACK);
+    init_pair(COLOR_MONSTER_UNDEED, COLOR_MAGENTA, COLOR_BLACK);
 }
 
 void draw_border(int start_y, int start_x, int height, int width)

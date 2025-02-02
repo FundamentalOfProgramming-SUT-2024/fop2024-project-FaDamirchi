@@ -10,6 +10,7 @@
 // forward declaration
 typedef struct Player Player;
 typedef struct Floor Floor;
+typedef struct Monster Monster;
 
 // consts
 #define MAP_WIDTH 120

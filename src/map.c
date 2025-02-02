@@ -1,5 +1,6 @@
 #include "map.h"
 #include "player.h"
+#include "monsters.h"
 #include "ui_utils.h"
 #include "global_defines.h"
 #include <time.h>
@@ -237,6 +238,7 @@ Room *generate_room(int grid)
     newRoom->spells_number = 0;
     newRoom->traps_number = 0;
     newRoom->weapons_number = 0;
+    newRoom->monsters_number = 0;
 
     return newRoom;
 }
@@ -388,6 +390,46 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                         mvprintw(rooms[idx]->spells[i].position.y, rooms[idx]->spells[i].position.x, "%%");
                         attroff(COLOR_PAIR(COLOR_SPELL_DAMAGE) | A_BOLD);
                     }
+                }
+            }
+
+            // draw monsters
+            for (int i = 0; i < rooms[idx]->monsters_number; i++)
+            {
+                if (rooms[idx]->monsters[i]->position.y == -1 && rooms[idx]->monsters[i]->position.x == -1)
+                {
+                    continue;
+                }
+
+                if (rooms[idx]->monsters[i]->monster_type == DEAMON)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_DEAMON) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "D");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_DEAMON) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == FIRE)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_FIRE) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "F");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_FIRE) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == GIANT)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_GIANT) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "G");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_GIANT) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == SNAKE)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_SNAKE) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "S");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_SNAKE) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == UNDEED)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_UNDEED) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "U");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_UNDEED) | A_BOLD);
                 }
             }
         }
@@ -553,6 +595,46 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                     attron(COLOR_PAIR(COLOR_WEAPONS) | A_BOLD | A_BLINK);
                     mvprintw(rooms[idx]->weapons[i].position.y, rooms[idx]->weapons[i].position.x, "^");
                     attroff(COLOR_PAIR(COLOR_WEAPONS) | A_BOLD | A_BLINK);
+                }
+            }
+
+            // draw monsters
+            for (int i = 0; i < rooms[idx]->monsters_number; i++)
+            {
+                if (rooms[idx]->monsters[i]->position.y == -1 && rooms[idx]->monsters[i]->position.x == -1)
+                {
+                    continue;
+                }
+
+                if (rooms[idx]->monsters[i]->monster_type == DEAMON)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_DEAMON) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "D");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_DEAMON) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == FIRE)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_FIRE) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "F");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_FIRE) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == GIANT)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_GIANT) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "G");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_GIANT) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == SNAKE)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_SNAKE) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "S");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_SNAKE) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == UNDEED)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_UNDEED) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "U");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_UNDEED) | A_BOLD);
                 }
             }
         }
@@ -722,6 +804,46 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
                     attroff(COLOR_PAIR(COLOR_WEAPONS) | A_BOLD | A_BLINK);
                 }
             }
+
+            // draw monsters
+            for (int i = 0; i < rooms[idx]->monsters_number; i++)
+            {
+                if (rooms[idx]->monsters[i]->position.y == -1 && rooms[idx]->monsters[i]->position.x == -1)
+                {
+                    continue;
+                }
+                
+                if (rooms[idx]->monsters[i]->monster_type == DEAMON)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_DEAMON) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "D");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_DEAMON) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == FIRE)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_FIRE) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "F");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_FIRE) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == GIANT)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_GIANT) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "G");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_GIANT) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == SNAKE)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_SNAKE) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "S");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_SNAKE) | A_BOLD);
+                }
+                else if (rooms[idx]->monsters[i]->monster_type == UNDEED)
+                {
+                    attron(COLOR_PAIR(COLOR_MONSTER_UNDEED) | A_BOLD);
+                    mvprintw(rooms[idx]->monsters[i]->position.y, rooms[idx]->monsters[i]->position.x, "U");
+                    attroff(COLOR_PAIR(COLOR_MONSTER_UNDEED) | A_BOLD);
+                }
+            }
         }
     }
 
@@ -731,7 +853,7 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
     {
         for (int j = 0; j < MAP_WIDTH; j++)
         {
-            if (map[i][j][1])
+            if (i != 0 && map[i][j][1])
             {
                 mvprintw(i, j, "#");
             }
@@ -803,7 +925,7 @@ void draw_all_map(Room **rooms, int rooms_number, bool ***map)
     {
         for (int j = 0; j < MAP_WIDTH; j++)
         {
-            if (map[i][j][0])
+            if (i != 0 && map[i][j][0])
             {
                 mvprintw(i, j, "#");
             }
@@ -1425,6 +1547,11 @@ void complete_map(Floor **floors, int floors_number, int level)
         place_food(floors[i]->rooms, floors[i]->rooms_number, level);
         place_spell(floors[i]->rooms, floors[i]->rooms_number);
         place_weapon(floors[i]->rooms, floors[i]->rooms_number);
+
+        for (int j = 0; j < floors[i]->rooms_number; j++)
+        {
+            monster_setup(floors[i]->rooms[j], level);
+        }
     }
 }
 
