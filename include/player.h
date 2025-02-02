@@ -47,6 +47,7 @@ typedef struct Player
 
     int gold;
     int health;
+    float lives;
     int current_weapon;
 
     Stuff stuff;

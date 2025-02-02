@@ -368,6 +368,7 @@ Player *player_setup(Room **rooms, int rooms_number)
     newPlayer->health = 100;
     newPlayer->passed_blockes = 0;
     newPlayer->current_weapon = WEAPON_MACE;
+    newPlayer->lives = 5;
 
     return newPlayer;
 }
@@ -1171,6 +1172,7 @@ void status_bar(Player *player)
     mvprintw(30, 0, "Current floor: %d", player->current_floor + 1);
     mvprintw(30, 25, "Health: %d", player->health);
     mvprintw(30, 45, "Gold: %d", player->gold);
+    mvprintw(30, 65, "Lives: %.2f", player->lives);
 }
 
 bool player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color)
@@ -1266,11 +1268,26 @@ bool player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         move_player(inp, floors, rooms, rooms_number, player);
 
         // reduce health by 1 after moving 10 blocks
-        while (player->passed_blockes > 5)
+        while (player->passed_blockes > 10)
         {
-            player->passed_blockes -= 5;
+            player->passed_blockes -= 10;
             player->health--;
         }
+    }
+
+    if (player->health > 80)
+    {
+        player->lives += 0.1;
+
+        if (player->lives > 5)
+        {
+            player->lives = 5;
+        }
+    }
+
+    if (player->health < 50)
+    {
+        player->lives -= 0.02;
     }
 
     return true;
@@ -1278,7 +1295,7 @@ bool player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
 
 int check_status(Player *player, Floor **floors)
 {
-    if (player->health <= 0)
+    if (player->health <= 0 || player->lives <= 0)
     {
         clear();
 
