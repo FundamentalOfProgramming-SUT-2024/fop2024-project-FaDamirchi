@@ -247,10 +247,10 @@ void draw_map(Room **rooms, int rooms_number, bool ***map, int current_floor)
 {
     for (int idx = 0; idx < rooms_number; idx++)
     {
-        // if (!rooms[idx]->isSeen)
-        // {
-        //     continue;
-        // }
+        if (!rooms[idx]->isSeen)
+        {
+            continue;
+        }
 
         // draw treasure room
         if (rooms[idx]->type == ROOM_TREASURE)
