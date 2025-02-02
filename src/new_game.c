@@ -107,7 +107,7 @@ void new_game(int level, int color)
     while (1)
     {
         clear();
-        show_status(newGame->player);
+        status_bar(newGame->player);
         show_message(newGame->player->message);
 
         draw_map(newGame->floors[newGame->player->current_floor]->rooms,
@@ -125,6 +125,12 @@ void new_game(int level, int color)
                       newGame->floors[newGame->player->current_floor]->rooms_number,
                       newGame->player,
                       color);
+
+        if(check_status(newGame->player, newGame->floors) != NOTHING)
+        {
+            // save the scores
+            break;
+        }
 
         refresh();
     }

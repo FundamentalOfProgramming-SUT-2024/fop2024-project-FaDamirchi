@@ -10,6 +10,10 @@ typedef struct Room Room;
 typedef struct Floor Floor;
 
 // consts
+#define WIN     1
+#define NOTHING 0
+#define LOSS   -1
+
 #define NUM_FOOD_MENU   5
 #define NUM_SPELL_MENU  4
 #define NUM_WEAPON_MENU 6
@@ -64,7 +68,8 @@ void show_foods(Player *player);
 void show_spells(Player *player);
 void show_weapons(Player *player);
 
-void show_status(Player *player);
+void status_bar(Player *player);
 void player_update(Floor **floors, Room **rooms, int rooms_number, Player *player, int color);
+int check_status(Player *player, Floor **floors);
 
 #endif

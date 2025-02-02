@@ -1054,7 +1054,7 @@ void show_weapons(Player *player)
     }
 }
 
-void show_status(Player *player)
+void status_bar(Player *player)
 {
     mvprintw(30, 0, "Current floor: %d", player->current_floor + 1);
     mvprintw(30, 25, "Health: %d", player->health);
@@ -1141,10 +1141,97 @@ void player_update(Floor **floors, Room **rooms, int rooms_number, Player *playe
         move_player(inp, floors, rooms, rooms_number, player);
 
         // reduce health by 1 after moving 10 blocks
-        while (player->passed_blockes > 10)
+        while (player->passed_blockes > 5)
         {
-            player->passed_blockes -= 10;
+            player->passed_blockes -= 5;
             player->health--;
         }
     }
+}
+
+int check_status(Player *player, Floor **floors)
+{
+    if (player->health <= 0)
+    {
+        clear();
+
+        int max_y, max_x;
+        getmaxyx(stdscr, max_y, max_x);
+        curs_set(0); // Hide cursor
+
+        int start_y = (max_y / 2) - 1;
+        int start_x = (max_x / 2) - 22;
+
+        // Draw border and title
+        draw_border(start_y - 1, start_x - 2, 3, 45);
+        attron(COLOR_PAIR(COLOR_ALERT_MESSAGE) | A_BLINK);
+        mvprintw(start_y - 3, start_x + 8, "=== !!!YOU LOST!!! ===");
+        attroff(COLOR_PAIR(COLOR_ALERT_MESSAGE) | A_BLINK);
+
+        attron(COLOR_PAIR(COLOR_GOLD_ORDINARY) | A_BOLD);
+        mvprintw(start_y, start_x, "Collected Golds: % d", player->gold);
+        attroff(COLOR_PAIR(COLOR_GOLD_ORDINARY) | A_BOLD);
+
+        attron(COLOR_PAIR(COLOR_GOLD_BLACK) | A_BOLD);
+        mvprintw(start_y, start_x + 30, "Score: %d", player->gold * 175);
+        attroff(COLOR_PAIR(COLOR_GOLD_BLACK) | A_BOLD);
+
+        attron(A_REVERSE);
+        mvprintw(start_y + 3, start_x + 8, "Return to Pregame Menu");
+        attroff(A_REVERSE);
+
+        int ch = getch();
+        while (ch != ENTER)
+        {
+            ch = getch();
+        }
+
+        return LOSS;
+    }
+
+    for (int i = 0; i < floors[player->current_floor]->rooms_number; i++)
+    {
+        if (floors[player->current_floor]->rooms[i]->type == ROOM_TREASURE &&
+            player->position.y > floors[player->current_floor]->rooms[i]->start.y &&
+            player->position.y < floors[player->current_floor]->rooms[i]->start.y + floors[player->current_floor]->rooms[i]->height - 1 &&
+            player->position.x > floors[player->current_floor]->rooms[i]->start.x &&
+            player->position.x < floors[player->current_floor]->rooms[i]->start.x + floors[player->current_floor]->rooms[i]->width - 1)
+        {
+            clear();
+            int max_y, max_x;
+            getmaxyx(stdscr, max_y, max_x);
+            curs_set(0); // Hide cursor
+
+            int start_y = (max_y / 2) - 1;
+            int start_x = (max_x / 2) - 22;
+
+            // Draw border and title
+            draw_border(start_y - 1, start_x - 2, 3, 45);
+            attron(COLOR_PAIR(COLOR_SUCCESS_MESSAGE) | A_BLINK);
+            mvprintw(start_y - 3, start_x + 9, "=== !!!YOU WON!!! ===");
+            attroff(COLOR_PAIR(COLOR_SUCCESS_MESSAGE) | A_BLINK);
+
+            attron(COLOR_PAIR(COLOR_GOLD_ORDINARY) | A_BOLD);
+            mvprintw(start_y, start_x, "Collected Golds: % d", player->gold);
+            attroff(COLOR_PAIR(COLOR_GOLD_ORDINARY) | A_BOLD);
+
+            attron(COLOR_PAIR(COLOR_GOLD_BLACK) | A_BOLD);
+            mvprintw(start_y, start_x + 30, "Score: %d", player->gold * 175);
+            attroff(COLOR_PAIR(COLOR_GOLD_BLACK) | A_BOLD);
+
+            attron(A_REVERSE);
+            mvprintw(start_y + 3, start_x + 8, "Return to Pregame Menu");
+            attroff(A_REVERSE);
+
+            int ch = getch();
+            while (ch != ENTER)
+            {
+                ch = getch();
+            }
+
+            return WIN;
+        }
+    }
+
+    return NOTHING;
 }
